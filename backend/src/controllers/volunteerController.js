@@ -1,0 +1,4 @@
+import Volunteer from "../models/Volunteer.js";
+let demo=[];
+export async function createVolunteer(req,res,next){try{const {name,phone,email,city,area,message}=req.body;if(!name||!phone)return res.status(400).json({success:false,message:"नाम और मोबाइल नंबर जरूरी हैं।"});const x={applicationNo:`VOL-${Date.now()}`,name,phone,email,city,area,message,status:"new"};if(Volunteer.db?.readyState===1){const v=await Volunteer.create(x);return res.status(201).json({success:true,applicationNo:v.applicationNo,volunteer:v})}demo.push({...x,createdAt:new Date()});res.status(201).json({success:true,applicationNo:x.applicationNo,volunteer:x})}catch(e){next(e)}}
+export async function listVolunteers(req,res,next){try{if(Volunteer.db?.readyState===1)return res.json({success:true,items:await Volunteer.find().sort({createdAt:-1}).limit(200)});res.json({success:true,items:demo})}catch(e){next(e)}}

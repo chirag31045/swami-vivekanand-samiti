@@ -1,0 +1,1 @@
+import {Router} from "express";import {createVolunteer,listVolunteers} from "../controllers/volunteerController.js";const r=Router();r.post("/",createVolunteer);r.get("/",listVolunteers);export default r;
