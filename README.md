@@ -1,7 +1,5 @@
 # स्वामी विवेकानन्द विचार प्रचार सेवा समिति — Full Stack Website
 
-यह प्रोजेक्ट आपके दिए हुए **लोगो** और **पोस्टर** को assets के रूप में शामिल करता है।
-
 ## Tech Stack
 - Frontend: React + Vite + CSS
 - Backend: Node.js + Express
