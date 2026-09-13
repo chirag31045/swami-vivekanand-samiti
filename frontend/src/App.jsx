@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Routes, Route, NavLink, Link } from "react-router-dom";
+import { Routes, Route, NavLink, Link, useParams, } from "react-router-dom";
 import {
   Menu,
   X,
@@ -26,9 +26,9 @@ import {
   Moon,
   Languages,
   Mail,
- Plus,
+  Plus,
 } from "lucide-react";
-import { siteData, activities } from "./data/siteData";
+import { siteData, activitiesHi, activitiesEn, activityDetails } from "./data/siteData";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const API_ORIGIN = API.replace(/\/api\/?$/, "");
@@ -250,7 +250,6 @@ const translations = {
       "Contact the Samiti for programs, service activities or other information.",
     office: "Office",
     quick: "Quick Links",
-    socialNote: "Replace the official social-media links in siteData.js.",
     rights: "All rights reserved.",
     language: "Language",
     light: "Light",
@@ -298,6 +297,8 @@ function LanguageProvider({ children }) {
 function Layout({ children }) {
   const [open, setOpen] = useState(false);
   const { t, lang, setLang, dark, setDark } = useLang();
+  const currentSiteData = siteData[lang] || siteData.hi;
+
   const links = [
     ["/", "home"],
     ["/about", "about"],
@@ -310,8 +311,8 @@ function Layout({ children }) {
     <div className="app">
       <div className="topbar">
         <div>
-          <span>{siteData.registration}</span>
-          <span>{siteData.uniqueId}</span>
+          <span>{currentSiteData.registration}</span>
+          <span>{currentSiteData.uniqueId}</span>
         </div>
         <div className="topControls">
           <label>
@@ -340,8 +341,14 @@ function Layout({ children }) {
         <Link to="/" className="brand" onClick={() => setOpen(false)}>
           <img src="/assets/logo.png" alt="Samiti logo" />
           <div>
-            <strong>स्वामी विवेकानन्द</strong>
-            <small>विचार प्रचार सेवा समिति</small>
+            <strong>
+              {lang === "hi" ? "स्वामी विवेकानन्द" : "Swami Vivekananda"}
+            </strong>
+            <small>
+              {lang === "hi"
+                ? "विचार प्रचार सेवा समिति"
+                : "Vichar Prachar Seva Samiti"}
+            </small>
           </div>
         </Link>
         <button className="menuBtn" onClick={() => setOpen(!open)}>
@@ -376,8 +383,8 @@ function Layout({ children }) {
         <div className="footerGrid">
           <div>
             <img src="/assets/logo.png" className="footerLogo" />
-            <h3>{siteData.name}</h3>
-            <p>{siteData.tagline}</p>
+            <h3>{currentSiteData.name}</h3>
+            <p>{currentSiteData.tagline}</p>
           </div>
           <div>
             <h4>{t("quick")}</h4>
@@ -394,18 +401,18 @@ function Layout({ children }) {
 
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  siteData.address,
+                  currentSiteData.address,
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {siteData.address}
+                {currentSiteData.address}
               </a>
             </p>
             <p>
               <Phone size={16} />
-              <a href={`tel:${siteData.leaders[0].phone}`}>
-                {siteData.leaders[0].phone}
+              <a href={`tel:${currentSiteData.phone}`}>
+                {currentSiteData.phone}
               </a>
             </p>
             <p>
@@ -420,7 +427,7 @@ function Layout({ children }) {
             </p>
             <div className="socials">
               <a
-                href={siteData.social.instagram}
+                href={currentSiteData.social.instagram}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
@@ -428,7 +435,7 @@ function Layout({ children }) {
                 <Instagram />
               </a>
               <a
-                href={siteData.social.facebook}
+                href={currentSiteData.social.facebook}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Facebook"
@@ -436,7 +443,7 @@ function Layout({ children }) {
                 <Facebook />
               </a>
               <a
-                href={siteData.social.whatsapp}
+                href={currentSiteData.social.whatsapp}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="WhatsApp"
@@ -444,7 +451,7 @@ function Layout({ children }) {
                 <MessageCircle />
               </a>
               <a
-                href={siteData.social.twitter}
+                href={currentSiteData.social.twitter}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Twitter"
@@ -456,7 +463,7 @@ function Layout({ children }) {
           </div>
         </div>
         <div className="copyright">
-          © {new Date().getFullYear()} {siteData.name}. {t("rights")}
+          © {new Date().getFullYear()} {currentSiteData.name}. {t("rights")}
         </div>
       </footer>
     </div>
@@ -464,7 +471,8 @@ function Layout({ children }) {
 }
 
 function Home() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const activities = lang === "en" ? activitiesEn : activitiesHi;
   return (
     <>
       <section className="hero">
@@ -487,7 +495,7 @@ function Home() {
           </div>
         </div>
         <div className="heroPoster">
-          <img src="/assets/poster.jpg" alt="Samiti poster" />
+          <img src="/assets/poster.png" alt="Samiti poster" />
         </div>
       </section>
       <section className="section">
@@ -503,7 +511,7 @@ function Home() {
         <div className="cards">
           {activities.map(([title, text], i) => (
             <article className="card" key={title}>
-              <div className="iconCircle">0{i + 1}</div>
+              <div className="iconCircle">{i + 1}</div>
               <h3>{title}</h3>
               <p>{text}</p>
             </article>
@@ -513,8 +521,14 @@ function Home() {
       <section className="quoteBand">
         <div>
           <span className="eyebrow">{t("inspiration")}</span>
-          <h2>“उठो, जागो और तब तक नहीं रुको जब तक लक्ष्य प्राप्त न हो जाए।”</h2>
-          <p>— स्वामी विवेकानन्द</p>
+
+          <h2>
+            {lang === "en"
+              ? "Arise, awake, and do not stop until the goal is reached."
+              : "“उठो, जागो और तब तक नहीं रुको जब तक लक्ष्य प्राप्त न हो जाए।”"}
+          </h2>
+
+          <p>{lang === "en" ? "— Swami Vivekananda" : "— स्वामी विवेकानन्द"}</p>
         </div>
       </section>
       <section className="section split">
@@ -536,7 +550,8 @@ function Home() {
   );
 }
 function About() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const currentSiteData = siteData[lang] || siteData.hi;
   return (
     <Page title={t("about")} intro={t("pageAbout")}>
       <div className="aboutGrid">
@@ -547,15 +562,15 @@ function About() {
           <div className="infoList">
             <div>
               <b>{t("registration")}</b>
-              <span>{siteData.registration}</span>
+              <span>{currentSiteData.registration}</span>
             </div>
             <div>
               <b>Unique ID</b>
-              <span>{siteData.uniqueId}</span>
+              <span>{currentSiteData.uniqueId}</span>
             </div>
             <div>
               <b>{t("address")}</b>
-              <span>{siteData.address}</span>
+              <span>{currentSiteData.address}</span>
             </div>
           </div>
         </div>
@@ -583,86 +598,87 @@ function About() {
     </Page>
   );
 }
-function langObjectiveCards(t) {
-  return t("about") === "हमारे बारे में"
-    ? [
-        [
-          "मानव कल्याण",
-          "जाति, धर्म, सम्प्रदाय या लिंग भेद के बिना मानव कल्याण के लिए कार्य करना।",
-        ],
-        [
-          "शिक्षा एवं डिजिटल साक्षरता",
-          "शिक्षा का प्रचार-प्रसार, पुस्तकालय/वाचनालय, खेल एवं डिजिटल शिक्षा और कंप्यूटर साक्षरता कार्यक्रम।",
-        ],
-        [
-          "रोजगार एवं कौशल विकास",
-          "युवाओं के लिए तकनीकी, शिक्षक, नर्सिंग, कंप्यूटर, औद्योगिक और अन्य कौशल प्रशिक्षण केंद्रों को बढ़ावा देना।",
-        ],
-        [
-          "स्वास्थ्य सेवा",
-          "स्वास्थ्य जागरूकता, चिकित्सा प्रशिक्षण, निःशुल्क मेडिकल/नेत्र कैंप और जरूरतमंदों को स्वास्थ्य सहायता।",
-        ],
-        [
-          "महिला सशक्तिकरण",
-          "महिला विकास योजनाओं में सहयोग, रोजगार प्रशिक्षण और स्वयं सहायता समूहों के माध्यम से सशक्तिकरण।",
-        ],
-      ]
-    : [
-        [
-          "Human Welfare",
-          "Work for human welfare without discrimination of caste, religion, community or gender.",
-        ],
-        [
-          "Education & Digital Literacy",
-          "Promote education, libraries, sports, digital education and computer literacy programs.",
-        ],
-        [
-          "Employment & Skill Development",
-          "Support technical, teaching, nursing, computer, industrial and other skill-development training.",
-        ],
-        [
-          "Health Services",
-          "Promote health awareness, medical training, free medical/eye camps and support for people in need.",
-        ],
-        [
-          "Women Empowerment",
-          "Support women-development schemes, employment training and self-help group based empowerment.",
-        ],
-      ];
-}
-
 function Activities() {
-  const { t } = useLang();
-  const objectiveCards = langObjectiveCards(t);
+  const { t, lang } = useLang();
+  const activities = lang === "en" ? activitiesEn : activitiesHi;
+
   return (
     <Page title={t("activities")} intro={t("activitiesIntro")}>
       <div className="cards">
         {activities.map(([title, text], i) => (
           <article className="card large" key={title}>
-            <div className="iconCircle">0{i + 1}</div>
+            <div className="iconCircle">{i + 1}</div>
+
             <h3>{title}</h3>
             <p>{text}</p>
-            <button className="textBtn">
+
+            <Link
+              to={`/activities/${i + 1}`}
+              className="textBtn"
+            >
               {t("details")} <ArrowRight size={16} />
-            </button>
+            </Link>
           </article>
         ))}
       </div>
-      <div className="objectiveSection">
-        <span className="eyebrow">{t("serviceObjectives")}</span>
-        <h2>{t("serviceObjectives")}</h2>
-        <p className="objectiveSource">{t("serviceSource")}</p>
-        <div className="objectiveGrid">
-          {objectiveCards.map((x, i) => (
-            <article className="objectiveCard" key={i}>
-              <div className="iconCircle">{i + 1}</div>
-              <h3>{x[0]}</h3>
-              <p>{x[1]}</p>
-            </article>
-          ))}
-        </div>
-      </div>
     </Page>
+  );
+}
+function ActivityDetail() {
+  const { lang } = useLang();
+  const { id } = useParams();
+
+  const activity = activityDetails[id];
+
+  if (!activity) {
+    return (
+      <Page
+        title={lang === "en" ? "Activity Not Found" : "गतिविधि नहीं मिली"}
+        intro=""
+      >
+        <Link to="/activities" className="primary">
+          {lang === "en"
+            ? "Back to Activities"
+            : "गतिविधियों पर वापस जाएँ"}
+        </Link>
+      </Page>
+    );
+  }
+
+  const content = activity[lang];
+
+  return (
+    <section className="activityDetailPage">
+      <div className="activityDetail">
+
+        {/* LEFT CONTENT */}
+        <div className="activityDetailContent">
+          <span className="activityEyebrow">
+            {lang === "en" ? "Our Activities" : "हमारी गतिविधियाँ"}
+          </span>
+
+          <h1>{content.title}</h1>
+
+          <p>{content.details}</p>
+
+          <Link to="/activities" className="primary activityBackBtn">
+            {lang === "en"
+              ? "← Back to Activities"
+              : "← गतिविधियों पर वापस जाएँ"}
+          </Link>
+        </div>
+
+        {/* RIGHT IMAGE */}
+        <div className="activityDetailImageBox">
+          <img
+            src={activity.image}
+            alt={content.title}
+            className="activityDetailImage"
+          />
+        </div>
+
+      </div>
+    </section>
   );
 }
 function Finance() {
@@ -771,7 +787,7 @@ function Gallery() {
         {msg && <span className="uploadMsg">{msg}</span>}
       </div>
       <div className="gallery">
-        <img src="/assets/poster.jpg" alt="Program poster" />
+        <img src="/assets/swami.jpg" alt="Program poster" />
         <img src="/assets/logo.png" alt="Samiti logo" />
         {photos.map((p, i) => (
           <img key={i} src={p.url} alt={p.originalName || "Samiti activity"} />
@@ -1028,71 +1044,79 @@ function Volunteer() {
   );
 }
 function Contact() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const currentSiteData = siteData[lang] || siteData.hi;
   return (
     <Page title={t("contact")} intro={t("contactIntro")}>
       <div className="contactGrid">
-        {siteData.leaders.map((x) => (
+        {currentSiteData.leaders.map((x) => (
           <div className="contactCard" key={x.role}>
             <span>{x.role}</span>
             <h3>{x.name}</h3>
-            <p>
-              <Phone size={16} /> {x.phone}
-            </p>
+
+            {x.phone && (
+              <p>
+                <Phone size={16} />
+                <a href={`tel:${x.phone}`}>{x.phone}</a>
+              </p>
+            )}
           </div>
         ))}
         <div className="contactCard wide">
           <span>{t("office")}</span>
           <h3>{t("address")}</h3>
           <p>
-            <MapPin size={16} /> {siteData.address}
+            <MapPin size={16} /> {currentSiteData.address}
           </p>
         </div>
-             {/* Social Media */}
+        {/* Social Media */}
         <div className="contactCard wide">
-          <span>Connect With Us</span>
-          <h3>हमसे जुड़ें</h3>
-          <p>हमारे साथ जुड़ने और नवीनतम गतिविधियों की जानकारी पाने के लिए:</p>
-          <div className="contactSocials">
+          <h3>{lang === "en" ? "Connect With Us" : "हमसे जुड़ें"}</h3>
 
+          <p>
+            {lang === "en"
+              ? "Join us and stay updated with our latest activities:"
+              : "हमारे साथ जुड़ने और नवीनतम गतिविधियों की जानकारी पाने के लिए:"}
+          </p>
+          <div className="contactSocials">
             {/* WhatsApp */}
             <a
-              href={siteData.social.whatsapp}
+              href={currentSiteData.social.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
             >
               <MessageCircle size={20} />
-              WhatsApp
+              {lang === "en" ? "WhatsApp" : "व्हाट्सऐप"}
             </a>
 
             {/* Facebook */}
             <a
-              href={siteData.social.facebook}
+              href={currentSiteData.social.facebook}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Facebook size={20} />
-              Facebook
+              {lang === "en" ? "Facebook" : "फेसबुक"}
             </a>
 
             {/* Instagram */}
             <a
-              href={siteData.social.instagram}
+              href={currentSiteData.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Instagram size={20} />
-               Instagram
+              {lang === "en" ? "Instagram" : "इंस्टाग्राम"}
             </a>
 
             {/* Twitter / X */}
             <a
-              href={siteData.social.twitter}
+              href={currentSiteData.social.twitter}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Twitter size={20} />
-              Twitter 
+              {lang === "en" ? "Twitter" : "ट्विटर"}
             </a>
 
             {/* Email */}
@@ -1102,9 +1126,8 @@ function Contact() {
               rel="noopener noreferrer"
             >
               <Mail size={20} />
-              Email
+              {lang === "en" ? "Email" : "ईमेल"}
             </a>
-
           </div>
         </div>
       </div>
@@ -1112,12 +1135,13 @@ function Contact() {
   );
 }
 function Page({ title, intro, children }) {
+  const { lang } = useLang();
+  const currentSiteData = siteData[lang] || siteData.hi;
+
   return (
     <>
       <section className="pageHero">
-        <span className="eyebrow">
-          स्वामी विवेकानन्द विचार प्रचार सेवा समिति
-        </span>
+        <span className="eyebrow">{currentSiteData.name}</span>
         <h1>{title}</h1>
         <p>{intro}</p>
       </section>
@@ -1134,6 +1158,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/activities" element={<Activities />} />
+          <Route path="/activities/:id" element={<ActivityDetail />} />
           <Route path="/finance" element={<Finance />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/documents" element={<Documents />} />
