@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Routes, Route, NavLink, Link, useParams, } from "react-router-dom";
+import { Routes, Route, NavLink, Link, useParams } from "react-router-dom";
 import {
   Menu,
   X,
@@ -28,7 +28,12 @@ import {
   Mail,
   Plus,
 } from "lucide-react";
-import { siteData, activitiesHi, activitiesEn, activityDetails } from "./data/siteData";
+import {
+  siteData,
+  activitiesHi,
+  activitiesEn,
+  activityDetails,
+} from "./data/siteData";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const API_ORIGIN = API.replace(/\/api\/?$/, "");
@@ -62,13 +67,14 @@ const translations = {
     viewFinance: "वित्तीय विवरण देखें",
     trust: "विश्वास और जवाबदेही",
     trustText:
-      "दान और खर्च के रिकॉर्ड के लिए सुरक्षित backend API और database structure तैयार है।",
+      "स्वामी विवेकानन्द विचार प्रचार सेवा समिति समाज सेवा, शिक्षा, स्वास्थ्य एवं जनकल्याण के लिए समर्पित एक सामाजिक संस्था है",
     pageAbout:
       "समिति का उद्देश्य सेवा, ज्ञान, संस्कार और विचार प्रचार के माध्यम से समाज में सकारात्मक योगदान देना है।",
     introTitle: "समिति का परिचय",
     introText:
       "यहाँ समिति का विस्तृत परिचय, उद्देश्य, स्थापना की पृष्ठभूमि, कार्यक्षेत्र और आगामी लक्ष्य लिखे जा सकते हैं। आप अपने अधिकृत दस्तावेज़ के अनुसार इस सामग्री को अपडेट कर सकते हैं।",
     registration: "पंजीकरण",
+    uniqueId: "विशिष्ट पहचान संख्या",
     address: "पता",
     activitiesIntro:
       "समिति द्वारा संचालित या प्रस्तावित प्रमुख सेवा क्षेत्रों का विवरण।",
@@ -99,7 +105,7 @@ const translations = {
     serviceSource:
       "समिति के पंजीकृत दस्तावेज़ में दिए उद्देश्यों का संक्षिप्त विवरण",
     certificateSection: "पंजीकरण प्रमाण पत्र",
-    ngoSection: "NGO Darpan प्रमाण पत्र",
+    ngoSection: "एनजीओ दर्पण प्रमाण पत्र",
     donateTitle: "सेवा में सहयोग",
     donateIntro:
       "समिति की सेवा गतिविधियों में सहयोग करने के लिए नीचे विवरण भरें।",
@@ -117,12 +123,12 @@ const translations = {
     account: "Account Name:",
     upi: "UPI ID:",
     docsTitle: "प्रमाण पत्र",
-    docsIntro: "समिति के पंजीकरण एवं NGO Darpan से संबंधित प्रमाण पत्र।",
-    regCert: "Registration Certificate",
+    docsIntro: "समिति के पंजीकरण एवं एनजीओ दर्पण से संबंधित प्रमाण पत्र।",
+    regCert: "पंजीकरण प्रमाण पत्र",
     regDesc: "पंजीकरण संख्या 284/ALWAR/2009-10.",
-    ngoCert: "NGO Darpan Certificate",
-    ngoDesc: "Unique ID RJ/2026/0967197.",
-    viewPdf: "PDF देखें",
+    ngoCert: "एनजीओ दर्पण प्रमाण पत्र",
+    ngoDesc: "विशिष्ट पहचान संख्या RJ/2026/0967197.",
+    viewPdf: "पीडीएफ देखें",
     volTitle: "स्वयंसेवक बनें",
     volIntro:
       "समिति की सेवा गतिविधियों में अपना समय, कौशल और सहयोग देने के लिए आवेदन करें।",
@@ -139,7 +145,6 @@ const translations = {
       "समिति से जुड़ने, कार्यक्रम या सेवा संबंधी जानकारी के लिए संपर्क करें।",
     office: "कार्यालय",
     quick: "त्वरित लिंक",
-    socialNote: "Social media के official links siteData.js में बदलें।",
     rights: "सर्वाधिकार सुरक्षित।",
     language: "भाषा",
     light: "लाइट",
@@ -174,13 +179,14 @@ const translations = {
     viewFinance: "View Financial Details",
     trust: "Trust & Accountability",
     trustText:
-      "A secure backend API and database structure is prepared for donation and expense records.",
+      "Swami Vivekanand Vichar Prachar Seva Samiti is a social organization dedicated to community service, education, healthcare, and public welfare.",
     pageAbout:
       "The Samiti aims to contribute positively to society through service, knowledge, values and the outreach of Swami Vivekananda's ideas.",
     introTitle: "About the Samiti",
     introText:
       "Add the Samiti's detailed introduction, objectives, history, working areas and future goals here. Update this section according to authorized documents.",
     registration: "Registration",
+    uniqueId: "Unique ID",
     address: "Address",
     activitiesIntro:
       "Details of the major service areas operated or proposed by the Samiti.",
@@ -459,7 +465,6 @@ function Layout({ children }) {
                 <Twitter />
               </a>
             </div>
-            <small className="socialNote">{t("socialNote")}</small>
           </div>
         </div>
         <div className="copyright">
@@ -565,7 +570,7 @@ function About() {
               <span>{currentSiteData.registration}</span>
             </div>
             <div>
-              <b>Unique ID</b>
+              <b>{t("uniqueId")}</b>
               <span>{currentSiteData.uniqueId}</span>
             </div>
             <div>
@@ -612,10 +617,7 @@ function Activities() {
             <h3>{title}</h3>
             <p>{text}</p>
 
-            <Link
-              to={`/activities/${i + 1}`}
-              className="textBtn"
-            >
+            <Link to={`/activities/${i + 1}`} className="textBtn">
               {t("details")} <ArrowRight size={16} />
             </Link>
           </article>
@@ -637,9 +639,7 @@ function ActivityDetail() {
         intro=""
       >
         <Link to="/activities" className="primary">
-          {lang === "en"
-            ? "Back to Activities"
-            : "गतिविधियों पर वापस जाएँ"}
+          {lang === "en" ? "Back to Activities" : "गतिविधियों पर वापस जाएँ"}
         </Link>
       </Page>
     );
@@ -650,7 +650,6 @@ function ActivityDetail() {
   return (
     <section className="activityDetailPage">
       <div className="activityDetail">
-
         {/* LEFT CONTENT */}
         <div className="activityDetailContent">
           <span className="activityEyebrow">
@@ -676,7 +675,6 @@ function ActivityDetail() {
             className="activityDetailImage"
           />
         </div>
-
       </div>
     </section>
   );

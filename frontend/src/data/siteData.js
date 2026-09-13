@@ -4,8 +4,8 @@ export const siteData = {
     tagline: "सेवा • ज्ञान • प्रचार",
     email: "svvpss13012010@gmail.com",
     phone: "8769251133",
-    registration: "REG.No:- 284/ALWAR/2009-10",
-    uniqueId: "Unique ID:- RJ/2026/0967197",
+    registration: "पंजीकरण क्रमांक:- 284/ALWAR/2009-10",
+    uniqueId: "विशिष्ट पहचान संख्या:- RJ/2026/0967197",
 
     social: {
       instagram: "https://www.instagram.com/p/DdKAADxB0nT/?stkn=MTltMmxubzJwMW1jbQ==",
