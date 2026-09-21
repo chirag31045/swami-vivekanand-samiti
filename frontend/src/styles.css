@@ -6825,3 +6825,684 @@ html[data-theme="dark"] .privacyCard p {
   padding: 10px 14px;
 }
 
+
+/* =========================================================
+   FINAL RESPONSIVE + DARK MODE FIXES
+   Scoped to avoid changing existing public/admin components.
+========================================================= */
+
+/* Public mobile navigation must remain readable in dark mode. */
+@media (max-width: 900px) {
+  html[data-theme="dark"] .nav {
+    background: #1b1613;
+    color: #f6eee3;
+    border-top: 1px solid #4a3b30;
+  }
+
+  html[data-theme="dark"] .nav a {
+    color: #f6eee3;
+  }
+
+  html[data-theme="dark"] .nav a.active {
+    color: #d8a94f;
+  }
+
+  html[data-theme="dark"] .menuBtn {
+    color: #f6eee3;
+  }
+}
+
+/* =========================================================
+   ADMIN - RESPONSIVE SIDEBAR / CONTENT
+========================================================= */
+.adminDashboard .adminSidebarOverlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .adminDashboard {
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .adminDashboard .adminSidebar {
+    width: min(290px, 82vw);
+    transform: translateX(-105%);
+    box-shadow: 18px 0 40px rgba(0, 0, 0, 0.18);
+    z-index: 1200;
+  }
+
+  .adminDashboard .adminSidebar.sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .adminDashboard .adminSidebarOverlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.52);
+    z-index: 1100;
+  }
+
+  .adminDashboard.adminDark .adminSidebarOverlay {
+    background: rgba(0, 0, 0, 0.68);
+  }
+
+  .adminDashboard .adminMain {
+    margin-left: 0;
+    width: 100%;
+    height: 100dvh;
+    min-width: 0;
+    padding-top: 68px;
+  }
+
+  .adminDashboard .adminTopHeader {
+    left: 0;
+    height: 68px;
+    padding: 0 16px;
+  }
+
+  .adminDashboard .mobileMenuButton {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  .adminDashboard .adminHeaderLeft {
+    min-width: 0;
+  }
+
+  .adminDashboard .adminHeaderLeft h1 {
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .adminDashboard .adminHeaderLeft p {
+    display: none;
+  }
+
+  .adminDashboard .adminHeaderRight {
+    gap: 7px;
+  }
+
+  .adminDashboard .adminContent {
+    padding: 18px 16px 30px;
+    min-width: 0;
+  }
+
+  .adminDashboard .adminCards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .adminDashboard .adminCard {
+    padding: 16px;
+  }
+
+  .adminDashboard .adminPanel {
+    padding: 16px;
+    min-width: 0;
+  }
+
+  .adminDashboard .adminPanelHeader {
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .adminDashboard .volunteerHeaderActions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .adminDashboard .volunteerHeaderActions > * {
+    flex: 1 1 auto;
+  }
+
+  .adminDashboard .volunteerFilterGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adminDashboard .adminGalleryGrid,
+  .adminDashboard .adminActivityGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .adminDashboard .adminTopHeader {
+    padding: 0 12px;
+  }
+
+  .adminDashboard .adminHeaderLeft {
+    gap: 8px;
+  }
+
+  .adminDashboard .adminHeaderRight {
+    gap: 5px;
+  }
+
+  .adminDashboard .adminProfileButton span,
+  .adminDashboard .adminProfileButton > svg {
+    display: none;
+  }
+
+  .adminDashboard .adminThemeButton,
+  .adminDashboard .mobileMenuButton {
+    width: 38px;
+    height: 38px;
+  }
+
+  .adminDashboard .adminContent {
+    padding: 14px 12px 26px;
+  }
+
+  .adminDashboard .adminWelcome h2 {
+    font-size: 22px;
+  }
+
+  .adminDashboard .adminCards {
+    grid-template-columns: 1fr;
+  }
+
+  .adminDashboard .adminCard strong {
+    font-size: 22px;
+  }
+
+  .adminDashboard .adminPanel {
+    padding: 13px;
+    border-radius: 11px;
+  }
+
+  .adminDashboard .adminPanelHeader h2 {
+    font-size: 18px;
+  }
+
+  .adminDashboard .volunteerFilterGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminDashboard .volunteerFilterActions {
+    width: 100%;
+  }
+
+  .adminDashboard .volunteerSearchButton,
+  .adminDashboard .volunteerResetButton {
+    flex: 1;
+  }
+
+  .adminDashboard .adminGalleryGrid,
+  .adminDashboard .adminActivityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminDashboard .adminAddVolunteerButton,
+  .adminDashboard .adminBulkVolunteerButton,
+  .adminDashboard .adminRefreshButton {
+    min-height: 38px;
+  }
+
+  .adminDashboard .adminProfileDropdown {
+    position: fixed;
+    top: 62px;
+    right: 10px;
+    width: min(280px, calc(100vw - 20px));
+  }
+}
+
+/* =========================================================
+   ADMIN - COMPLETE DARK SURFACE / FORM OVERRIDES
+========================================================= */
+.adminDashboard.adminDark .adminContent,
+.adminDashboard.adminDark .adminPanel,
+.adminDashboard.adminDark .adminCard,
+.adminDashboard.adminDark .volunteerFilterBox,
+.adminDashboard.adminDark .bulk-status-bar {
+  color: var(--admin-text);
+}
+
+.adminDashboard.adminDark .adminPanel,
+.adminDashboard.adminDark .adminCard,
+.adminDashboard.adminDark .volunteerFilterBox,
+.adminDashboard.adminDark .adminRefreshButton,
+.adminDashboard.adminDark .adminBulkVolunteerButton,
+.adminDashboard.adminDark .volunteerResetButton,
+.adminDashboard.adminDark .volunteerViewButton,
+.adminDashboard.adminDark .volunteerEditButton,
+.adminDashboard.adminDark .volunteerDeleteButton {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  color: var(--admin-text);
+}
+
+.adminDashboard.adminDark .volunteerFilterGrid input,
+.adminDashboard.adminDark .volunteerFilterGrid select,
+.adminDashboard.adminDark input,
+.adminDashboard.adminDark select,
+.adminDashboard.adminDark textarea {
+  background: #111827;
+  color: #f3f4f6;
+  border-color: #374151;
+}
+
+.adminDashboard.adminDark input::placeholder,
+.adminDashboard.adminDark textarea::placeholder {
+  color: #9ca3af;
+}
+
+.adminDashboard.adminDark .adminEmpty,
+.adminDashboard.adminDark .adminPanelHeader p,
+.adminDashboard.adminDark .adminWelcome p {
+  color: var(--admin-muted);
+}
+
+.adminDashboard.adminDark .adminGalleryItem,
+.adminDashboard.adminDark .adminActivityCard,
+.adminDashboard.adminDark .siteSettingsBlock,
+.adminDashboard.adminDark .siteSettingsMediaCard,
+.adminDashboard.adminDark .siteLeaderCard,
+.adminDashboard.adminDark .addVolunteerModal,
+.adminDashboard.adminDark .galleryModal,
+.adminDashboard.adminDark .activityModal,
+.adminDashboard.adminDark .bulkVolunteerModal,
+.adminDashboard.adminDark .deleteModal,
+.adminDashboard.adminDark .galleryDeleteModal,
+.adminDashboard.adminDark .activityDeleteModal,
+.adminDashboard.adminDark .volunteerViewModal,
+.adminDashboard.adminDark .activityViewModal {
+  background: var(--admin-surface) !important;
+  color: var(--admin-text);
+  border-color: var(--admin-border) !important;
+}
+
+.adminDashboard.adminDark .adminGalleryInfo,
+.adminDashboard.adminDark .adminActivityContent,
+.adminDashboard.adminDark .activityField,
+.adminDashboard.adminDark .siteSettingsField,
+.adminDashboard.adminDark .volunteerViewField {
+  color: var(--admin-text);
+}
+
+.adminDashboard.adminDark .adminGalleryInfo p,
+.adminDashboard.adminDark .adminActivityContent p,
+.adminDashboard.adminDark .activityField small,
+.adminDashboard.adminDark .siteSettingsBlock > p,
+.adminDashboard.adminDark .siteSettingsBlockHeader p,
+.adminDashboard.adminDark .volunteerViewField span {
+  color: var(--admin-muted);
+}
+
+.adminDashboard.adminDark .adminTable tbody tr,
+.adminDashboard.adminDark .adminTable tbody td {
+  background: var(--admin-surface);
+}
+
+.adminDashboard.adminDark .adminTable tbody tr:hover {
+  background: #252f3d;
+}
+
+.adminDashboard.adminDark .adminTable tbody tr:hover td {
+  background: #252f3d;
+}
+
+.adminDashboard.adminDark .adminProfileDropdown {
+  background: var(--admin-surface);
+  border-color: var(--admin-border);
+  color: var(--admin-text);
+}
+
+/* Dark modal overlays */
+.adminDashboard.adminDark .addVolunteerOverlay,
+.adminDashboard.adminDark .galleryModalOverlay,
+.adminDashboard.adminDark .activityModalOverlay,
+.adminDashboard.adminDark .bulkVolunteerOverlay,
+.adminDashboard.adminDark .deleteModalOverlay,
+.adminDashboard.adminDark .galleryDeleteOverlay,
+.adminDashboard.adminDark .activityDeleteOverlay,
+.adminDashboard.adminDark .volunteerViewOverlay,
+.adminDashboard.adminDark .activityViewOverlay {
+  background: rgba(0, 0, 0, 0.72) !important;
+}
+
+/* Keep text readable in dark mode even where older rules used white backgrounds. */
+.adminDashboard.adminDark .activityModalHeader,
+.adminDashboard.adminDark .activityModalBody,
+.adminDashboard.adminDark .activityModalFooter,
+.adminDashboard.adminDark .galleryModalHeader,
+.adminDashboard.adminDark .galleryModalBody,
+.adminDashboard.adminDark .galleryModalFooter,
+.adminDashboard.adminDark .volunteerViewHeader,
+.adminDashboard.adminDark .volunteerViewBody,
+.adminDashboard.adminDark .volunteerViewFooter {
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+.adminDashboard.adminDark .adminSidebarBrand img {
+  background: #ffffff;
+}
+
+/* Avoid horizontal page growth on mobile from wide child components. */
+.adminDashboard .adminMain,
+.adminDashboard .adminContent,
+.adminDashboard .adminPanel,
+.adminDashboard .adminTableWrap,
+.adminDashboard .adminGalleryGrid,
+.adminDashboard .adminActivityGrid {
+  max-width: 100%;
+}
+
+/* =========================================================
+   ACTIVITY DETAIL PAGE
+========================================================= */
+
+.activityDetailPage {
+  width: 100%;
+  max-width: 100%;
+  min-height: 70vh;
+
+  padding: 70px 6%;
+  background: #fffaf2;
+
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.activityDetail {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  align-items: center;
+  gap: 55px;
+
+  box-sizing: border-box;
+}
+
+.activityDetailContent {
+  width: 100%;
+  min-width: 0;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
+
+.activityDetailContent h1 {
+  max-width: 100%;
+  margin: 0 0 25px;
+
+  font-size: clamp(32px, 4vw, 46px);
+  line-height: 1.15;
+  font-weight: 800;
+
+  color: #222;
+
+  overflow-wrap: anywhere;
+}
+
+.activityDetailContent p {
+  width: 100%;
+  max-width: 560px;
+
+  margin: 0 0 32px;
+
+  font-size: 17px;
+  line-height: 1.8;
+
+  color: #555;
+
+  overflow-wrap: break-word;
+}
+
+.activityDetailImage {
+  width: 100% !important;
+  max-width: 100% !important;
+
+  height: 430px;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 25px;
+
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+
+  box-sizing: border-box;
+}
+
+
+/* ---------- BACK BUTTON ---------- */
+
+.activityBackBtn {
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 8px;
+
+  min-height: 44px;
+
+  padding: 12px 20px !important;
+
+  border-radius: 8px;
+
+  background: #a51d22;
+  color: #fff !important;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  box-sizing: border-box;
+}
+
+.activityBackBtn svg {
+  width: 18px;
+  height: 18px;
+
+  display: block;
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   ACTIVITY DETAIL - DARK MODE
+========================================================= */
+
+html[data-theme="dark"] .activityDetailPage {
+  background: #171310;
+  color: #f6eee3;
+}
+
+html[data-theme="dark"] .activityDetailContent h1 {
+  color: #f8f1e8;
+}
+
+html[data-theme="dark"] .activityDetailContent p {
+  color: #c7b9aa;
+}
+
+html[data-theme="dark"] .activityEyebrow {
+  color: #e0b85b;
+}
+
+html[data-theme="dark"] .activityDetailImage {
+  border: 1px solid #49382d;
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(201, 154, 61, 0.08);
+}
+
+html[data-theme="dark"] .activityBackBtn {
+  background: #b42328;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .activityBackBtn:hover {
+  background: #d13a40;
+}
+
+
+/* =========================================================
+   MOBILE - ACTIVITY DETAIL
+========================================================= */
+
+@media (max-width: 900px) {
+  .activityDetailPage {
+    padding: 50px 5%;
+  }
+
+  .activityDetail {
+    grid-template-columns: 1fr;
+    gap: 35px;
+    align-items: start;
+  }
+
+  .activityDetailContent {
+    order: 1;
+    padding: 0;
+  }
+
+  .activityDetailImage {
+    order: 2;
+
+    width: 100% !important;
+    height: auto !important;
+
+    aspect-ratio: 16 / 10;
+
+    min-height: 240px;
+    max-height: 430px;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 20px;
+  }
+
+  .activityDetailContent h1 {
+    font-size: clamp(30px, 8vw, 42px);
+  }
+
+  .activityDetailContent p {
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+}
+
+
+/* =========================================================
+   MOBILE SMALL - 600px
+========================================================= */
+
+@media (max-width: 600px) {
+  .activityDetailPage {
+    padding: 38px 20px 50px;
+  }
+
+  .activityDetail {
+    width: 100%;
+    gap: 28px;
+  }
+
+  .activityEyebrow {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .activityDetailContent h1 {
+    font-size: 34px;
+    line-height: 1.12;
+
+    margin-bottom: 18px;
+  }
+
+  .activityDetailContent p {
+    font-size: 16px;
+    line-height: 1.75;
+
+    margin-bottom: 24px;
+  }
+
+  .activityDetailImage {
+    width: 100% !important;
+
+    height: auto !important;
+
+    aspect-ratio: 4 / 3;
+
+    min-height: 0;
+    max-height: none;
+
+    border-radius: 18px;
+
+    object-fit: cover;
+  }
+
+  .activityBackBtn {
+    width: auto;
+    max-width: 100%;
+
+    padding: 11px 16px !important;
+
+    font-size: 14px;
+  }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE - 430px
+========================================================= */
+
+@media (max-width: 430px) {
+  .activityDetailPage {
+    padding: 30px 16px 45px;
+  }
+
+  .activityDetail {
+    gap: 24px;
+  }
+
+  .activityDetailContent h1 {
+    font-size: 30px;
+  }
+
+  .activityDetailContent p {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .activityDetailImage {
+    width: 100% !important;
+    aspect-ratio: 4 / 3;
+
+    border-radius: 16px;
+  }
+
+  .activityBackBtn {
+    width: 100%;
+    justify-content: center !important;
+  }
+}
+
+
+/* =========================================================
+   EXTRA: PREVENT HORIZONTAL OVERFLOW
+========================================================= */
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}

@@ -52,7 +52,7 @@ const links = [
   ["/", "home"],
   ["/about", "about"],
   ["/activities", "activities"],
-  ["/finance", "finance"],
+  ["/documents", "documents"],
   ["/gallery", "gallery"],
   ["/contact", "contact"],
 ];
@@ -62,7 +62,7 @@ const translations = {
     home: "होम",
     about: "हमारे बारे में",
     activities: "सेवा कार्य",
-    finance: "वित्तीय पारदर्शिता",
+    privacy: "गोपनीयता नीति",
     gallery: "गैलरी",
     contact: "संपर्क",
     documents: "प्रमाण पत्र",
@@ -169,12 +169,15 @@ const translations = {
     light: "लाइट",
     dark: "डार्क",
     theme: "थीम",
+    privacyIntro: "वेबसाइट पर आपकी जानकारी के उपयोग और सुरक्षा से संबंधित जानकारी।",
+    privacyTitle: "आपकी गोपनीयता हमारे लिए महत्वपूर्ण है",
+    privacySummary: "हम वेबसाइट के माध्यम से प्राप्त जानकारी का उपयोग सेवा अनुरोधों, स्वयंसेवक आवेदन, संपर्क और आवश्यक प्रशासनिक कार्यों के लिए करते हैं।",
   },
   en: {
     home: "Home",
     about: "About Us",
     activities: "Services",
-    finance: "Financial Transparency",
+    privacy: "Privacy Policy",
     gallery: "Gallery",
     contact: "Contact",
     documents: "Certificates",
@@ -279,6 +282,9 @@ const translations = {
     light: "Light",
     dark: "Dark",
     theme: "Theme",
+    privacyIntro: "Information about how information submitted through this website is used and protected.",
+    privacyTitle: "Your Privacy Matters",
+    privacySummary: "Information received through this website is used for service requests, volunteer applications, communication and necessary administrative activities.",
   },
 };
 
@@ -479,7 +485,7 @@ function Layout({ children }) {
 
             <Link to="/about">{t("about")}</Link>
 
-            <Link to="/finance">{t("finance")}</Link>
+            <Link to="/privacy-policy">{t("privacy")}</Link>
 
             <Link to="/documents">{t("documents")}</Link>
 
@@ -692,27 +698,32 @@ function Home() {
       </section>
 
       <section className="section split">
-        <div>
-          <span className="eyebrow">{t("transparency")}</span>
+  <div>
+    <span className="eyebrow">{t("privacy")}</span>
 
-          <h2>{t("transparentTitle")}</h2>
+    <h2>{t("privacyTitle")}</h2>
 
-          <p>{t("transparentText")}</p>
+    <p>{t("privacySummary")}</p>
 
-          <Link className="primary" to="/finance">
-            {t("viewFinance")}
-            <ArrowRight size={18} />
-          </Link>
-        </div>
+    <Link className="primary" to="/privacy-policy">
+      {t("privacy")}
+      <ArrowRight size={18} />
+    </Link>
+  </div>
 
-        <div className="trustBox">
-          <ShieldCheck size={42} />
+  <div className="trustBox">
+    <ShieldCheck size={42} />
 
-          <h3>{t("trust")}</h3>
+    <h3>{t("dataProtectionTitle") || (lang === "en" ? "Data Protection" : "डेटा सुरक्षा")}</h3>
 
-          <p>{t("trustText")}</p>
-        </div>
-      </section>
+    <p>
+      {t("dataProtectionText") ||
+        (lang === "en"
+          ? "We take reasonable steps to protect your personal information and ensure restricted access."
+          : "आपकी निजी जानकारी की सुरक्षा के लिए उचित उपाय किए जाते हैं और पहुंच सीमित रखी जाती है।")}
+    </p>
+  </div>
+</section>
     </>
   );
 }
@@ -759,32 +770,6 @@ function About() {
               <span>{address}</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="certificateSection">
-        <div>
-          <span className="eyebrow">{t("certificateSection")}</span>
-
-          <h2>{t("certificateSection")}</h2>
-
-          <iframe
-            className="pdfFrame"
-            src="/documents/registration-certificate.pdf"
-            title="Registration Certificate"
-          />
-        </div>
-
-        <div>
-          <span className="eyebrow">{t("ngoSection")}</span>
-
-          <h2>{t("ngoSection")}</h2>
-
-          <iframe
-            className="pdfFrame"
-            src="/documents/ngo-darpan-certificate.pdf"
-            title="NGO Darpan Certificate"
-          />
         </div>
       </div>
     </Page>
@@ -925,68 +910,7 @@ function ActivityDetail() {
     </section>
   );
 }
-function Finance() {
-  const { t } = useLang();
-  const [data, setData] = useState(null);
-  useEffect(() => {
-    fetch(`${API}/finance/summary`)
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {});
-  }, []);
-  const s = data?.summary || { income: 0, expense: 0, balance: 0 };
-  return (
-    <Page title={t("finance")} intro={t("financeIntro")}>
-      <div className="financeCards">
-        <div>
-          <IndianRupee />
-          <span>{t("income")}</span>
-          <strong>₹{s.income.toLocaleString("en-IN")}</strong>
-        </div>
-        <div>
-          <IndianRupee />
-          <span>{t("expense")}</span>
-          <strong>₹{s.expense.toLocaleString("en-IN")}</strong>
-        </div>
-        <div>
-          <IndianRupee />
-          <span>{t("balance")}</span>
-          <strong>₹{s.balance.toLocaleString("en-IN")}</strong>
-        </div>
-      </div>
-      <div className="tableWrap">
-        <h2>{t("records")}</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>{t("date")}</th>
-              <th>{t("type")}</th>
-              <th>{t("category")}</th>
-              <th>{t("description")}</th>
-              <th>{t("amount")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(data?.records || []).map((r, i) => (
-              <tr key={i}>
-                <td>{r.date}</td>
-                <td>
-                  {r.type === "income" ? t("incomeWord") : t("expenseWord")}
-                </td>
-                <td>{r.category}</td>
-                <td>{r.description}</td>
-                <td>₹{Number(r.amount).toLocaleString("en-IN")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="notice">
-        <b>{t("important")}</b> {t("demo")}
-      </div>
-    </Page>
-  );
-}
+
 function Gallery() {
   const { t } = useLang();
   const [photos, setPhotos] = useState([]);
@@ -1143,6 +1067,85 @@ function DonationForm() {
             <b>{t("upi")}</b> example@upi
           </p>
         </div>
+      </div>
+    </Page>
+  );
+}
+function PrivacyPolicy() {
+  const { t, lang } = useLang();
+
+  const sections =
+    lang === "en"
+      ? [
+          [
+            "Information We Collect",
+            "We may collect information that you voluntarily provide through volunteer, contact, donation or other website forms, such as your name, phone number, email address and message details.",
+          ],
+          [
+            "How We Use Information",
+            "Information submitted through this website is used to respond to requests, manage volunteer applications, communicate with users and support the Samiti's administrative activities.",
+          ],
+          [
+            "Data Protection",
+            "We take reasonable steps to protect information submitted through the website. Access to administrative information is restricted to authorized users.",
+          ],
+          [
+            "Third-Party Services",
+            "The website may use third-party services for hosting, image storage, communication, payments or analytics. Their own terms and privacy practices may apply.",
+          ],
+          [
+            "Cookies and Local Storage",
+            "The website may use browser storage for preferences such as language and theme. You can clear this data through your browser settings.",
+          ],
+          [
+            "Contact",
+            "If you have a privacy-related question or request, please use the contact details published on this website.",
+          ],
+        ]
+      : [
+          [
+            "हम कौन-सी जानकारी लेते हैं",
+            "स्वयंसेवक, संपर्क, सहयोग या अन्य वेबसाइट फॉर्म के माध्यम से आपके द्वारा दी गई जानकारी जैसे नाम, मोबाइल नंबर, ईमेल और संदेश का विवरण लिया जा सकता है।",
+          ],
+          [
+            "जानकारी का उपयोग",
+            "वेबसाइट पर दी गई जानकारी का उपयोग अनुरोधों का उत्तर देने, स्वयंसेवक आवेदन प्रबंधित करने, उपयोगकर्ताओं से संपर्क करने और समिति की प्रशासनिक गतिविधियों में सहायता के लिए किया जाता है।",
+          ],
+          [
+            "डेटा सुरक्षा",
+            "वेबसाइट के माध्यम से दी गई जानकारी की सुरक्षा के लिए उचित उपाय किए जाते हैं। प्रशासनिक जानकारी तक पहुंच अधिकृत उपयोगकर्ताओं तक सीमित रहती है।",
+          ],
+          [
+            "थर्ड-पार्टी सेवाएं",
+            "वेबसाइट होस्टिंग, इमेज स्टोरेज, संचार, भुगतान या अन्य तकनीकी सेवाओं के लिए थर्ड-पार्टी सेवाओं का उपयोग कर सकती है। उनकी अपनी शर्तें और गोपनीयता नीतियां लागू हो सकती हैं।",
+          ],
+          [
+            "कुकीज और लोकल स्टोरेज",
+            "भाषा और थीम जैसी प्राथमिकताओं के लिए वेबसाइट ब्राउज़र स्टोरेज का उपयोग कर सकती है। आप अपने ब्राउज़र की सेटिंग्स से इसे साफ कर सकते हैं।",
+          ],
+          [
+            "संपर्क",
+            "गोपनीयता से संबंधित प्रश्न या अनुरोध के लिए वेबसाइट पर दिए गए संपर्क विवरण का उपयोग करें।",
+          ],
+        ];
+
+  return (
+    <Page title={t("privacy")} intro={t("privacyIntro")}>
+      <section className="privacyHomeSection">
+        <div className="privacyHomeCard">
+          <span className="eyebrow">{t("privacy")}</span>
+          <h2>{t("privacyTitle")}</h2>
+          <p>{t("privacySummary")}</p>
+        </div>
+      </section>
+
+      <div className="privacyGrid">
+        {sections.map(([title, text]) => (
+          <article className="privacyCard" key={title}>
+            <h2>{title}</h2>
+            <p>{text}</p>
+          </article>
+        ))}
       </div>
     </Page>
   );
@@ -1592,9 +1595,9 @@ function PublicRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/activities" element={<Activities />} />
         <Route path="/activities/:id" element={<ActivityDetail />} />
-        <Route path="/finance" element={<Finance />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/documents" element={<Documents />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/volunteer" element={<Volunteer />} />
         <Route path="/donate" element={<DonateRoute />} />
         <Route path="/contact" element={<Contact />} />
