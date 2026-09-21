@@ -1,0 +1,559 @@
+[1mdiff --git a/frontend/src/App.jsx b/frontend/src/App.jsx[m
+[1mindex ba29ed9..58a3d40 100644[m
+[1m--- a/frontend/src/App.jsx[m
+[1m+++ b/frontend/src/App.jsx[m
+[36m@@ -5,7 +5,14 @@[m [mimport React, {[m
+   useMemo,[m
+   useState,[m
+ } from "react";[m
+[31m-import { Routes, Route, NavLink, Link, useParams } from "react-router-dom";[m
+[32m+[m[32mimport {[m
+[32m+[m[32m  Routes,[m
+[32m+[m[32m  Route,[m
+[32m+[m[32m  NavLink,[m
+[32m+[m[32m  Link,[m
+[32m+[m[32m  useParams,[m
+[32m+[m[32m  useLocation,[m
+[32m+[m[32m} from "react-router-dom";[m
+ import {[m
+   Menu,[m
+   X,[m
+[36m@@ -28,15 +35,27 @@[m [mimport {[m
+   Mail,[m
+   Plus,[m
+ } from "lucide-react";[m
+[32m+[m[32mimport { siteData } from "./data/siteData";[m
+ import {[m
+[31m-  siteData,[m
+[31m-  activitiesHi,[m
+[31m-  activitiesEn,[m
+[31m-  activityDetails,[m
+[31m-} from "./data/siteData";[m
+[31m-[m
+[32m+[m[32m  SiteSettingsProvider,[m
+[32m+[m[32m  useSiteSettings,[m
+[32m+[m[32m  getAssetUrl,[m
+[32m+[m[32m} from "./pages/siteSettingsContext";[m
+[32m+[m[32mimport AdminLogin from "./pages/AdminLogin";[m
+[32m+[m[32mimport AdminDashboard from "./pages/AdminDashboard";[m
+[32m+[m[32mimport Donate from "./pages/Donate";[m
+[32m+[m[32mimport DonationAdmin from "./pages/DonationAdmin";[m
+[32m+[m[32mimport AdminProfile from "./pages/AdminProfile";[m
+ const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";[m
+ const API_ORIGIN = API.replace(/\/api\/?$/, "");[m
+[32m+[m[32mconst links = [[m
+[32m+[m[32m  ["/", "home"],[m
+[32m+[m[32m  ["/about", "about"],[m
+[32m+[m[32m  ["/activities", "activities"],[m
+[32m+[m[32m  ["/finance", "finance"],[m
+[32m+[m[32m  ["/gallery", "gallery"],[m
+[32m+[m[32m  ["/contact", "contact"],[m
+[32m+[m[32m];[m
+ [m
+ const translations = {[m
+   hi: {[m
+[36m@@ -209,7 +228,6 @@[m [mconst translations = {[m
+     galleryIntro:[m
+       "Photos from Samiti programs, service activities and awareness campaigns.",[m
+     galleryPlaceholder: "More program photos can be added here.",[m
+[31m-    uploadPhoto: "Add Photo",[m
+     uploading: "Uploading photo...",[m
+     uploadSuccess: "Photo added successfully.",[m
+     uploadError: "Photo upload failed.",[m
+[36m@@ -300,72 +318,124 @@[m [mfunction LanguageProvider({ children }) {[m
+   );[m
+ }[m
+ [m
+[32m+[m[32mconst getHeaderNameParts = (name = "") => {[m
+[32m+[m[32m  const words = String(name).trim().split(/\s+/).filter(Boolean);[m
+[32m+[m
+[32m+[m[32m  return {[m
+[32m+[m[32m    title: words.slice(0, 2).join(" "),[m
+[32m+[m[32m    subtitle: words.slice(2).join(" "),[m
+[32m+[m[32m  };[m
+[32m+[m[32m};[m
+[32m+[m
+ function Layout({ children }) {[m
+   const [open, setOpen] = useState(false);[m
+[32m+[m
+   const { t, lang, setLang, dark, setDark } = useLang();[m
+[31m-  const currentSiteData = siteData[lang] || siteData.hi;[m
+ [m
+[31m-  const links = [[m
+[31m-    ["/", "home"],[m
+[31m-    ["/about", "about"],[m
+[31m-    ["/activities", "activities"],[m
+[31m-    ["/finance", "finance"],[m
+[31m-    ["/gallery", "gallery"],[m
+[31m-    ["/contact", "contact"],[m
+[31m-  ];[m
+[32m+[m[32m  const { siteSettings } = useSiteSettings();[m
+[32m+[m
+[32m+[m[32m  const baseSiteData = siteData[lang] || siteData.hi;[m
+[32m+[m
+[32m+[m[32m  const currentSiteData = {[m
+[32m+[m[32m    ...baseSiteData,[m
+[32m+[m
+[32m+[m[32m    name: lang === "en" ? siteSettings.nameEn : siteSettings.nameHi,[m
+[32m+[m
+[32m+[m[32m    tagline: lang === "en" ? siteSettings.taglineEn : siteSettings.taglineHi,[m
+[32m+[m
+[32m+[m[32m    registration:[m
+[32m+[m[32m      lang === "en" ? siteSettings.registrationEn : siteSettings.registrationHi,[m
+[32m+[m
+[32m+[m[32m    uniqueId: lang === "en" ? siteSettings.uniqueIdEn : siteSettings.uniqueIdHi,[m
+[32m+[m
+[32m+[m[32m    address: lang === "en" ? siteSettings.addressEn : siteSettings.addressHi,[m
+[32m+[m
+[32m+[m[32m    phone: siteSettings.phone,[m
+[32m+[m
+[32m+[m[32m    email: siteSettings.email,[m
+[32m+[m
+[32m+[m[32m    social: siteSettings.social,[m
+[32m+[m
+[32m+[m[32m    leaders: (siteSettings.leaders || []).map((leader) => ({[m
+[32m+[m[32m      role: lang === "en" ? leader.roleEn : leader.roleHi,[m
+[32m+[m
+[32m+[m[32m      name: lang === "en" ? leader.nameEn : leader.nameHi,[m
+[32m+[m
+[32m+[m[32m      phone: leader.phone,[m
+[32m+[m[32m    })),[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  const headerName = lang === "en" ? siteSettings.nameEn : siteSettings.nameHi;[m
+[32m+[m
+[32m+[m[32m  const { title: headerTitle, subtitle: headerSubtitle } =[m
+[32m+[m[32m    getHeaderNameParts(headerName);[m
+[32m+[m
+[32m+[m[32m  const mapLink =[m
+[32m+[m[32m    siteSettings.mapUrl ||[m
+[32m+[m[32m    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([m
+[32m+[m[32m      currentSiteData.address,[m
+[32m+[m[32m    )}`;[m
+[32m+[m
+   return ([m
+     <div className="app">[m
+       <div className="topbar">[m
+         <div>[m
+           <span>{currentSiteData.registration}</span>[m
+[32m+[m
+           <span>{currentSiteData.uniqueId}</span>[m
+         </div>[m
+[32m+[m
+         <div className="topControls">[m
+           <label>[m
+             <Languages size={15} />[m
+[32m+[m
+             <span className="controlLabel">{t("language")}</span>[m
+[32m+[m
+             <select[m
+               value={lang}[m
+               onChange={(e) => setLang(e.target.value)}[m
+               aria-label="Language"[m
+             >[m
+               <option value="hi">हिन्दी</option>[m
+[32m+[m
+               <option value="en">English</option>[m
+             </select>[m
+           </label>[m
+[32m+[m
+           <button[m
+             className="themeToggle"[m
+             onClick={() => setDark(!dark)}[m
+             aria-label={t("theme")}[m
+           >[m
+             {dark ? <Sun size={16} /> : <Moon size={16} />}[m
+[32m+[m
+             <span>{dark ? t("light") : t("dark")}</span>[m
+           </button>[m
+         </div>[m
+       </div>[m
+[32m+[m
+       <header className="header">[m
+         <Link to="/" className="brand" onClick={() => setOpen(false)}>[m
+[31m-          <img src="/assets/logo.png" alt="Samiti logo" />[m
+[32m+[m[32m          <img src={getAssetUrl(siteSettings.logo)} alt="Samiti logo" />[m
+[32m+[m
+           <div>[m
+[31m-            <strong>[m
+[31m-              {lang === "hi" ? "स्वामी विवेकानन्द" : "Swami Vivekananda"}[m
+[31m-            </strong>[m
+[31m-            <small>[m
+[31m-              {lang === "hi"[m
+[31m-                ? "विचार प्रचार सेवा समिति"[m
+[31m-                : "Vichar Prachar Seva Samiti"}[m
+[31m-            </small>[m
+[32m+[m[32m            <strong>{headerTitle}</strong>[m
+[32m+[m
+[32m+[m[32m            <small>{headerSubtitle}</small>[m
+           </div>[m
+         </Link>[m
+[32m+[m
+         <button className="menuBtn" onClick={() => setOpen(!open)}>[m
+           {open ? <X /> : <Menu />}[m
+         </button>[m
+[32m+[m
+         <nav className={open ? "nav open" : "nav"}>[m
+           {links.map(([to, key]) => ([m
+             <NavLink key={to} to={to} onClick={() => setOpen(false)}>[m
+               {t(key)}[m
+             </NavLink>[m
+           ))}[m
+[32m+[m
+           <Link[m
+             className="volunteerBtn"[m
+             to="/volunteer"[m
+[36m@@ -374,6 +444,7 @@[m [mfunction Layout({ children }) {[m
+             <Users size={17} />[m
+             {t("volunteer")}[m
+           </Link>[m
+[32m+[m
+           <Link[m
+             className="donateBtn"[m
+             to="/donate"[m
+[36m@@ -384,53 +455,66 @@[m [mfunction Layout({ children }) {[m
+           </Link>[m
+         </nav>[m
+       </header>[m
+[32m+[m
+       <main>{children}</main>[m
+[32m+[m
+[32m+[m[32m      {/* ================= FOOTER ================= */}[m
+[32m+[m
+       <footer className="footer">[m
+         <div className="footerGrid">[m
+           <div>[m
+[31m-            <img src="/assets/logo.png" className="footerLogo" />[m
+[32m+[m[32m            <img[m
+[32m+[m[32m              src={getAssetUrl(siteSettings.logo)}[m
+[32m+[m[32m              className="footerLogo"[m
+[32m+[m[32m              alt="Samiti logo"[m
+[32m+[m[32m            />[m
+[32m+[m
+             <h3>{currentSiteData.name}</h3>[m
+[32m+[m
+             <p>{currentSiteData.tagline}</p>[m
+           </div>[m
+[32m+[m
+           <div>[m
+             <h4>{t("quick")}</h4>[m
+[32m+[m
+             <Link to="/about">{t("about")}</Link>[m
+[32m+[m
+             <Link to="/finance">{t("finance")}</Link>[m
+[32m+[m
+             <Link to="/documents">{t("documents")}</Link>[m
+[32m+[m
+             <Link to="/volunteer">{t("volunteer")}</Link>[m
+[32m+[m
+             <Link to="/contact">{t("contact")}</Link>[m
+           </div>[m
+[32m+[m
+           <div>[m
+             <h4>{t("contact")}</h4>[m
+[32m+[m
+             <p>[m
+               <MapPin size={16} />[m
+ [m
+[31m-              <a[m
+[31m-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([m
+[31m-                  currentSiteData.address,[m
+[31m-                )}`}[m
+[31m-                target="_blank"[m
+[31m-                rel="noopener noreferrer"[m
+[31m-              >[m
+[32m+[m[32m              <a href={mapLink} target="_blank" rel="noopener noreferrer">[m
+                 {currentSiteData.address}[m
+               </a>[m
+             </p>[m
+[32m+[m
+             <p>[m
+               <Phone size={16} />[m
+[32m+[m
+               <a href={`tel:${currentSiteData.phone}`}>[m
+                 {currentSiteData.phone}[m
+               </a>[m
+             </p>[m
+[32m+[m
+             <p>[m
+               <Mail size={16} />[m
+[31m-              <a[m
+[31m-                href="https://mail.google.com/mail/?view=cm&fs=1&to=svvpss13012010@gmail.com"[m
+[31m-                target="_blank"[m
+[31m-                rel="noopener noreferrer"[m
+[31m-              >[m
+[31m-                svvpss13012010@gmail.com[m
+[32m+[m
+[32m+[m[32m              <a href={`mailto:${currentSiteData.email}`}>[m
+[32m+[m[32m                {currentSiteData.email}[m
+               </a>[m
+             </p>[m
+[32m+[m
+             <div className="socials">[m
+               <a[m
+                 href={currentSiteData.social.instagram}[m
+[36m@@ -440,6 +524,7 @@[m [mfunction Layout({ children }) {[m
+               >[m
+                 <Instagram />[m
+               </a>[m
+[32m+[m
+               <a[m
+                 href={currentSiteData.social.facebook}[m
+                 target="_blank"[m
+[36m@@ -448,6 +533,7 @@[m [mfunction Layout({ children }) {[m
+               >[m
+                 <Facebook />[m
+               </a>[m
+[32m+[m
+               <a[m
+                 href={currentSiteData.social.whatsapp}[m
+                 target="_blank"[m
+[36m@@ -456,6 +542,7 @@[m [mfunction Layout({ children }) {[m
+               >[m
+                 <MessageCircle />[m
+               </a>[m
+[32m+[m
+               <a[m
+                 href={currentSiteData.social.twitter}[m
+                 target="_blank"[m
+[36m@@ -467,6 +554,7 @@[m [mfunction Layout({ children }) {[m
+             </div>[m
+           </div>[m
+         </div>[m
+[32m+[m
+         <div className="copyright">[m
+           © {new Date().getFullYear()} {currentSiteData.name}. {t("rights")}[m
+         </div>[m
+[36m@@ -477,52 +565,118 @@[m [mfunction Layout({ children }) {[m
+ [m
+ function Home() {[m
+   const { t, lang } = useLang();[m
+[31m-  const activities = lang === "en" ? activitiesEn : activitiesHi;[m
+[32m+[m
+[32m+[m[32m  const [activities, setActivities] = useState([]);[m
+[32m+[m[32m  const [activitiesLoading, setActivitiesLoading] = useState(true);[m
+[32m+[m[32m  const [activitiesError, setActivitiesError] = useState("");[m
+[32m+[m[32m  const { siteSettings } = useSiteSettings();[m
+[32m+[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    let mounted = true;[m
+[32m+[m
+[32m+[m[32m    const loadActivities = async () => {[m
+[32m+[m[32m      try {[m
+[32m+[m[32m        const response = await fetch(`${API}/activities`);[m
+[32m+[m
+[32m+[m[32m        const data = await response.json();[m
+[32m+[m
+[32m+[m[32m        if (mounted && response.ok && data?.success) {[m
+[32m+[m[32m          setActivities(data.items || []);[m
+[32m+[m[32m        }[m
+[32m+[m[32m      } catch (error) {[m
+[32m+[m[32m        console.error("Home activities error:", error);[m
+[32m+[m[32m      } finally {[m
+[32m+[m[32m        if (mounted) {[m
+[32m+[m[32m          setActivitiesLoading(false);[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    loadActivities();[m
+[32m+[m
+[32m+[m[32m    return () => {[m
+[32m+[m[32m      mounted = false;[m
+[32m+[m[32m    };[m
+[32m+[m[32m  }, []);[m
+[32m+[m
+   return ([m
+     <>[m
+       <section className="hero">[m
+         <div className="heroContent">[m
+           <span className="eyebrow">{t("services")}</span>[m
+[32m+[m
+           <h1>[m
+             {t("hero")}[m
+             <br />[m
+             <em>{t("hero2")}</em>[m
+           </h1>[m
+[32m+[m
+           <p>{t("heroText")}</p>[m
+[32m+[m
+           <div className="actions">[m
+             <Link className="primary" to="/about">[m
+[31m-              {t("aboutBtn")} <ArrowRight size={18} />[m
+[32m+[m[32m              {t("aboutBtn")}[m
+[32m+[m[32m              <ArrowRight size={18} />[m
+             </Link>[m
+[32m+[m
+             <Link className="secondary" to="/donate">[m
+               <Heart size={18} />[m
+               {t("supportBtn")}[m
+             </Link>[m
+           </div>[m
+         </div>[m
+[32m+[m
+         <div className="heroPoster">[m
+[31m-          <img src="/assets/poster.png" alt="Samiti poster" />[m
+[32m+[m[32m          <img[m
+[32m+[m[32m            src={getAssetUrl(siteSettings.poster)}[m
+[32m+[m[32m            alt={lang === "en" ? "Samiti poster" : "समिति पोस्टर"}[m
+[32m+[m[32m          />[m
+         </div>[m
+       </section>[m
+[32m+[m
+[32m+[m[32m      {/* =================================================[m
+[32m+[m[32m          DYNAMIC ACTIVITIES FROM API[m
+[32m+[m[32m      ================================================= */}[m
+[32m+[m
+       <section className="section">[m
+         <div className="sectionHead">[m
+           <div>[m
+             <span className="eyebrow">{t("whatWeDo")}</span>[m
+[32m+[m
+             <h2>{t("keyAreas")}</h2>[m
+           </div>[m
+[32m+[m
+           <Link to="/activities">[m
+[31m-            {t("allActivities")} <ArrowRight size={18} />[m
+[32m+[m[32m            {t("allActivities")}[m
+[32m+[m[32m            <ArrowRight size={18} />[m
+           </Link>[m
+         </div>[m
+[31m-        <div className="cards">[m
+[31m-          {activities.map(([title, text], i) => ([m
+[31m-            <article className="card" key={title}>[m
+[31m-              <div className="iconCircle">{i + 1}</div>[m
+[31m-              <h3>{title}</h3>[m
+[31m-              <p>{text}</p>[m
+[31m-            </article>[m
+[31m-          ))}[m
+[31m-        </div>[m
+[32m+[m
+[32m+[m[32m        {activitiesLoading ? ([m
+[32m+[m[32m          <div className="adminEmpty">Loading...</div>[m
+[32m+[m[32m        ) : activitiesError ? ([m
+[32m+[m[32m          <div className="adminEmpty">{activitiesError}</div>[m
+[32m+[m[32m        ) : ([m
+[32m+[m[32m          <div className="cards">[m
+[32m+[m[32m            {activities.map((activity) => {[m
+[32m+[m[32m              const content = activity?.[lang] || activity?.en || activity?.hi;[m
+[32m+[m
+[32m+[m[32m              if (!content) return null;[m
+[32m+[m
+[32m+[m[32m              return ([m
+[32m+[m[32m                <article className="card" key={activity.activityNo}>[m
+[32m+[m[32m                  <div className="iconCircle">{activity.activityNo}</div>[m
+[32m+[m
+[32m+[m[32m                  <h3>{content.title}</h3>[m
+[32m+[m
+[32m+[m[32m                  <p>{content.shortText}</p>[m
+[32m+[m[32m                </article>[m
+[32m+[m[32m              );[m
+[32m+[m[32m            })}[m
+[32m+[m[32m          </div>[m
+[32m+[m[32m        )}[m
+       </section>[m
+[32m+[m
+       <section className="quoteBand">[m
+         <div>[m
+           <span className="eyebrow">{t("inspiration")}</span>[m
+[36m@@ -536,18 +690,26 @@[m [mfunction Home() {[m
+           <p>{lang === "en" ? "— Swami Vivekananda" : "— स्वामी विवेकानन्द"}</p>[m
+         </div>[m
+       </section>[m
+[32m+[m
+       <section className="section split">[m
+         <div>[m
+           <span className="eyebrow">{t("transparency")}</span>[m
+[32m+[m
+           <h2>{t("transparentTitle")}</h2>[m
+[32m+[m
+           <p>{t("transparentText")}</p>[m
+[32m+[m
+           <Link className="primary" to="/finance">[m
+[31m-            {t("viewFinance")} <ArrowRight size={18} />[m
+[32m+[m[32m            {t("viewFinance")}[m
+[32m+[m[32m            <ArrowRight size={18} />[m
+           </Link>[m
+         </div>[m
+[32m+[m
+         <div className="trustBox">[m
+           <ShieldCheck size={42} />[m
+[32m+[m
+           <h3>{t("trust")}</h3>[m
+[32m+[m
+           <p>{t("trustText")}</p>[m
+         </div>[m
+       </section>[m
+[36m@@ -556,43 +718,68 @@[m [mfunction Home() {[m
+ }[m
+ function About() {[m
+   const { t, lang } = useLang();[m
+[31m-  const currentSiteData = siteData[lang] || siteData.hi;[m
+[32m+[m[32m  const { siteSettings } = useSiteSettings();[m
+[32m+[m
+[32m+[m[32m  const registration =[m
+[32m+[m[32m    lang === "en" ? siteSettings.registrationEn : siteSettings.registrationHi;[m
+[32m+[m
+[32m+[m[32m  const uniqueId =[m
+[32m+[m[32m    lang === "en" ? siteSettings.uniqueIdEn : siteSettings.uniqueIdHi;[m
+[32m+[m
+[32m+[m[32m  const address =[m
+[32m+[m[32m    lang === "en" ? siteSettings.addressEn : siteSettings.addressHi;[m
+[32m+[m
+   return ([m
+     <Page title={t("about")} intro={t("pageAbout")}>[m
+       <div className="aboutGrid">[m
+[31m-        <img src="/assets/logo.png" className="aboutLogo" />[m
+[32m+[m[32m        <img[m
+[32m+[m[32m          src={getAssetUrl(siteSettings.logo)}[m
+[32m+[m[32m          className="aboutLogo"[m
+[32m+[m[32m          alt="Samiti logo"[m
+[32m+[m[32m        />[m
+[32m+[m
+         <div>[m
+           <h2>{t("introTitle")}</h2>[m
+[32m+[m
+           <p>{t("introText")}</p>[m
+[32m+[m
+           <div className="infoList">[m
+             <div>[m
+               <b>{t("registration")}</b>[m
+[31m-              <span>{currentSiteData.registration}</span>[m
+[32m+[m[32m              <span>{registration}</span>[m
+             </div>[m
+[32m+[m
+             <div>[m
+               <b>{t("uniqueId")}</b>[m
+[31m-              <span>{currentSiteData.uniqueId}</span>[m
+[32m+[m[32m              <span>{uniqueId}</span>[m
+             </div>[m
+[32m+[m
+             <div>[m
+               <b>{t("address")}</b>[m
+[31m-              <span>{currentSiteData.address}</span>[m
+[32m+[m[32m              <span>{address}</span>[m
+             </div>[m
+           </div>[m
+         </div>[m
+       </div>[m
+[32m+[m
+       <div className="certificateSection">[m
+         <div>[m
+           <span className="eyebrow">{t("certificateSection")}</span>[m
+[32m+[m
+           <h2>{t("certificateSection")}</h2>[m
+[32m+[m
+           <iframe[m
+             className="pdfFrame"[m
+             src="/documents/registration-certificate.pdf"[m
+             title="Registration Certificate"[m
+           />[m
+         </div>[m
+[32m+[m
+         <div>[m
+           <span className="eyebrow">{t("ngoSection")}</span>[m
+[32m+[m
+           <h2>{t("ngoSection")}</h2>[m
+[32m+[m
+           <iframe[m
+             classNa

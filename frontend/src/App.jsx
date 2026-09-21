@@ -5,7 +5,14 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Routes, Route, NavLink, Link, useParams } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  NavLink,
+  Link,
+  useParams,
+  useLocation,
+} from "react-router-dom";
 import {
   Menu,
   X,
@@ -28,15 +35,27 @@ import {
   Mail,
   Plus,
 } from "lucide-react";
+import { siteData } from "./data/siteData";
 import {
-  siteData,
-  activitiesHi,
-  activitiesEn,
-  activityDetails,
-} from "./data/siteData";
-
+  SiteSettingsProvider,
+  useSiteSettings,
+  getAssetUrl,
+} from "./pages/siteSettingsContext";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import Donate from "./pages/Donate";
+import DonationAdmin from "./pages/DonationAdmin";
+import AdminProfile from "./pages/AdminProfile";
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const API_ORIGIN = API.replace(/\/api\/?$/, "");
+const links = [
+  ["/", "home"],
+  ["/about", "about"],
+  ["/activities", "activities"],
+  ["/finance", "finance"],
+  ["/gallery", "gallery"],
+  ["/contact", "contact"],
+];
 
 const translations = {
   hi: {
@@ -209,7 +228,6 @@ const translations = {
     galleryIntro:
       "Photos from Samiti programs, service activities and awareness campaigns.",
     galleryPlaceholder: "More program photos can be added here.",
-    uploadPhoto: "Add Photo",
     uploading: "Uploading photo...",
     uploadSuccess: "Photo added successfully.",
     uploadError: "Photo upload failed.",
@@ -300,72 +318,124 @@ function LanguageProvider({ children }) {
   );
 }
 
+const getHeaderNameParts = (name = "") => {
+  const words = String(name).trim().split(/\s+/).filter(Boolean);
+
+  return {
+    title: words.slice(0, 2).join(" "),
+    subtitle: words.slice(2).join(" "),
+  };
+};
+
 function Layout({ children }) {
   const [open, setOpen] = useState(false);
-  const { t, lang, setLang, dark, setDark } = useLang();
-  const currentSiteData = siteData[lang] || siteData.hi;
 
-  const links = [
-    ["/", "home"],
-    ["/about", "about"],
-    ["/activities", "activities"],
-    ["/finance", "finance"],
-    ["/gallery", "gallery"],
-    ["/contact", "contact"],
-  ];
+  const { t, lang, setLang, dark, setDark } = useLang();
+
+  const { siteSettings } = useSiteSettings();
+
+  const baseSiteData = siteData[lang] || siteData.hi;
+
+  const currentSiteData = {
+    ...baseSiteData,
+
+    name: lang === "en" ? siteSettings.nameEn : siteSettings.nameHi,
+
+    tagline: lang === "en" ? siteSettings.taglineEn : siteSettings.taglineHi,
+
+    registration:
+      lang === "en" ? siteSettings.registrationEn : siteSettings.registrationHi,
+
+    uniqueId: lang === "en" ? siteSettings.uniqueIdEn : siteSettings.uniqueIdHi,
+
+    address: lang === "en" ? siteSettings.addressEn : siteSettings.addressHi,
+
+    phone: siteSettings.phone,
+
+    email: siteSettings.email,
+
+    social: siteSettings.social,
+
+    leaders: (siteSettings.leaders || []).map((leader) => ({
+      role: lang === "en" ? leader.roleEn : leader.roleHi,
+
+      name: lang === "en" ? leader.nameEn : leader.nameHi,
+
+      phone: leader.phone,
+    })),
+  };
+
+  const headerName = lang === "en" ? siteSettings.nameEn : siteSettings.nameHi;
+
+  const { title: headerTitle, subtitle: headerSubtitle } =
+    getHeaderNameParts(headerName);
+
+  const mapLink =
+    siteSettings.mapUrl ||
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      currentSiteData.address,
+    )}`;
+
   return (
     <div className="app">
       <div className="topbar">
         <div>
           <span>{currentSiteData.registration}</span>
+
           <span>{currentSiteData.uniqueId}</span>
         </div>
+
         <div className="topControls">
           <label>
             <Languages size={15} />
+
             <span className="controlLabel">{t("language")}</span>
+
             <select
               value={lang}
               onChange={(e) => setLang(e.target.value)}
               aria-label="Language"
             >
               <option value="hi">हिन्दी</option>
+
               <option value="en">English</option>
             </select>
           </label>
+
           <button
             className="themeToggle"
             onClick={() => setDark(!dark)}
             aria-label={t("theme")}
           >
             {dark ? <Sun size={16} /> : <Moon size={16} />}
+
             <span>{dark ? t("light") : t("dark")}</span>
           </button>
         </div>
       </div>
+
       <header className="header">
         <Link to="/" className="brand" onClick={() => setOpen(false)}>
-          <img src="/assets/logo.png" alt="Samiti logo" />
+          <img src={getAssetUrl(siteSettings.logo)} alt="Samiti logo" />
+
           <div>
-            <strong>
-              {lang === "hi" ? "स्वामी विवेकानन्द" : "Swami Vivekananda"}
-            </strong>
-            <small>
-              {lang === "hi"
-                ? "विचार प्रचार सेवा समिति"
-                : "Vichar Prachar Seva Samiti"}
-            </small>
+            <strong>{headerTitle}</strong>
+
+            <small>{headerSubtitle}</small>
           </div>
         </Link>
+
         <button className="menuBtn" onClick={() => setOpen(!open)}>
           {open ? <X /> : <Menu />}
         </button>
+
         <nav className={open ? "nav open" : "nav"}>
           {links.map(([to, key]) => (
             <NavLink key={to} to={to} onClick={() => setOpen(false)}>
               {t(key)}
             </NavLink>
           ))}
+
           <Link
             className="volunteerBtn"
             to="/volunteer"
@@ -374,6 +444,7 @@ function Layout({ children }) {
             <Users size={17} />
             {t("volunteer")}
           </Link>
+
           <Link
             className="donateBtn"
             to="/donate"
@@ -384,53 +455,66 @@ function Layout({ children }) {
           </Link>
         </nav>
       </header>
+
       <main>{children}</main>
+
+      {/* ================= FOOTER ================= */}
+
       <footer className="footer">
         <div className="footerGrid">
           <div>
-            <img src="/assets/logo.png" className="footerLogo" />
+            <img
+              src={getAssetUrl(siteSettings.logo)}
+              className="footerLogo"
+              alt="Samiti logo"
+            />
+
             <h3>{currentSiteData.name}</h3>
+
             <p>{currentSiteData.tagline}</p>
           </div>
+
           <div>
             <h4>{t("quick")}</h4>
+
             <Link to="/about">{t("about")}</Link>
+
             <Link to="/finance">{t("finance")}</Link>
+
             <Link to="/documents">{t("documents")}</Link>
+
             <Link to="/volunteer">{t("volunteer")}</Link>
+
             <Link to="/contact">{t("contact")}</Link>
           </div>
+
           <div>
             <h4>{t("contact")}</h4>
+
             <p>
               <MapPin size={16} />
 
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  currentSiteData.address,
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href={mapLink} target="_blank" rel="noopener noreferrer">
                 {currentSiteData.address}
               </a>
             </p>
+
             <p>
               <Phone size={16} />
+
               <a href={`tel:${currentSiteData.phone}`}>
                 {currentSiteData.phone}
               </a>
             </p>
+
             <p>
               <Mail size={16} />
-              <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=svvpss13012010@gmail.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                svvpss13012010@gmail.com
+
+              <a href={`mailto:${currentSiteData.email}`}>
+                {currentSiteData.email}
               </a>
             </p>
+
             <div className="socials">
               <a
                 href={currentSiteData.social.instagram}
@@ -440,6 +524,7 @@ function Layout({ children }) {
               >
                 <Instagram />
               </a>
+
               <a
                 href={currentSiteData.social.facebook}
                 target="_blank"
@@ -448,6 +533,7 @@ function Layout({ children }) {
               >
                 <Facebook />
               </a>
+
               <a
                 href={currentSiteData.social.whatsapp}
                 target="_blank"
@@ -456,6 +542,7 @@ function Layout({ children }) {
               >
                 <MessageCircle />
               </a>
+
               <a
                 href={currentSiteData.social.twitter}
                 target="_blank"
@@ -467,6 +554,7 @@ function Layout({ children }) {
             </div>
           </div>
         </div>
+
         <div className="copyright">
           © {new Date().getFullYear()} {currentSiteData.name}. {t("rights")}
         </div>
@@ -477,52 +565,118 @@ function Layout({ children }) {
 
 function Home() {
   const { t, lang } = useLang();
-  const activities = lang === "en" ? activitiesEn : activitiesHi;
+
+  const [activities, setActivities] = useState([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
+  const [activitiesError, setActivitiesError] = useState("");
+  const { siteSettings } = useSiteSettings();
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadActivities = async () => {
+      try {
+        const response = await fetch(`${API}/activities`);
+
+        const data = await response.json();
+
+        if (mounted && response.ok && data?.success) {
+          setActivities(data.items || []);
+        }
+      } catch (error) {
+        console.error("Home activities error:", error);
+      } finally {
+        if (mounted) {
+          setActivitiesLoading(false);
+        }
+      }
+    };
+
+    loadActivities();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <>
       <section className="hero">
         <div className="heroContent">
           <span className="eyebrow">{t("services")}</span>
+
           <h1>
             {t("hero")}
             <br />
             <em>{t("hero2")}</em>
           </h1>
+
           <p>{t("heroText")}</p>
+
           <div className="actions">
             <Link className="primary" to="/about">
-              {t("aboutBtn")} <ArrowRight size={18} />
+              {t("aboutBtn")}
+              <ArrowRight size={18} />
             </Link>
+
             <Link className="secondary" to="/donate">
               <Heart size={18} />
               {t("supportBtn")}
             </Link>
           </div>
         </div>
+
         <div className="heroPoster">
-          <img src="/assets/poster.png" alt="Samiti poster" />
+          <img
+            src={getAssetUrl(siteSettings.poster)}
+            alt={lang === "en" ? "Samiti poster" : "समिति पोस्टर"}
+          />
         </div>
       </section>
+
+      {/* =================================================
+          DYNAMIC ACTIVITIES FROM API
+      ================================================= */}
+
       <section className="section">
         <div className="sectionHead">
           <div>
             <span className="eyebrow">{t("whatWeDo")}</span>
+
             <h2>{t("keyAreas")}</h2>
           </div>
+
           <Link to="/activities">
-            {t("allActivities")} <ArrowRight size={18} />
+            {t("allActivities")}
+            <ArrowRight size={18} />
           </Link>
         </div>
-        <div className="cards">
-          {activities.map(([title, text], i) => (
-            <article className="card" key={title}>
-              <div className="iconCircle">{i + 1}</div>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </article>
-          ))}
-        </div>
+
+        {activitiesLoading ? (
+          <div className="adminEmpty">Loading...</div>
+        ) : activitiesError ? (
+          <div className="adminEmpty">{activitiesError}</div>
+        ) : (
+          <div className="cards">
+            {activities.map((activity) => {
+              const content = activity?.[lang] || activity?.en || activity?.hi;
+
+              if (!content) return null;
+
+              return (
+                <article className="card" key={activity.activityNo}>
+                  <div className="iconCircle">{activity.activityNo}</div>
+
+                  <h3>{content.title}</h3>
+
+                  <p>{content.shortText}</p>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
+
       <section className="quoteBand">
         <div>
           <span className="eyebrow">{t("inspiration")}</span>
@@ -536,18 +690,26 @@ function Home() {
           <p>{lang === "en" ? "— Swami Vivekananda" : "— स्वामी विवेकानन्द"}</p>
         </div>
       </section>
+
       <section className="section split">
         <div>
           <span className="eyebrow">{t("transparency")}</span>
+
           <h2>{t("transparentTitle")}</h2>
+
           <p>{t("transparentText")}</p>
+
           <Link className="primary" to="/finance">
-            {t("viewFinance")} <ArrowRight size={18} />
+            {t("viewFinance")}
+            <ArrowRight size={18} />
           </Link>
         </div>
+
         <div className="trustBox">
           <ShieldCheck size={42} />
+
           <h3>{t("trust")}</h3>
+
           <p>{t("trustText")}</p>
         </div>
       </section>
@@ -556,43 +718,68 @@ function Home() {
 }
 function About() {
   const { t, lang } = useLang();
-  const currentSiteData = siteData[lang] || siteData.hi;
+  const { siteSettings } = useSiteSettings();
+
+  const registration =
+    lang === "en" ? siteSettings.registrationEn : siteSettings.registrationHi;
+
+  const uniqueId =
+    lang === "en" ? siteSettings.uniqueIdEn : siteSettings.uniqueIdHi;
+
+  const address =
+    lang === "en" ? siteSettings.addressEn : siteSettings.addressHi;
+
   return (
     <Page title={t("about")} intro={t("pageAbout")}>
       <div className="aboutGrid">
-        <img src="/assets/logo.png" className="aboutLogo" />
+        <img
+          src={getAssetUrl(siteSettings.logo)}
+          className="aboutLogo"
+          alt="Samiti logo"
+        />
+
         <div>
           <h2>{t("introTitle")}</h2>
+
           <p>{t("introText")}</p>
+
           <div className="infoList">
             <div>
               <b>{t("registration")}</b>
-              <span>{currentSiteData.registration}</span>
+              <span>{registration}</span>
             </div>
+
             <div>
               <b>{t("uniqueId")}</b>
-              <span>{currentSiteData.uniqueId}</span>
+              <span>{uniqueId}</span>
             </div>
+
             <div>
               <b>{t("address")}</b>
-              <span>{currentSiteData.address}</span>
+              <span>{address}</span>
             </div>
           </div>
         </div>
       </div>
+
       <div className="certificateSection">
         <div>
           <span className="eyebrow">{t("certificateSection")}</span>
+
           <h2>{t("certificateSection")}</h2>
+
           <iframe
             className="pdfFrame"
             src="/documents/registration-certificate.pdf"
             title="Registration Certificate"
           />
         </div>
+
         <div>
           <span className="eyebrow">{t("ngoSection")}</span>
+
           <h2>{t("ngoSection")}</h2>
+
           <iframe
             className="pdfFrame"
             src="/documents/ngo-darpan-certificate.pdf"
@@ -605,20 +792,49 @@ function About() {
 }
 function Activities() {
   const { t, lang } = useLang();
-  const activities = lang === "en" ? activitiesEn : activitiesHi;
+
+  const [activities, setActivities] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API}/activities`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          setActivities(data.items || []);
+        }
+      })
+      .catch((error) => {
+        console.error("Activities load error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <Page title={t("activities")} intro={t("activitiesIntro")}>
+        <div className="adminEmpty">Loading...</div>
+      </Page>
+    );
+  }
 
   return (
     <Page title={t("activities")} intro={t("activitiesIntro")}>
       <div className="cards">
-        {activities.map(([title, text], i) => (
-          <article className="card large" key={title}>
-            <div className="iconCircle">{i + 1}</div>
+        {activities.map((activity) => (
+          <article className="card large" key={activity.activityNo}>
+            <div className="iconCircle">{activity.activityNo}</div>
 
-            <h3>{title}</h3>
-            <p>{text}</p>
+            <h3>{activity[lang]?.title}</h3>
 
-            <Link to={`/activities/${i + 1}`} className="textBtn">
-              {t("details")} <ArrowRight size={16} />
+            <p>{activity[lang]?.shortText}</p>
+
+            <Link to={`/activities/${activity.activityNo}`} className="textBtn">
+              {t("details")}
+              <ArrowRight size={16} />
             </Link>
           </article>
         ))}
@@ -630,7 +846,35 @@ function ActivityDetail() {
   const { lang } = useLang();
   const { id } = useParams();
 
-  const activity = activityDetails[id];
+  const [activity, setActivity] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API}/activities/${id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          setActivity(data.item);
+        }
+      })
+      .catch((error) => {
+        console.error("Activity detail error:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <section className="activityDetailPage">
+        <div className="activityDetail">
+          <p>Loading...</p>
+        </div>
+      </section>
+    );
+  }
 
   if (!activity) {
     return (
@@ -645,12 +889,15 @@ function ActivityDetail() {
     );
   }
 
-  const content = activity[lang];
+  const content = activity[lang] || activity.en;
+
+  const imageUrl = activity.image?.startsWith("http")
+    ? activity.image
+    : `${API_ORIGIN}${activity.image}`;
 
   return (
     <section className="activityDetailPage">
       <div className="activityDetail">
-        {/* LEFT CONTENT */}
         <div className="activityDetailContent">
           <span className="activityEyebrow">
             {lang === "en" ? "Our Activities" : "हमारी गतिविधियाँ"}
@@ -667,10 +914,9 @@ function ActivityDetail() {
           </Link>
         </div>
 
-        {/* RIGHT IMAGE */}
         <div className="activityDetailImageBox">
           <img
-            src={activity.image}
+            src={imageUrl}
             alt={content.title}
             className="activityDetailImage"
           />
@@ -749,8 +995,19 @@ function Gallery() {
   useEffect(() => {
     fetch(`${API}/gallery`)
       .then((r) => r.json())
-      .then((d) => setPhotos(d.items || []))
-      .catch(() => {});
+      .then((d) => {
+        const items = (d.items || []).map((item) => ({
+          ...item,
+          url: item.url?.startsWith("http")
+            ? item.url
+            : `${API_ORIGIN}${item.url}`,
+        }));
+
+        setPhotos(items);
+      })
+      .catch((error) => {
+        console.error("Gallery load error:", error);
+      });
   }, []);
   const upload = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -785,30 +1042,14 @@ function Gallery() {
         {msg && <span className="uploadMsg">{msg}</span>}
       </div>
       <div className="gallery">
-        <img src="/assets/swami.jpg" alt="Program poster" />
-        <img src="/assets/logo.png" alt="Samiti logo" />
         {photos.map((p, i) => (
           <img key={i} src={p.url} alt={p.originalName || "Samiti activity"} />
         ))}
-        <label className="galleryAddCard">
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={upload}
-            hidden
-          />
-          <span className="galleryPlus">
-            <Plus size={42} />
-          </span>
-          <strong>{uploading ? t("uploading") : t("uploadPhoto")}</strong>
-          <small>Click here to add more program photos</small>
-        </label>
       </div>
     </Page>
   );
 }
-function Donate() {
+function DonationForm() {
   const { t } = useLang();
   const [form, setForm] = useState({
     donorName: "",
@@ -942,7 +1183,8 @@ function Documents() {
   );
 }
 function Volunteer() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+
   const [form, setForm] = useState({
     name: "",
     phone: "",
@@ -951,181 +1193,369 @@ function Volunteer() {
     area: "",
     message: "",
   });
+
   const [msg, setMsg] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const [successPopup, setSuccessPopup] = useState(false);
+  const [applicationNo, setApplicationNo] = useState("");
+
   const submit = async (e) => {
     e.preventDefault();
-    setMsg(t("sending"));
+
+    if (submitting) return;
+
+    setSubmitting(true);
+    setMsg("");
+
     try {
       const r = await fetch(`${API}/volunteers`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(form),
       });
+
       const d = await r.json();
-      setMsg(d.success ? `${t("application")} ${d.applicationNo}` : d.message);
-    } catch {
-      setMsg(t("backendError"));
+
+      console.log("Volunteer API Response:", d);
+
+      if (!r.ok || !d.success) {
+        throw new Error(d.message || "Application submit नहीं हो सकी।");
+      }
+
+      // IMPORTANT
+      const newApplicationNo = d.item?.applicationNo || "";
+
+      console.log("Application No:", newApplicationNo);
+
+      setApplicationNo(newApplicationNo);
+
+      // Show popup
+      setSuccessPopup(true);
+
+      // Clear form
+      setForm({
+        name: "",
+        phone: "",
+        email: "",
+        city: "",
+        area: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Volunteer submit error:", error);
+      setMsg(error.message || "Backend से connection नहीं हो पाया।");
+    } finally {
+      setSubmitting(false);
     }
   };
+
   return (
-    <Page title={t("volTitle")} intro={t("volIntro")}>
-      <div className="volunteerIntro">
-        <Users size={38} />
-        <div>
-          <h2>{t("join")}</h2>
-          <p>{t("joinText")}</p>
+    <>
+      <Page title={t("volTitle")} intro={t("volIntro")}>
+        <div className="volunteerIntro">
+          <Users size={38} />
+
+          <div>
+            <h2>{t("join")}</h2>
+
+            <p>{t("joinText")}</p>
+          </div>
         </div>
-      </div>
-      <form className="form volunteerForm" onSubmit={submit}>
-        <div className="formTwo">
+
+        <form className="form volunteerForm" onSubmit={submit}>
+          <div className="formTwo">
+            <label>
+              {t("name")}
+
+              <input
+                required
+                value={form.name}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    name: e.target.value,
+                  })
+                }
+              />
+            </label>
+
+            <label>
+              {t("mobile")}
+
+              <input
+                required
+                type="tel"
+                value={form.phone}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    phone: e.target.value,
+                  })
+                }
+              />
+            </label>
+
+            <label>
+              {t("email")}
+
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    email: e.target.value,
+                  })
+                }
+              />
+            </label>
+
+            <label>
+              {t("city")}
+
+              <input
+                value={form.city}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    city: e.target.value,
+                  })
+                }
+              />
+            </label>
+          </div>
+
           <label>
-            {t("name")}
-            <input
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            {t("area")}
+
+            <select
+              value={form.area}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  area: e.target.value,
+                })
+              }
+            >
+              <option value="">{t("choose")}</option>
+
+              <option>शिक्षा सेवा / Education</option>
+
+              <option>युवा जागरण / Youth</option>
+
+              <option>सामाजिक सेवा / Social Service</option>
+
+              <option>कार्यक्रम प्रबंधन / Event Management</option>
+
+              <option>डिजिटल / IT सेवा / Digital IT</option>
+
+              <option>अन्य / Other</option>
+            </select>
+          </label>
+
+          <label>
+            {t("message")}
+
+            <textarea
+              rows="5"
+              value={form.message}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  message: e.target.value,
+                })
+              }
             />
           </label>
-          <label>
-            {t("mobile")}
-            <input
-              required
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-          </label>
-          <label>
-            {t("email")}
-            <input
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-          </label>
-          <label>
-            {t("city")}
-            <input
-              value={form.city}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
-            />
-          </label>
+
+          <button className="primary" type="submit" disabled={submitting}>
+            {submitting ? "Submitting..." : t("sendVolunteer")}
+
+            <Users size={17} />
+          </button>
+
+          {msg && <p className="status errorStatus">{msg}</p>}
+        </form>
+      </Page>
+
+      {/* ================= SUCCESS POPUP ================= */}
+
+      {successPopup && (
+        <div className="successOverlay" onClick={() => setSuccessPopup(false)}>
+          <div className="successPopup" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="popupClose"
+              onClick={() => setSuccessPopup(false)}
+            >
+              ×
+            </button>
+
+            <div className="successIcon">✓</div>
+
+            <h2>
+              {lang === "en"
+                ? "Application Submitted Successfully!"
+                : "आवेदन सफलतापूर्वक जमा हो गया!"}
+            </h2>
+
+            <p>
+              {lang === "en"
+                ? "Your volunteer application has been submitted successfully."
+                : "आपका volunteer application successfully submit हो गया है।"}
+            </p>
+
+            {applicationNo && (
+              <div className="applicationNumber">
+                <span>
+                  {lang === "en" ? "Application No." : "आवेदन संख्या"}
+                </span>
+
+                <strong>{applicationNo}</strong>
+              </div>
+            )}
+
+            <button
+              type="button"
+              className="popupOk"
+              onClick={() => setSuccessPopup(false)}
+            >
+              OK
+            </button>
+          </div>
         </div>
-        <label>
-          {t("area")}
-          <select
-            value={form.area}
-            onChange={(e) => setForm({ ...form, area: e.target.value })}
-          >
-            <option value="">{t("choose")}</option>
-            <option>शिक्षा सेवा / Education</option>
-            <option>युवा जागरण / Youth</option>
-            <option>सामाजिक सेवा / Social Service</option>
-            <option>कार्यक्रम प्रबंधन / Event Management</option>
-            <option>डिजिटल / IT सेवा / Digital IT</option>
-            <option>अन्य / Other</option>
-          </select>
-        </label>
-        <label>
-          {t("message")}
-          <textarea
-            rows="5"
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-          ></textarea>
-        </label>
-        <button className="primary" type="submit">
-          {t("sendVolunteer")} <Users size={17} />
-        </button>
-        {msg && <p className="status">{msg}</p>}
-      </form>
-    </Page>
+      )}
+    </>
   );
 }
 function Contact() {
   const { t, lang } = useLang();
-  const currentSiteData = siteData[lang] || siteData.hi;
-  return (
-    <Page title={t("contact")} intro={t("contactIntro")}>
-      <div className="contactGrid">
-        {currentSiteData.leaders.map((x) => (
-          <div className="contactCard" key={x.role}>
-            <span>{x.role}</span>
-            <h3>{x.name}</h3>
 
-            {x.phone && (
+  const { siteSettings } = useSiteSettings();
+
+  const leaders = siteSettings.leaders || [];
+
+  const address =
+    lang === "en" ? siteSettings.addressEn : siteSettings.addressHi;
+
+  const intro =
+    lang === "en" ? siteSettings.contactIntroEn : siteSettings.contactIntroHi;
+
+  const mapLink =
+    siteSettings.mapUrl ||
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      address,
+    )}`;
+
+  return (
+    <Page title={t("contact")} intro={intro}>
+      <div className="contactGrid">
+        {leaders.map((leader, index) => (
+          <div className="contactCard" key={`${leader.nameEn}-${index}`}>
+            <span>{lang === "en" ? leader.roleEn : leader.roleHi}</span>
+
+            <h3>{lang === "en" ? leader.nameEn : leader.nameHi}</h3>
+
+            {leader.phone && (
               <p>
                 <Phone size={16} />
-                <a href={`tel:${x.phone}`}>{x.phone}</a>
+
+                <a href={`tel:${leader.phone}`}>{leader.phone}</a>
               </p>
             )}
           </div>
         ))}
+
         <div className="contactCard wide">
           <span>{t("office")}</span>
+
           <h3>{t("address")}</h3>
+
           <p>
-            <MapPin size={16} /> {currentSiteData.address}
+            <MapPin size={16} />
+
+            <a href={mapLink} target="_blank" rel="noopener noreferrer">
+              {address}
+            </a>
+          </p>
+
+          <p>
+            <Phone size={16} />
+
+            <a href={`tel:${siteSettings.phone}`}>{siteSettings.phone}</a>
+          </p>
+
+          <p>
+            <Mail size={16} />
+
+            <a href={`mailto:${siteSettings.email}`}>{siteSettings.email}</a>
           </p>
         </div>
-        {/* Social Media */}
+
         <div className="contactCard wide">
           <h3>{lang === "en" ? "Connect With Us" : "हमसे जुड़ें"}</h3>
 
-          <p>
-            {lang === "en"
-              ? "Join us and stay updated with our latest activities:"
-              : "हमारे साथ जुड़ने और नवीनतम गतिविधियों की जानकारी पाने के लिए:"}
-          </p>
+          <p>{intro}</p>
+
           <div className="contactSocials">
-            {/* WhatsApp */}
-            <a
-              href={currentSiteData.social.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle size={20} />
-              {lang === "en" ? "WhatsApp" : "व्हाट्सऐप"}
-            </a>
+            {siteSettings.social.whatsapp && (
+              <a
+                href={siteSettings.social.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle size={20} />
 
-            {/* Facebook */}
-            <a
-              href={currentSiteData.social.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Facebook size={20} />
-              {lang === "en" ? "Facebook" : "फेसबुक"}
-            </a>
+                {lang === "en" ? "WhatsApp" : "व्हाट्सऐप"}
+              </a>
+            )}
 
-            {/* Instagram */}
-            <a
-              href={currentSiteData.social.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Instagram size={20} />
-              {lang === "en" ? "Instagram" : "इंस्टाग्राम"}
-            </a>
+            {siteSettings.social.facebook && (
+              <a
+                href={siteSettings.social.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Facebook size={20} />
 
-            {/* Twitter / X */}
-            <a
-              href={currentSiteData.social.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Twitter size={20} />
-              {lang === "en" ? "Twitter" : "ट्विटर"}
-            </a>
+                {lang === "en" ? "Facebook" : "फेसबुक"}
+              </a>
+            )}
 
-            {/* Email */}
-            <a
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=svvpss13012010@gmail.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Mail size={20} />
-              {lang === "en" ? "Email" : "ईमेल"}
-            </a>
+            {siteSettings.social.instagram && (
+              <a
+                href={siteSettings.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Instagram size={20} />
+
+                {lang === "en" ? "Instagram" : "इंस्टाग्राम"}
+              </a>
+            )}
+
+            {siteSettings.social.twitter && (
+              <a
+                href={siteSettings.social.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Twitter size={20} />
+
+                {lang === "en" ? "Twitter" : "Twitter / X"}
+              </a>
+            )}
+
+            {siteSettings.email && (
+              <a href={`mailto:${siteSettings.email}`}>
+                <Mail size={20} />
+
+                {lang === "en" ? "Email" : "ईमेल"}
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -1148,23 +1578,48 @@ function Page({ title, intro, children }) {
   );
 }
 
+function DonateRoute() {
+  const { lang } = useLang();
+
+  return <Donate lang={lang} />;
+}
+
+function PublicRoutes() {
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/activities" element={<Activities />} />
+        <Route path="/activities/:id" element={<ActivityDetail />} />
+        <Route path="/finance" element={<Finance />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/documents" element={<Documents />} />
+        <Route path="/volunteer" element={<Volunteer />} />
+        <Route path="/donate" element={<DonateRoute />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </Layout>
+  );
+}
+
 export default function App() {
   return (
     <LanguageProvider>
-      <Layout>
+      <SiteSettingsProvider>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/activities" element={<Activities />} />
-          <Route path="/activities/:id" element={<ActivityDetail />} />
-          <Route path="/finance" element={<Finance />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/documents" element={<Documents />} />
-          <Route path="/volunteer" element={<Volunteer />} />
-          <Route path="/donate" element={<Donate />} />
-          <Route path="/contact" element={<Contact />} />
+          {/* PUBLIC WEBSITE */}
+          <Route path="/*" element={<PublicRoutes />} />
+
+          {/* ADMIN */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+          <Route path="/admin/donations" element={<DonationAdmin />} />
+          <Route path="/admin/profile" element={<AdminProfile />} />
         </Routes>
-      </Layout>
+      </SiteSettingsProvider>
     </LanguageProvider>
   );
 }

@@ -1,0 +1,279 @@
+/* Admin registration page uses the existing admin CSS variables. */
+.adminRegistrationPage {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.adminRegistrationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.adminRegistrationEyebrow {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--admin-primary);
+}
+.adminRegistrationHeader h2 {
+  margin: 0;
+  color: var(--admin-text);
+  font-size: 28px;
+}
+.adminRegistrationHeader p {
+  margin: 5px 0 0;
+  color: var(--admin-muted);
+}
+.adminRegistrationHeaderIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--admin-card-icon);
+  color: var(--admin-primary);
+  border: 1px solid var(--admin-border);
+}
+.adminRegistrationGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  gap: 18px;
+}
+.adminRegistrationCard {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-sizing: border-box;
+  color: var(--admin-text);
+}
+.adminRegistrationCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.adminRegistrationCardHead h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--admin-text);
+}
+.adminRegistrationCardHead p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--admin-muted);
+}
+.adminRegistrationFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.adminRegistrationFields label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--admin-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+.adminRegistrationFields input,
+.adminRegistrationFields textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--admin-border);
+  border-radius: 9px;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  padding: 11px 12px;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+}
+.adminRegistrationFields input:focus,
+.adminRegistrationFields textarea:focus {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px rgba(180, 35, 40, 0.1);
+}
+.adminRegistrationFull {
+  grid-column: 1 / -1;
+}
+.adminPasswordField {
+  position: relative;
+  display: block;
+}
+.adminPasswordField input {
+  padding-right: 44px !important;
+}
+.adminPasswordField button {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--admin-muted);
+  cursor: pointer;
+}
+.adminPasswordField button:hover {
+  color: var(--admin-primary);
+  background: var(--admin-surface);
+}
+.adminRegistrationMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+.adminRegistrationMessage.success {
+  color: #15803d;
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
+}
+.adminRegistrationMessage.error {
+  color: #b42328;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+}
+.adminRegistrationSubmit {
+  margin-top: 16px;
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--admin-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+.adminRegistrationSubmit:hover {
+  background: var(--admin-primary-hover);
+}
+.adminRegistrationSubmit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.adminRegistrationRefresh {
+  border: 1px solid var(--admin-border);
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  border-radius: 8px;
+  padding: 8px 11px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+.adminAccountsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.adminAccountRow {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  background: var(--admin-bg);
+}
+.adminAccountAvatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-card-icon);
+  color: var(--admin-primary);
+  font-weight: 800;
+}
+.adminAccountAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.adminAccountInfo {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.adminAccountInfo strong {
+  color: var(--admin-text);
+  font-size: 13px;
+}
+.adminAccountInfo span,
+.adminAccountInfo small {
+  color: var(--admin-muted);
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.adminAccountStatus {
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.adminAccountStatus.active {
+  color: #15803d;
+  background: #dcfce7;
+}
+.adminAccountStatus.inactive {
+  color: #b42328;
+  background: #fee2e2;
+}
+.adminRegistrationEmpty {
+  padding: 35px 10px;
+  text-align: center;
+  color: var(--admin-muted);
+}
+.adminDashboard.adminDark .adminRegistrationMessage.success {
+  color: #bbf7d0;
+  background: #052e16;
+  border-color: #166534;
+}
+.adminDashboard.adminDark .adminRegistrationMessage.error {
+  color: #fecaca;
+  background: #450a0a;
+  border-color: #7f1d1d;
+}
+@media (max-width: 900px) {
+  .adminRegistrationGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .adminRegistrationFields {
+    grid-template-columns: 1fr;
+  }
+  .adminRegistrationFull {
+    grid-column: auto;
+  }
+  .adminRegistrationHeader h2 {
+    font-size: 23px;
+  }
+}
