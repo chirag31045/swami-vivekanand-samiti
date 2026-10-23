@@ -54,7 +54,9 @@ If MongoDB is not available, the demo API still starts using in-memory sample da
 ```bash
 npm run dev
 ```
-Frontend: http://localhost:5173  
+Frontend: https://frontend-nine-plum-866tk2mksh.vercel.app/
+Admin Dashboard: https://frontend-nine-plum-866tk2mksh.vercel.app/admin/login  
+## user : Admin  Password: Admin@123
 Backend: http://localhost:5000/api/health
 
 ## Main Pages
