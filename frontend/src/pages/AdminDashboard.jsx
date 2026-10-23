@@ -33,6 +33,7 @@ import {
   Settings,
   UserPlus,
   UserRound,
+  EyeOff,
 } from "lucide-react";
 
 import Pagination from "../pages/Pagination";
@@ -40,6 +41,7 @@ import * as XLSX from "xlsx";
 import { useSiteSettings, getAssetUrl } from "../pages/siteSettingsContext";
 import DonationAdmin from "./DonationAdmin";
 import AdminRegistration from "./AdminRegistration";
+import ApkManager from "./ApkManager";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -181,6 +183,7 @@ export default function AdminDashboard() {
   const [bulkActivities, setBulkActivities] = useState([]);
   const [bulkImages, setBulkImages] = useState([]);
   const [bulkSaving, setBulkSaving] = useState(false);
+  const [showEditPassword, setShowEditPassword] = useState(false);
 
   const EMPTY_SITE_SETTINGS_FORM = {
     nameHi: "",
@@ -358,6 +361,42 @@ export default function AdminDashboard() {
     const data = await apiRequest("/finance");
     if (data?.success) setFinance(data.items || []);
     setFinanceLoading(false);
+  };
+
+  const loadDonationStats = async () => {
+    try {
+      const data = await apiRequest("/donations/admin?limit=1");
+
+      console.log("DONATION ADMIN RESPONSE:", data);
+
+      if (data?.success) {
+        const stats = data.stats || {};
+
+        setDonationStats({
+          paid: {
+            count: Number(stats.paid?.count || 0),
+            amount: Number(stats.paid?.amount || 0),
+          },
+
+          pending: {
+            count: Number(stats.pending?.count || 0),
+            amount: Number(stats.pending?.amount || 0),
+          },
+
+          failed: {
+            count: Number(stats.failed?.count || 0),
+            amount: Number(stats.failed?.amount || 0),
+          },
+
+          refunded: {
+            count: Number(stats.refunded?.count || 0),
+            amount: Number(stats.refunded?.amount || 0),
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Donation stats loading error:", error);
+    }
   };
 
   const loadGallery = async () => {
@@ -539,6 +578,7 @@ export default function AdminDashboard() {
     loadVolunteers();
     loadFinance();
     loadGallery();
+    loadDonationStats();
     loadAdminProfile();
   }, []);
 
@@ -1429,8 +1469,6 @@ export default function AdminDashboard() {
     0,
   );
 
-  
-
   const sidebarItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "volunteers", label: "Volunteers", icon: Users },
@@ -1442,6 +1480,7 @@ export default function AdminDashboard() {
     { id: "websiteSettings", label: "Website Settings", icon: Settings },
     { id: "donations", label: "Donations", icon: WalletCards },
     { id: "adminRegistration", label: "Admin Registration", icon: UserPlus },
+    { id: "apkManager", label: "Android APKs", icon: Download },
   ];
 
   const cards = [
@@ -1452,10 +1491,12 @@ export default function AdminDashboard() {
       icon: Users,
       section: "volunteers",
     },
-   {
-      title: "Total Donation",
-      value: `₹${Number(donationStats.paid?.amount || 0).toLocaleString("en-IN")}`,
-      subtitle: `${donationStats.paid?.count || 0} paid donations`,
+    {
+      title: "Total",
+      value: `₹${Number(donationStats?.paid?.amount || 0).toLocaleString(
+        "en-IN",
+      )}`,
+      subtitle: `${Number(donationStats?.paid?.count || 0)} paid donations`,
       icon: WalletCards,
       section: "donations",
     },
@@ -1570,7 +1611,9 @@ export default function AdminDashboard() {
                       ? getAssetUrl(adminProfile.profileImage)
                       : getAssetUrl(siteSettings.logo)
                   }
-                  alt={adminProfile?.displayName || adminUser.username || "Admin"}
+                  alt={
+                    adminProfile?.displayName || adminUser.username || "Admin"
+                  }
                   className="adminProfileImage"
                 />
                 <ChevronDown
@@ -1580,42 +1623,40 @@ export default function AdminDashboard() {
               </button>
 
               {profileOpen && (
-                <div className="adminProfileDropdown">
-                  <div className="profileDropdownHeader">
-                    <img
-                      src={
-                        adminProfile?.profileImage
-                          ? getAssetUrl(adminProfile.profileImage)
-                          : getAssetUrl(siteSettings.logo)
-                      }
-                      alt={adminProfile?.displayName || adminUser.username || "Admin"}
-                      className="adminProfileImage"
-                    />
-                    <div>
-                      <strong>{adminProfile?.displayName || adminUser.displayName || adminUser.username}</strong>
-                      <span>{adminProfile?.role || "Administrator"}</span>
-                    </div>
+                <div
+                  className="adminProfileModalOverlay"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  <div
+                    className="adminProfileDropdown adminProfileDropdownEnhanced"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    {/* PROFILE BUTTON */}
+                    <button
+                      type="button"
+                      className="profileDropdownAction profileViewAction"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        navigate("/admin/profile");
+                      }}
+                    >
+                      <UserRound size={18} />
+                      <span>Profile</span>
+                    </button>
+
+                    {/* LOGOUT BUTTON */}
+                    <button
+                      type="button"
+                      className="profileDropdownAction profileLogout"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        logout();
+                      }}
+                    >
+                      <LogOut size={18} />
+                      <span>Log Out</span>
+                    </button>
                   </div>
-                  <div className="profileDropdownDivider" />
-                  <button
-                    type="button"
-                    className="profileLogout"
-                    onClick={() => {
-                      setProfileOpen(false);
-                      navigate("/admin/profile");
-                    }}
-                  >
-                    <UserRound size={17} />
-                    <span>Profile</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="profileLogout"
-                    onClick={logout}
-                  >
-                    <LogOut size={17} />
-                    <span>Logout</span>
-                  </button>
                 </div>
               )}
             </div>
@@ -1627,7 +1668,12 @@ export default function AdminDashboard() {
           {activeSection === "dashboard" && (
             <>
               <div className="adminWelcome">
-                <h2>Welcome, {adminProfile?.displayName || adminUser.displayName || adminUser.username}</h2>
+                <h2>
+                  Welcome,{" "}
+                  {adminProfile?.displayName ||
+                    adminUser.displayName ||
+                    adminUser.username}
+                </h2>
                 <p>
                   Manage volunteers, financial transactions, and gallery from
                   one place.
@@ -1909,6 +1955,7 @@ export default function AdminDashboard() {
                         <th>Message</th>
                         <th>Status</th>
                         <th>Date</th>
+                        <th>Password</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -2004,6 +2051,18 @@ export default function AdminDashboard() {
                                   "en-IN",
                                 )
                               : "-"}
+                          </td>
+
+                          <td>
+                            <span
+                              className={
+                                v.passwordSet
+                                  ? "password-status password-status--set"
+                                  : "password-status password-status--missing"
+                              }
+                            >
+                              {v.passwordSet ? "Set" : "Not set"}
+                            </span>
                           </td>
 
                           {/* Action */}
@@ -2120,7 +2179,7 @@ export default function AdminDashboard() {
           {/* =====================================================
     DONATIONS
 ===================================================== */}
-
+          {activeSection === "apkManager" && <ApkManager />}
           {activeSection === "donations" && <DonationAdmin />}
 
           {/* ADMIN REGISTRATION TAB */}
@@ -3645,6 +3704,19 @@ export default function AdminDashboard() {
                       }
                     />
                   </div>
+                  <div className="addVolunteerField addVolunteerFull">
+                    <label>{editingVolunteer ? "Set / Reset Password (leave blank to keep current)" : "Password *"}</label>
+                    <input
+                      type="password"
+                      autoComplete="new-password"
+                      minLength={8}
+                      required={!editingVolunteer}
+                      placeholder={editingVolunteer ? "Leave blank to keep current password" : "At least 8 characters"}
+                      value={volunteerForm.password || ""}
+                      onChange={(e) => setVolunteerForm({ ...volunteerForm, password: e.target.value })}
+                    />
+                    {editingVolunteer && <small>Current password is never displayed. Enter a new one only if you want to reset it.</small>}
+                  </div>
                 </div>
 
                 <div className="addVolunteerActions">
@@ -3805,7 +3877,18 @@ export default function AdminDashboard() {
                   </span>
                 </div>
               </div>
-
+              <div
+                className={`password-state-detail ${viewVolunteer.passwordSet ? "is-set" : "not-set"}`}
+              >
+                <strong>
+                  Password: {viewVolunteer.passwordSet ? "Set" : "Not set"}
+                </strong>
+                <span>
+                  {viewVolunteer.passwordSet
+                    ? "A password hash is stored securely."
+                    : "No password hash is stored for this volunteer."}
+                </span>
+              </div>
               {/* DETAILS */}
               <div className="volunteerViewDetails">
                 <div className="volunteerViewField">

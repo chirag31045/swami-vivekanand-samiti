@@ -1,4 +1,5 @@
 import Donation from "../models/donationModel.js";
+import { createAdminNotification } from "../services/adminNotificationService.js";
 import {
   verifyWebhookSignature,
 } from "../services/razorpayService.js";
@@ -215,6 +216,14 @@ export async function handleDonationWebhook(
             new Date();
 
       await donation.save();
+
+       await createAdminNotification({
+        eventKey: `payment:${payment?.id || orderId}`,
+        type: "payment",
+        title: "New donation received",
+        message: `${donation.donorName} donated ₹${Number(donation.amount).toLocaleString("en-IN")} for ${donation.purpose || "General Seva"}.`,
+        entityId: String(donation._id),
+      });
 
       await sendReceiptOnceFromWebhook(
         donation._id,

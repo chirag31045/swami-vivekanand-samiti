@@ -10,14 +10,15 @@ import {
 } from "../controllers/activityController.js";
 
 import { imageUpload } from "../middleware/imageUpload.js";
+import { requireAdmin } from "../middleware/auth.js";
 
 const router = Router();
 
 router.get("/", getActivities);
 router.get("/:activityNo", getActivity);
-router.post("/", imageUpload.single("image"), createActivity);
-router.put("/:activityNo", imageUpload.single("image"), updateActivity);
-router.delete("/:activityNo", deleteActivity);
-router.post("/bulk", imageUpload.array("images", 15), bulkCreateActivities);
+router.post("/", requireAdmin, imageUpload.single("image"), createActivity);
+router.put("/:activityNo", requireAdmin, imageUpload.single("image"), updateActivity);
+router.delete("/:activityNo", requireAdmin, deleteActivity);
+router.post("/bulk", requireAdmin, imageUpload.array("images", 15), bulkCreateActivities);
 
 export default router;

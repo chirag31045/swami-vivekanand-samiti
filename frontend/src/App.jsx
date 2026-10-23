@@ -46,6 +46,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Donate from "./pages/Donate";
 import DonationAdmin from "./pages/DonationAdmin";
 import AdminProfile from "./pages/AdminProfile";
+import AppDownload from "./pages/AppDownload";
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const API_ORIGIN = API.replace(/\/api\/?$/, "");
 const links = [
@@ -68,6 +69,7 @@ const translations = {
     documents: "प्रमाण पत्र",
     volunteer: "स्वयंसेवक बनें",
     donate: "सहयोग करें",
+    appDownload: "ऐप डाउनलोड",
     services: "सेवा • ज्ञान • प्रचार",
     hero: "स्वामी विवेकानन्द के विचारों से",
     hero2: "समाज सेवा की ओर",
@@ -169,9 +171,11 @@ const translations = {
     light: "लाइट",
     dark: "डार्क",
     theme: "थीम",
-    privacyIntro: "वेबसाइट पर आपकी जानकारी के उपयोग और सुरक्षा से संबंधित जानकारी।",
+    privacyIntro:
+      "वेबसाइट पर आपकी जानकारी के उपयोग और सुरक्षा से संबंधित जानकारी।",
     privacyTitle: "आपकी गोपनीयता हमारे लिए महत्वपूर्ण है",
-    privacySummary: "हम वेबसाइट के माध्यम से प्राप्त जानकारी का उपयोग सेवा अनुरोधों, स्वयंसेवक आवेदन, संपर्क और आवश्यक प्रशासनिक कार्यों के लिए करते हैं।",
+    privacySummary:
+      "हम वेबसाइट के माध्यम से प्राप्त जानकारी का उपयोग सेवा अनुरोधों, स्वयंसेवक आवेदन, संपर्क और आवश्यक प्रशासनिक कार्यों के लिए करते हैं।",
   },
   en: {
     home: "Home",
@@ -183,6 +187,7 @@ const translations = {
     documents: "Certificates",
     volunteer: "Become a Volunteer",
     donate: "Donate",
+    appDownload: "Download App",
     services: "Service • Knowledge • Outreach",
     hero: "Inspired by Swami Vivekananda",
     hero2: "Towards Social Service",
@@ -282,9 +287,11 @@ const translations = {
     light: "Light",
     dark: "Dark",
     theme: "Theme",
-    privacyIntro: "Information about how information submitted through this website is used and protected.",
+    privacyIntro:
+      "Information about how information submitted through this website is used and protected.",
     privacyTitle: "Your Privacy Matters",
-    privacySummary: "Information received through this website is used for service requests, volunteer applications, communication and necessary administrative activities.",
+    privacySummary:
+      "Information received through this website is used for service requests, volunteer applications, communication and necessary administrative activities.",
   },
 };
 
@@ -332,6 +339,21 @@ const getHeaderNameParts = (name = "") => {
     subtitle: words.slice(2).join(" "),
   };
 };
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+  }, [pathname]);
+
+  return null;
+}
+
 
 function Layout({ children }) {
   const [open, setOpen] = useState(false);
@@ -483,15 +505,29 @@ function Layout({ children }) {
           <div>
             <h4>{t("quick")}</h4>
 
-            <Link to="/about">{t("about")}</Link>
+            <Link to="/about" onClick={() => window.scrollTo(0, 0)}>
+              {t("about")}
+            </Link>
 
-            <Link to="/privacy-policy">{t("privacy")}</Link>
+            <Link to="/privacy-policy" onClick={() => window.scrollTo(0, 0)}>
+              {t("privacy")}
+            </Link>
 
-            <Link to="/documents">{t("documents")}</Link>
+            <Link to="/documents" onClick={() => window.scrollTo(0, 0)}>
+              {t("documents")}
+            </Link>
 
-            <Link to="/volunteer">{t("volunteer")}</Link>
+            <Link to="/volunteer" onClick={() => window.scrollTo(0, 0)}>
+              {t("volunteer")}
+            </Link>
 
-            <Link to="/contact">{t("contact")}</Link>
+            <Link to="/contact" onClick={() => window.scrollTo(0, 0)}>
+              {t("contact")}
+            </Link>
+
+            <Link to="/app-download" onClick={() => window.scrollTo(0, 0)}>
+              {lang === "en" ? "Download App" : "ऐप डाउनलोड करें"}
+            </Link>
           </div>
 
           <div>
@@ -698,32 +734,35 @@ function Home() {
       </section>
 
       <section className="section split">
-  <div>
-    <span className="eyebrow">{t("privacy")}</span>
+        <div>
+          <span className="eyebrow">{t("privacy")}</span>
 
-    <h2>{t("privacyTitle")}</h2>
+          <h2>{t("privacyTitle")}</h2>
 
-    <p>{t("privacySummary")}</p>
+          <p>{t("privacySummary")}</p>
 
-    <Link className="primary" to="/privacy-policy">
-      {t("privacy")}
-      <ArrowRight size={18} />
-    </Link>
-  </div>
+          <Link className="primary" to="/privacy-policy">
+            {t("privacy")}
+            <ArrowRight size={18} />
+          </Link>
+        </div>
 
-  <div className="trustBox">
-    <ShieldCheck size={42} />
+        <div className="trustBox">
+          <ShieldCheck size={42} />
 
-    <h3>{t("dataProtectionTitle") || (lang === "en" ? "Data Protection" : "डेटा सुरक्षा")}</h3>
+          <h3>
+            {t("dataProtectionTitle") ||
+              (lang === "en" ? "Data Protection" : "डेटा सुरक्षा")}
+          </h3>
 
-    <p>
-      {t("dataProtectionText") ||
-        (lang === "en"
-          ? "We take reasonable steps to protect your personal information and ensure restricted access."
-          : "आपकी निजी जानकारी की सुरक्षा के लिए उचित उपाय किए जाते हैं और पहुंच सीमित रखी जाती है।")}
-    </p>
-  </div>
-</section>
+          <p>
+            {t("dataProtectionText") ||
+              (lang === "en"
+                ? "We take reasonable steps to protect your personal information and ensure restricted access."
+                : "आपकी निजी जानकारी की सुरक्षा के लिए उचित उपाय किए जाते हैं और पहुंच सीमित रखी जाती है।")}
+          </p>
+        </div>
+      </section>
     </>
   );
 }
@@ -1202,11 +1241,33 @@ function Volunteer() {
 
   const [successPopup, setSuccessPopup] = useState(false);
   const [applicationNo, setApplicationNo] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
 
     if (submitting) return;
+
+    if (password.length < 8) {
+      setMsg(
+        lang === "en"
+          ? "Password must be at least 8 characters."
+          : "पासवर्ड कम से कम 8 अक्षरों का होना चाहिए।",
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMsg(
+        lang === "en"
+          ? "Passwords do not match."
+          : "दोनों पासवर्ड एक जैसे नहीं हैं।",
+      );
+      return;
+    }
 
     setSubmitting(true);
     setMsg("");
@@ -1217,7 +1278,10 @@ function Volunteer() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          password: password,
+        }),
       });
 
       const d = await r.json();
@@ -1247,6 +1311,10 @@ function Volunteer() {
         area: "",
         message: "",
       });
+      setPassword("");
+      setConfirmPassword("");
+      setShowPassword(false);
+      setShowConfirmPassword(false);
     } catch (error) {
       console.error("Volunteer submit error:", error);
       setMsg(error.message || "Backend से connection नहीं हो पाया।");
@@ -1291,6 +1359,8 @@ function Volunteer() {
               <input
                 required
                 type="tel"
+                maxLength={10}
+                pattern="[0-9]{10}"
                 value={form.phone}
                 onChange={(e) =>
                   setForm({
@@ -1328,6 +1398,72 @@ function Volunteer() {
                   })
                 }
               />
+            </label>
+          </div>
+
+          <div className="volunteerPasswordGrid">
+            <label>
+              {lang === "en" ? "Create Password" : "पासवर्ड बनाएं"}
+              <div className="volunteerPasswordInput">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={
+                    lang === "en" ? "At least 8 characters" : "कम से कम 8 अक्षर"
+                  }
+                  minLength={8}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="passwordToggle"
+                  onClick={() => setShowPassword((value) => !value)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword
+                    ? lang === "en"
+                      ? "Hide"
+                      : "छिपाएं"
+                    : lang === "en"
+                      ? "Show"
+                      : "दिखाएं"}
+                </button>
+              </div>
+            </label>
+
+            <label>
+              {lang === "en" ? "Confirm Password" : "पासवर्ड दोबारा लिखें"}
+              <div className="volunteerPasswordInput">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder={
+                    lang === "en" ? "Re-enter password" : "पासवर्ड फिर से लिखें"
+                  }
+                  minLength={8}
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="passwordToggle"
+                  onClick={() => setShowConfirmPassword((value) => !value)}
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
+                >
+                  {showConfirmPassword
+                    ? lang === "en"
+                      ? "Hide"
+                      : "छिपाएं"
+                    : lang === "en"
+                      ? "Show"
+                      : "दिखाएं"}
+                </button>
+              </div>
             </label>
           </div>
 
@@ -1498,6 +1634,33 @@ function Contact() {
           </p>
         </div>
 
+        {/* Google Map */}
+        <div className="contactCard wide contactMapCard">
+          <h3>{lang === "en" ? "Our Location" : "हमारा स्थान"}</h3>
+
+          <div className="contactMap">
+            <iframe
+              title="Samiti Office Location"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(address || "")}&output=embed`}
+              width="100%"
+              height="350"
+              style={{ border: 0 }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+
+          <a
+            className="primary"
+            href={mapLink}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {lang === "en" ? "Open in Google Maps" : "Google Maps में खोलें"}
+          </a>
+        </div>
+
         <div className="contactCard wide">
           <h3>{lang === "en" ? "Connect With Us" : "हमसे जुड़ें"}</h3>
 
@@ -1596,6 +1759,7 @@ function PublicRoutes() {
         <Route path="/activities" element={<Activities />} />
         <Route path="/activities/:id" element={<ActivityDetail />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/app-download" element={<AppDownload />} />
         <Route path="/documents" element={<Documents />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/volunteer" element={<Volunteer />} />
@@ -1610,6 +1774,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <SiteSettingsProvider>
+        <ScrollToTop />
         <Routes>
           {/* PUBLIC WEBSITE */}
           <Route path="/*" element={<PublicRoutes />} />

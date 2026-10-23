@@ -1,5 +1,6 @@
 import Volunteer from "../models/Volunteer.js";
 import XLSX from "xlsx";
+import bcrypt from "bcryptjs";
 
 /* =====================================================
    CREATE VOLUNTEER
@@ -9,17 +10,21 @@ export async function createVolunteer(req, res) {
   try {
     const applicationNo = `VOL-${Date.now()}`;
 
+    const { name, phone, email, city, area, message, password } = req.body || {};
+    if (!String(name || "").trim() || !String(phone || "").trim()) return res.status(400).json({ success: false, message: "Name and mobile number are required." });
+    if (typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({ success: false, message: "Password must contain at least 8 characters." });
+    }
+    const passwordHash = await bcrypt.hash(password, 12);
     const volunteer = await Volunteer.create({
-      ...req.body,
-      applicationNo,
-      status: "pending",
+      name: String(name).trim(), phone: String(phone).trim(), email: String(email || "").trim(),
+      city: String(city || "").trim(), area: String(area || "").trim(), message: String(message || "").trim(),
+      passwordHash, applicationNo, status: "pending",
     });
-
-    res.status(201).json({
-      success: true,
-      message: "Volunteer application submitted successfully.",
-      item: volunteer,
-    });
+    const item = volunteer.toObject();
+    delete item.passwordHash;
+    item.passwordSet = Boolean(passwordHash);
+    return res.status(201).json({ success: true, message: "Volunteer application submitted successfully.", item });
   } catch (error) {
     console.error("Create volunteer error:", error);
 
@@ -75,6 +80,10 @@ export async function updateVolunteerStatus(req, res) {
       area: area,
       message: message?.trim(),
     };
+    if (typeof req.body.password === "string" && req.body.password.length > 0) {
+      if (req.body.password.length < 8) return res.status(400).json({ success: false, message: "Password must contain at least 8 characters." });
+      updateData.passwordHash = await bcrypt.hash(req.body.password, 12);
+    }
 
     // Status bhi update karo
     if (status) {
@@ -89,7 +98,7 @@ export async function updateVolunteerStatus(req, res) {
           new: true,
           runValidators: true,
         }
-      );
+      ).select("+passwordHash");
 
     if (!volunteer) {
       return res.status(404).json({
@@ -98,12 +107,11 @@ export async function updateVolunteerStatus(req, res) {
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      message:
-        "Volunteer details updated successfully.",
-      item: volunteer,
-    });
+    const item = volunteer.toObject();
+    const passwordSet = Boolean(updateData.passwordHash || item.passwordHash);
+    delete item.passwordHash;
+    item.passwordSet = passwordSet;
+    return res.status(200).json({ success: true, message: "Volunteer details updated successfully.", item });
 
   } catch (error) {
     console.error(
@@ -295,7 +303,7 @@ export async function getVolunteers(req, res) {
       newApplicationCount,
     ] = await Promise.all([
       // Current page records
-      Volunteer.find(filter)
+      Volunteer.find(filter).select("+passwordHash")
         .sort({
           createdAt: -1,
         })
@@ -333,6 +341,9 @@ export async function getVolunteers(req, res) {
       }),
     ]);
 
+    // Never send password hashes to the admin browser; only expose a set/not-set flag.
+    const safeVolunteers = volunteers.map(({ passwordHash, ...item }) => ({ ...item, passwordSet: Boolean(passwordHash) }));
+
     // ==========================================
     // TOTAL PAGES
     // ==========================================
@@ -348,7 +359,7 @@ export async function getVolunteers(req, res) {
 
       count: volunteers.length,
 
-      items: volunteers,
+      items: safeVolunteers,
 
       pagination: {
         page,

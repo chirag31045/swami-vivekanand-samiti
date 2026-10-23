@@ -304,38 +304,42 @@ export default function AdminProfile() {
               </button>
 
               {profileOpen && (
-                <div className="adminProfileDropdown adminProfileDropdownEnhanced">
-                  <div className="profileDropdownHeader">
-                    <img
-                      src={displayImage}
-                      alt={profile.displayName}
-                      className="adminProfileImage"
-                    />
-                    <div>
-                      <strong>{profile.displayName || "Developer Account"}</strong>
-                      <span>{profile.role || "Admin"}</span>
-                    </div>
+                <div
+                  className="adminProfileModalOverlay"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  <div
+                    className="adminProfileDropdown adminProfileDropdownEnhanced"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    {/* PROFILE BUTTON */}
+                    <button
+                      type="button"
+                      className="profileDropdownAction profileViewAction"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        navigate("/admin/profile");
+                      }}
+                    >
+                      <UserRound size={18} />
+                      <span>Profile</span>
+                    </button>
+
+                    {/* LOGOUT BUTTON */}
+                    <button
+                      type="button"
+                      className="profileDropdownAction profileLogout"
+                      onClick={() => {
+                        setProfileOpen(false);
+                        logout();
+                      }}
+                    >
+                      <LogOut size={18} />
+                      <span>Log Out</span>
+                    </button>
                   </div>
-                  {profile.email && (
-                    <div className="profileDropdownMeta">{profile.email}</div>
-                  )}
-                  <div className="profileDropdownDivider" />
-                  <button
-                    type="button"
-                    className="profileDropdownAction profileViewAction"
-                    onClick={() => setProfileOpen(false)}
-                  >
-                    <UserRound size={17} /> Profile
-                  </button>
-                  <button
-                    type="button"
-                    className="profileDropdownAction profileLogout"
-                    onClick={logout}
-                  >
-                    <LogOut size={17} /> Log Out
-                  </button>
                 </div>
-              )}
+              )}  
             </div>
           </div>
         </header>

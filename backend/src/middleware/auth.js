@@ -60,3 +60,18 @@ export async function requireAdmin(req, res, next) {
 }
 
 export default requireAdmin;
+
+
+// Volunteer sessions are distinct from admin sessions. Status is rechecked on every protected request.
+export async function requireVolunteer(req, res, next) {
+  try {
+    const header = req.headers.authorization || "";
+    if (!header.startsWith("Bearer ")) return res.status(401).json({ success: false, message: "Volunteer login required." });
+    const decoded = jwt.verify(header.slice(7).trim(), process.env.JWT_SECRET);
+    if (decoded.role !== "volunteer" || !decoded.volunteerId) return res.status(403).json({ success: false, message: "Volunteer access denied." });
+    const Volunteer = (await import("../models/Volunteer.js")).default;
+    const volunteer = await Volunteer.findById(decoded.volunteerId);
+    if (!volunteer || String(volunteer.status).toLowerCase() !== "approved") return res.status(403).json({ success: false, message: "Volunteer approval active nahi hai; login blocked." });
+    req.volunteer = volunteer; req.user = decoded; return next();
+  } catch { return res.status(401).json({ success: false, message: "Volunteer session invalid ya expire ho gaya." }); }
+}

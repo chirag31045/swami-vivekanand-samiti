@@ -52,11 +52,7 @@ router.get("/verify", requireAdmin, (req, res) => {
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/profile",
-  requireAdmin,
-  getMyAdminProfile,
-);
+router.get("/profile", requireAdmin, getMyAdminProfile);
 
 router.put(
   "/profile",
@@ -71,16 +67,8 @@ router.put(
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/registration",
-  requireAdmin,
-  listAdmins,
-);
+router.get("/registration", requireAdmin, listAdmins);
 
-router.post(
-  "/registration",
-  requireAdmin,
-  registerAdmin,
-);
+router.post("/registration", requireAdmin, registerAdmin);
 
 export default router;

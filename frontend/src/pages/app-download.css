@@ -1,0 +1,255 @@
+.appDownloadPage {
+  min-height: 70vh;
+  padding: 42px 5vw 80px;
+  background: #fffaf0;
+  color: #292321;
+}
+
+/* Hero — match the main website's maroon theme */
+.appDownloadHero {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 55px 24px 60px;
+  border-radius: 0 0 30px 30px;
+  background:
+    radial-gradient(circle at top right, #8d302d 0%, transparent 48%),
+    linear-gradient(135deg, #481311 0%, #681b19 55%, #8e2420 100%);
+  color: #fff;
+  box-shadow: 0 20px 50px rgba(72, 19, 17, 0.18);
+}
+
+.appDownloadIcon {
+  width: 82px;
+  height: 82px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 22px;
+  color: #f0bd59;
+}
+
+.appDownloadEyebrow,
+.appReleaseHeading span {
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  color: #e3ad48;
+}
+
+.appDownloadHero h1 {
+  font-size: clamp(32px, 5vw, 52px);
+  margin: 12px 0;
+  color: #fff;
+}
+
+.appDownloadHero p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: #fff0e7;
+  line-height: 1.8;
+}
+
+.appDownloadTrust {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+
+.appDownloadTrust span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #fff;
+}
+
+/* Available versions */
+.appReleaseSection {
+  max-width: 1100px;
+  margin: 50px auto 0;
+}
+
+.appReleaseHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.appReleaseHeading span {
+  color: #a52a25;
+}
+
+.appReleaseHeading h2 {
+  font-size: 28px;
+  margin: 7px 0;
+  color: #302320;
+}
+
+.appReleaseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 22px;
+}
+
+/* Version cards */
+.appReleaseCard,
+.appReleaseEmpty {
+  background: #fff;
+  border: 1px solid #eadbc9;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 12px 35px rgba(76, 31, 20, 0.07);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appReleaseCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(76, 31, 20, 0.13);
+}
+
+.appReleaseCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.appReleaseMiniIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #fff0d5;
+  color: #8b201d;
+  display: grid;
+  place-items: center;
+}
+
+.appReleaseBadge {
+  font-size: 11px;
+  font-weight: 800;
+  background: #f8e8c5;
+  color: #7d281b;
+  padding: 7px 10px;
+  border-radius: 30px;
+}
+
+.appReleaseCard h3 {
+  margin: 20px 0 6px;
+  font-size: 21px;
+  color: #302320;
+}
+
+.appReleaseVersion {
+  font-weight: 800;
+  color: #9d2923;
+  margin: 0;
+}
+
+.appReleaseNotes {
+  color: #74665f;
+  line-height: 1.7;
+  min-height: 30px;
+}
+
+.appReleaseMeta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #75665e;
+  font-size: 12px;
+  margin: 22px 0;
+}
+
+.appReleaseMeta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Gold download button */
+.appReleaseDownload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-decoration: none;
+  background: linear-gradient(135deg, #d9a23b, #edc56f);
+  color: #451512;
+  font-weight: 800;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #d5a345;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.appReleaseDownload:hover {
+  background: linear-gradient(135deg, #c18a25, #e4b755);
+  transform: translateY(-1px);
+}
+
+.appReleaseSafety {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #81736a;
+  margin: 14px 0 0;
+}
+
+.appReleaseEmpty {
+  text-align: center;
+  padding: 45px 20px;
+  color: #74665f;
+}
+
+.appReleaseEmpty svg {
+  color: #9d2923;
+}
+
+.appReleaseEmpty h3 {
+  color: #302320;
+}
+
+.appReleaseNotice {
+  padding: 25px;
+  background: #fff;
+  border: 1px solid #eadbc9;
+  border-radius: 14px;
+}
+
+.appReleaseNotice.error {
+  color: #b42318;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .appDownloadPage {
+    padding: 20px 14px 50px;
+  }
+
+  .appDownloadHero {
+    padding: 38px 18px;
+    border-radius: 0 0 22px 22px;
+  }
+
+  .appDownloadHero h1 {
+    font-size: 34px;
+  }
+
+  .appReleaseSection {
+    margin-top: 32px;
+  }
+
+  .appReleaseHeading h2 {
+    font-size: 24px;
+  }
+
+  .appReleaseGrid {
+    grid-template-columns: 1fr;
+  }
+}

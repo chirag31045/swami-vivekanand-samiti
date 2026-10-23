@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 
 if (process.env.VERCEL !== "1") {
   connectDB().finally(() => {
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`API running on http://localhost:${PORT}`);
     });
   });

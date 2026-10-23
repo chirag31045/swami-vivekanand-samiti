@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/drawable-nodpi_samiti_logo.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/drawable-nodpi/samiti_logo.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "org.swamisamiti.mobile.app-debug-43:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "org.swamisamiti.mobile.app-main-45:/mipmap-xxxhdpi/ic_launcher_round.png"
+    }
+]

@@ -60,10 +60,13 @@ const ensureEnvAdmin = async () => {
 
 export async function adminLogin(req, res, next) {
   try {
-    const username = String(req.body?.username || "").trim();
+    const identifier = String(
+      req.body?.username || req.body?.phone || req.body?.mobileNumber || "",
+    ).trim();
+
     const password = String(req.body?.password || "");
 
-    if (!username || !password) {
+    if (!identifier || !password) {
       return res.status(400).json({
         success: false,
         message: "Username and password are required.",
@@ -78,9 +81,22 @@ export async function adminLogin(req, res, next) {
     |--------------------------------------------------------------------------
     */
 
+    // The app uses one mobile-number + password screen for both volunteers and admins.
+    // Accept an admin's registered phone as the identifier, while preserving username login for the website.
     let admin = await Admin.findOne({
-      username,
+      username: identifier,
     }).select("+passwordHash");
+
+    if (!admin) {
+      const digits = identifier.replace(/\D/g, "");
+
+      if (digits.length === 10) {
+        admin = await Admin.findOne({
+          phone: digits,
+          role: "admin",
+        }).select("+passwordHash");
+      }
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -88,7 +104,7 @@ export async function adminLogin(req, res, next) {
     |--------------------------------------------------------------------------
     */
 
-    if (!admin && username === envAdmin.username) {
+    if (!admin && identifier === envAdmin.username) {
       admin = await ensureEnvAdmin();
     }
 
@@ -105,10 +121,7 @@ export async function adminLogin(req, res, next) {
        *
        * Otherwise dono credentials invalid hain.
        */
-      if (
-        envAdmin.password &&
-        password === envAdmin.password
-      ) {
+      if (envAdmin.password && password === envAdmin.password) {
         return res.status(401).json({
           success: false,
           message: "Wrong username.",
@@ -141,10 +154,7 @@ export async function adminLogin(req, res, next) {
     |--------------------------------------------------------------------------
     */
 
-    const passwordMatches = await bcrypt.compare(
-      password,
-      admin.passwordHash,
-    );
+    const passwordMatches = await bcrypt.compare(password, admin.passwordHash);
 
     if (!passwordMatches) {
       return res.status(401).json({
@@ -178,8 +188,7 @@ export async function adminLogin(req, res, next) {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn:
-          process.env.ADMIN_SESSION_EXPIRES_IN || "1d",
+        expiresIn: process.env.ADMIN_SESSION_EXPIRES_IN || "1d",
 
         jwtid: crypto.randomUUID(),
       },
@@ -207,10 +216,7 @@ export async function adminLogout(req, res, next) {
     const decoded = req.admin;
 
     if (token && decoded?.exp) {
-      const tokenHash = crypto
-        .createHash("sha256")
-        .update(token)
-        .digest("hex");
+      const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
       await RevokedAdminToken.updateOne(
         { tokenHash },

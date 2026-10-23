@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SwamiSamiti" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#B45309</item>
+        <item name="colorPrimaryVariant">#78350F</item>
+        <item name="colorSecondary">#15803D</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:statusBarColor">#78350F</item>
+        <item name="android:navigationBarColor">#78350F</item>
+    </style>
+</resources>

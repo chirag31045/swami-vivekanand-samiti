@@ -1,0 +1,15 @@
+GRADLE FIX — SWAMI SAMITI ANDROID
+
+1) ZIP extract karein.
+2) Android Studio > Open mein inner folder select karein:
+   SwamiSamitiAndroidStudio/SwamiSamitiAndroid
+   Bahar wala SwamiSamitiAndroidStudio folder select na karein.
+3) gradle/wrapper/gradle-wrapper.properties mein Gradle 8.9 set hai.
+4) Android Studio > Settings > Build, Execution, Deployment > Build Tools > Gradle:
+   "Use Gradle from" mein "gradle-wrapper.properties" / "Gradle wrapper" select karein.
+   "Gradle JDK" = Embedded JDK (17) ya installed JDK 17.
+5) File > Sync Project with Gradle Files.
+6) Agar download timeout ho, browser mein https://services.gradle.org/distributions/gradle-8.9-bin.zip kholkar network test karein. Mobile hotspot try karein; VPN/proxy ko check karein.
+7) local.properties jaanbujhkar include nahi hai; Android Studio apne computer ka Android SDK path khud set karega.
+
+Note: Original ZIP mein gradle-wrapper.properties missing tha, isliye project mein Gradle 9.6.0 ka reference is ZIP se nahi aa raha tha. Agar Android Studio phir bhi gradle-9.6.0-bin.zip maangta hai, to aapne wrong folder open kiya hai ya kisi aur wrapper.properties file ko use kar raha hai. Project mein Ctrl+Shift+F se "9.6.0" search karein.

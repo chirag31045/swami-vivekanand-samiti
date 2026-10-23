@@ -17,6 +17,10 @@ import activityRoutes from "./routes/activityRoutes.js";
 import siteSettingsRoutes from "./routes/siteSettingsRoutes.js";
 import donationWebhookRoutes from "./routes/donationWebhookRoutes.js";
 import donationSettingsRoutes from "./routes/donationSettingsRoutes.js";
+import mobileAuthRoutes from "./routes/mobileAuthRoutes.js";
+import appReleaseRoutes from "./routes/appReleaseRoutes.js";
+import { requireVolunteer } from "./middleware/auth.js";
+import { getMyProfile, updateMyProfile, getMyDonations } from "./controllers/volunteerSelfController.js";
 
 import { notFound, errorHandler } from "./middleware/error.js";
 
@@ -25,21 +29,28 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const allowedOrigins = (
-  process.env.FRONTEND_URL ||
-  "http://localhost:5173"
-)
+const configuredOrigins = (process.env.FRONTEND_URL || "")
   .split(",")
-  .map((origin) => origin.trim())
+  .map((o) => o.trim().replace(/\/+$/, ""))
   .filter(Boolean);
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow server-to-server, curl, Postman, or requests without origin
+    if (!origin) return callback(null, true);
+
+    const cleanOrigin = origin.replace(/\/+$/, "");
+
+    // Matches any localhost port (e.g., http://localhost:5173, http://localhost:3000)
+    const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(cleanOrigin);
+    const isAllowedConfig = configuredOrigins.includes(cleanOrigin);
+
+    if (isLocalhost || isAllowedConfig) {
       return callback(null, true);
     }
 
-    return callback(new Error("CORS origin is not allowed."));
+    console.warn(`[CORS Blocked] Origin not permitted: ${origin}`);
+    return callback(new Error(`CORS origin is not allowed: ${origin}`));
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -120,6 +131,11 @@ app.use("/api/activities", activityRoutes);
 app.use("/api/site-settings", siteSettingsRoutes);
 app.use("/api/donation-settings", donationSettingsRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/mobile-auth", mobileAuthRoutes);
+app.use("/api/app-releases", appReleaseRoutes);
+app.get("/api/volunteer/me", requireVolunteer, getMyProfile);
+app.patch("/api/volunteer/me", requireVolunteer, updateMyProfile);
+app.get("/api/donations/my", requireVolunteer, getMyDonations);
 
 app.use(notFound);
 app.use(errorHandler);
