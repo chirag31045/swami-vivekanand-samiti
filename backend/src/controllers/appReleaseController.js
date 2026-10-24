@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
+import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
 import AppRelease from "../models/AppRelease.js";
 
 const cloudConfigured = () =>
@@ -39,6 +41,8 @@ async function saveApk(file) {
       { method: "POST", body },
     );
     const data = await response.json();
+    console.log("Cloudinary status:", response.status);
+console.log("Cloudinary error:", data?.error?.message);
     if (!response.ok || !data.secure_url)
       throw new Error(
         data?.error?.message ||
@@ -81,44 +85,6 @@ export async function listAdminReleases(_req, res) {
       .json({ success: false, message: "Failed to load releases." });
   }
 }
-export async function uploadRelease(req, res) {
-  try {
-    if (!req.file)
-      return res
-        .status(400)
-        .json({ success: false, message: "Choose an .apk file." });
-    if (!req.file.originalname.toLowerCase().endsWith(".apk"))
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Only Android .apk files are allowed.",
-        });
-    const version = String(req.body.version || "").trim();
-    if (!version)
-      return res
-        .status(400)
-        .json({ success: false, message: "Version is required." });
-    const fileUrl = await saveApk(req.file);
-    const item = await AppRelease.create({
-      title: String(req.body.title || "Swami Samiti Android App").trim(),
-      version,
-      notes: String(req.body.notes || "").trim(),
-      fileUrl,
-      fileName: req.file.originalname,
-      fileSize: req.file.size,
-      isPublished: req.body.isPublished !== "false",
-    });
-    return res
-      .status(201)
-      .json({ success: true, message: "APK published successfully.", item });
-  } catch (e) {
-    console.error("APK upload error:", e);
-    return res
-      .status(500)
-      .json({ success: false, message: e.message || "APK upload failed." });
-  }
-}
 export async function deleteRelease(req, res) {
   try {
     const item = await AppRelease.findByIdAndDelete(req.params.id);
@@ -132,5 +98,147 @@ export async function deleteRelease(req, res) {
     return res
       .status(500)
       .json({ success: false, message: "Failed to delete release." });
+  }
+}
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  },
+);
+
+const BUCKET = process.env.SUPABASE_BUCKET || "apk-releases";
+const MAX_APK_SIZE = 49 * 1024 * 1024;
+
+export async function createApkUploadUrl(req, res) {
+  try {
+    const { fileName, fileSize } = req.body;
+
+    if (
+      typeof fileName !== "string" ||
+      !fileName.toLowerCase().endsWith(".apk")
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Only APK files are allowed.",
+      });
+    }
+
+    if (
+      !Number.isFinite(fileSize) ||
+      fileSize <= 0 ||
+      fileSize > MAX_APK_SIZE
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "APK size must be less than 49 MB.",
+      });
+    }
+
+    const safeName = fileName
+      .replace(/[^a-zA-Z0-9._-]/g, "_")
+      .slice(-100);
+
+    const uploadPath = `releases/${randomUUID()}-${safeName}`;
+
+    const { data, error } = await supabase.storage
+      .from(BUCKET)
+      .createSignedUploadUrl(uploadPath);
+
+    if (error) throw error;
+
+    return res.json({
+      success: true,
+      uploadPath,
+      token: data.token,
+    });
+  } catch (error) {
+    console.error("Create APK upload URL error:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Could not prepare APK upload.",
+    });
+  }
+}
+
+
+export async function completeApkUpload(req, res) {
+  try {
+    const { version, notes = "", uploadPath } = req.body;
+
+    if (
+      typeof version !== "string" ||
+      !version.trim() ||
+      typeof uploadPath !== "string" ||
+      !uploadPath.startsWith("releases/") ||
+      !uploadPath.toLowerCase().endsWith(".apk")
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid release details.",
+      });
+    }
+
+    const fileName = uploadPath.split("/").pop();
+
+    // Verify that the uploaded APK exists in Supabase Storage
+    const { data: files, error: listError } = await supabase.storage
+      .from(BUCKET)
+      .list("releases", {
+        search: fileName,
+        limit: 100,
+      });
+
+    if (listError) throw listError;
+
+    const uploadedFile = files?.find(
+      (file) => file.name === fileName
+    );
+
+    if (!uploadedFile) {
+      return res.status(400).json({
+        success: false,
+        message: "APK upload was not found in Storage.",
+      });
+    }
+
+    // Get the public download URL
+    const { data: publicData } = supabase.storage
+      .from(BUCKET)
+      .getPublicUrl(uploadPath);
+
+    if (!publicData?.publicUrl) {
+      throw new Error("Could not generate APK public URL.");
+    }
+
+    // Save using the exact fields defined in AppRelease schema
+    const release = await AppRelease.create({
+      title: "Swami Samiti Android App",
+      version: version.trim(),
+      notes: String(notes).slice(0, 5000),
+      fileUrl: publicData.publicUrl,
+      fileName,
+      fileSize: uploadedFile.metadata?.size ?? 0,
+      isPublished: true,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "APK release published successfully.",
+      release,
+    });
+  } catch (error) {
+    console.error("Complete APK upload error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Could not publish APK release.",
+    });
   }
 }

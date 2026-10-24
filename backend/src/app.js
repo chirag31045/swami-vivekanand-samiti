@@ -26,6 +26,17 @@ import { notFound, errorHandler } from "./middleware/error.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
+app.use(express.json());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+});
+
+app.use(limiter);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
