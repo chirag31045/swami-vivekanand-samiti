@@ -465,7 +465,17 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             setOnClickListener { showPhoneLogin(true) }
             contentDescription = "Create a new volunteer account"
         })
-        paragraph("Admin? Use the same login screen with your registered admin mobile number and password. Volunteers can sign in only after approval.", 12f)
+        root.addView(TextView(this).apply {
+            text = getAppVersion()
+            textSize = 12f
+            setTextColor(Color.GRAY)
+            gravity = Gravity.CENTER
+            setPadding(8, dp(16), 8, dp(8))
+            layoutParams = LinearLayout.LayoutParams(
+                -1,
+                -2
+            )
+        })
     }
 
     private fun showPhoneLogin(register: Boolean) {
@@ -1824,6 +1834,15 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             } catch (e: Exception) {
                 message(networkErrorMessage(e, "Request failed. Please try again."))
             } finally { loading = false }
+        }
+    }
+
+    private fun getAppVersion(): String {
+        return try {
+            val info = packageManager.getPackageInfo(packageName, 0)
+            "Version ${info.versionName ?: "1.0.0"}"
+        } catch (e: Exception) {
+            "Version 1.0.0"
         }
     }
 
