@@ -1,6 +1,7 @@
 package org.swamisamiti.mobile
 
 import com.google.gson.JsonObject
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -13,7 +14,6 @@ import retrofit2.http.Query
 import retrofit2.http.PUT
 import retrofit2.http.Multipart
 import retrofit2.http.Part
-import okhttp3.MultipartBody
 
 data class PhoneRequest(val phone: String, val name: String? = null)
 data class VolunteerLoginRequest(val phone: String, val password: String)

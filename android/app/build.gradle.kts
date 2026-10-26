@@ -21,6 +21,11 @@ android {
             "API_BASE_URL",
             "\"https://swami-vivekanand-samiti-backend.vercel.app/api/\""
         )
+//        buildConfigField(
+//            "String",
+//            "API_BASE_URL",
+//            "\"http://172.25.195.78:5000/api/\""
+//        )
     }
 
     buildFeatures {

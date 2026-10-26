@@ -20,7 +20,8 @@ import donationSettingsRoutes from "./routes/donationSettingsRoutes.js";
 import mobileAuthRoutes from "./routes/mobileAuthRoutes.js";
 import appReleaseRoutes from "./routes/appReleaseRoutes.js";
 import { requireVolunteer } from "./middleware/auth.js";
-import { getMyProfile, updateMyProfile, getMyDonations } from "./controllers/volunteerSelfController.js";
+import { getMyProfile, updateMyProfile, getMyDonations, uploadMyPhoto, } from "./controllers/volunteerSelfController.js";
+import { imageUpload } from "./middleware/imageUpload.js";
 
 import { notFound, errorHandler } from "./middleware/error.js";
 
@@ -147,6 +148,12 @@ app.use("/api/app-releases", appReleaseRoutes);
 app.get("/api/volunteer/me", requireVolunteer, getMyProfile);
 app.patch("/api/volunteer/me", requireVolunteer, updateMyProfile);
 app.get("/api/donations/my", requireVolunteer, getMyDonations);
+app.post(
+  "/api/volunteer/me/photo",
+  requireVolunteer,
+  imageUpload.single("image"),
+  uploadMyPhoto
+);
 
 app.use(notFound);
 app.use(errorHandler);

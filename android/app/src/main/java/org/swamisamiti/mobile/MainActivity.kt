@@ -199,9 +199,6 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 contentDescription = "Profile photo"
             })
             menuContainer.addView(TextView(this).apply {
-                text = "Swami Samiti"; textSize = 20f; setTextColor(if (darkMode) Color.WHITE else navy); setTypeface(typeface, Typeface.BOLD)
-            })
-            menuContainer.addView(TextView(this).apply {
                 text = (prefs.getString("displayName", "") ?: "").ifBlank { if ((prefs.getString("role", "user") ?: "user").equals("admin", true)) "Administrator" else "Volunteer" }
                 textSize = 16f; setTextColor(if (darkMode) Color.WHITE else navy); setTypeface(typeface, Typeface.BOLD); setPadding(0, dp(2), 0, dp(2))
             })
@@ -354,9 +351,39 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             background = getDrawable(android.R.drawable.edit_text)
             layoutParams = LinearLayout.LayoutParams(-1, dp(54)).apply { bottomMargin = dp(10) }
         }
-        if (password) e.inputType = 129 else if (otp) e.inputType = 2 else if (mobile) e.inputType = 3
+        if (password) {
+            e.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            addPasswordVisibilityToggle(e)
+        } else if (otp) e.inputType = 2 else if (mobile) e.inputType = 3
         root.addView(e)
         return e
+    }
+
+    // Adds a tappable eye-style icon inside password fields without changing the existing layout.
+    private fun addPasswordVisibilityToggle(field: EditText) {
+        val eye = getDrawable(android.R.drawable.ic_menu_view)
+        field.setCompoundDrawablesWithIntrinsicBounds(null, null, eye, null)
+        field.compoundDrawablePadding = dp(8)
+        field.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_UP) {
+                val drawable = field.compoundDrawables[2]
+                if (drawable != null && event.x >= field.width - field.paddingRight - drawable.bounds.width() - dp(12)) {
+                    val start = field.selectionStart
+                    val end = field.selectionEnd
+                    val isVisible = (field.inputType and android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD) == android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    field.inputType = if (isVisible) {
+                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    } else {
+                        android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    }
+                    field.setCompoundDrawablesWithIntrinsicBounds(null, null, getDrawable(android.R.drawable.ic_menu_view), null)
+                    field.setSelection(start.coerceAtLeast(0).coerceAtMost(field.text?.length ?: 0), end.coerceAtLeast(0).coerceAtMost(field.text?.length ?: 0))
+                    field.performClick()
+                    return@setOnTouchListener true
+                }
+            }
+            false
+        }
     }
 
     // Registration-only field styling; the shared input helper stays unchanged for other screens.
@@ -379,6 +406,20 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
     private fun message(s: String) = Toast.makeText(this, s, Toast.LENGTH_LONG).show()
 
+    private fun networkErrorMessage(error: Throwable, fallback: String = "Something went wrong. Please try again."): String {
+        var cause: Throwable? = error
+        while (cause != null) {
+            when (cause) {
+                is java.net.UnknownHostException,
+                is java.net.ConnectException,
+                is java.net.SocketTimeoutException,
+                is java.net.SocketException,
+                is java.io.IOException -> return "Network error. Please check your internet connection and try again."
+            }
+            cause = cause.cause
+        }
+        return error.localizedMessage?.takeIf { it.isNotBlank() } ?: fallback
+    }
     private fun showWelcome() {
         setup("Seva • Sanskar • Samarpan")
 
@@ -548,7 +589,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                             }
                         }
                     }
-                } catch (e: Exception) { message("Could not connect to the server: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("Could not connect to the server: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }
@@ -620,7 +661,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         message(body.message ?: "OTP request processed. Check your SMS.")
                         showOtpVerification(number)
                     } else message(body?.message ?: "Could not request OTP. Please retry.")
-                } catch (e: Exception) { message("OTP request failed: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("OTP request failed: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, saffron)
@@ -645,7 +686,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     if (response.isSuccessful && body?.success == true && !body.token.isNullOrBlank()) {
                         saveOtpSession(body, phoneNumber)
                     } else message(body?.message ?: "OTP verification failed. Please retry.")
-                } catch (e: Exception) { message("OTP verification failed: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("OTP verification failed: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, green)
@@ -657,7 +698,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     val response = ApiClient.service.sendMobileOtp(OtpSendRequest(phoneNumber, "login"))
                     val body = response.body()
                     message(if (response.isSuccessful && body?.success == true) (body.message ?: "OTP request processed.") else (body?.message ?: "Could not resend OTP."))
-                } catch (e: Exception) { message("Could not resend OTP: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("Could not resend OTP: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, saffron)
@@ -682,7 +723,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         message(body.message ?: "If eligible, a reset OTP has been sent.")
                         showResetPassword(number)
                     } else message(body?.message ?: "Could not request reset OTP.")
-                } catch (e: Exception) { message("Reset OTP request failed: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("Reset OTP request failed: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, saffron)
@@ -712,7 +753,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         message(body.message ?: "Password reset successfully. Please log in.")
                         showPhoneLogin(false)
                     } else message(body?.message ?: "Password reset failed. Check the OTP and retry.")
-                } catch (e: Exception) { message("Password reset failed: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("Password reset failed: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, green)
@@ -724,7 +765,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     val response = ApiClient.service.sendMobileOtp(OtpSendRequest(phoneNumber, "reset-password"))
                     val body = response.body()
                     message(if (response.isSuccessful && body?.success == true) (body.message ?: "OTP request processed.") else (body?.message ?: "Could not resend OTP."))
-                } catch (e: Exception) { message("Could not resend OTP: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("Could not resend OTP: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, saffron)
@@ -752,13 +793,13 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 try {
                     val payload = PasswordChangeRequest(oldValue, newValue)
                     val response = if (isAdmin) ApiClient.service.changeAdminPassword("Bearer $token", payload)
-                        else ApiClient.service.changeVolunteerPassword("Bearer $token", payload)
+                    else ApiClient.service.changeVolunteerPassword("Bearer $token", payload)
                     val body = response.body()
                     if (response.isSuccessful && body?.success == true) {
                         message(body.message ?: "Password changed successfully.")
                         showRoleHome(role)
                     } else message(body?.message ?: "Password change failed. Check your current password.")
-                } catch (e: Exception) { message("Password change failed: ${e.localizedMessage ?: "Please retry."}") }
+                } catch (e: Exception) { message("Password change failed: ${networkErrorMessage(e, "Please retry.")}") }
                 finally { loading = false }
             }
         }, green)
@@ -824,6 +865,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             contentDescription = "Admin password"
             layoutParams = LinearLayout.LayoutParams(-1, dp(54)).apply { bottomMargin = dp(4) }
         }
+        addPasswordVisibilityToggle(password)
         loginCard.addView(username)
         loginCard.addView(password)
         lateinit var loginButton: MaterialButton
@@ -854,7 +896,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                             showRoleHome("admin")
                         } else message(body?.stringValue("message") ?: "Admin login failed. Please check your credentials.")
                     } catch (e: Exception) {
-                        message("Could not connect to the server: ${e.localizedMessage}")
+                        message("Could not connect to the server: ${networkErrorMessage(e)}")
                     } finally {
                         loading = false
                         loginButton.isEnabled = true
@@ -940,7 +982,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         message(body.stringValue("message") ?: "Application submitted.")
                         showRoleHome("user")
                     } else message(body?.stringValue("message") ?: "Application could not be submitted.")
-                } catch (e: Exception) { message("Request failed: ${e.localizedMessage}") }
+                } catch (e: Exception) { message("Request failed: ${networkErrorMessage(e)}") }
             }
         }
         actionButton("Back to Dashboard", { showRoleHome(prefs.getString("role", "user") ?: "user") }, navy2)
@@ -988,11 +1030,11 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     else -> true
                 }
                 (query.isBlank() || name.lowercase().contains(query) || phoneValue.contains(query)) &&
-                    (cityQuery.isBlank() || city.lowercase().contains(cityQuery)) &&
-                    (areaQuery.isBlank() || area.lowercase().contains(areaQuery)) &&
-                    statusMatches &&
-                    (dateFrom.isBlank() || (rowDate.isNotBlank() && rowDate >= dateFrom)) &&
-                    (dateTo.isBlank() || (rowDate.isNotBlank() && rowDate <= dateTo))
+                        (cityQuery.isBlank() || city.lowercase().contains(cityQuery)) &&
+                        (areaQuery.isBlank() || area.lowercase().contains(areaQuery)) &&
+                        statusMatches &&
+                        (dateFrom.isBlank() || (rowDate.isNotBlank() && rowDate >= dateFrom)) &&
+                        (dateTo.isBlank() || (rowDate.isNotBlank() && rowDate <= dateTo))
             }
 
             setup("Volunteer Applications", true)
@@ -1293,7 +1335,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     val response = if (isEdit) ApiClient.service.updateActivity("Bearer $token", activityNo, field(hiTitle.text.toString()), field(hiShort.text.toString()), field(hiDetails.text.toString()), field(enTitle.text.toString()), field(enShort.text.toString()), field(enDetails.text.toString()), image)
                     else ApiClient.service.createActivity("Bearer $token", field(activityNo.toString()), field(hiTitle.text.toString()), field(hiShort.text.toString()), field(hiDetails.text.toString()), field(enTitle.text.toString()), field(enShort.text.toString()), field(enDetails.text.toString()), image!!)
                     if (response.isSuccessful) { message("Activity saved successfully."); pendingActivityImageUri = null; loadActivities() } else message(response.errorBody()?.string() ?: "Could not save activity.")
-                } catch (e: Exception) { message("Save failed: ${e.localizedMessage}") }
+                } catch (e: Exception) { message("Save failed: ${networkErrorMessage(e)}") }
             }
         }, green)
         actionButton("Cancel", { loadActivities() }, navy2)
@@ -1308,7 +1350,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 val part = MultipartBody.Part.createFormData("photo", "gallery-image.jpg", bytes.toRequestBody(mime.toMediaTypeOrNull()))
                 val response = if (editId.isBlank()) ApiClient.service.uploadGallery("Bearer $token", part) else ApiClient.service.updateGallery("Bearer $token", editId, part)
                 if (response.isSuccessful) { message(if (editId.isBlank()) "Gallery image added." else "Gallery image updated."); pendingGalleryEditId = ""; pendingGalleryImageUri = null; loadGallery(true) } else message(response.errorBody()?.string() ?: "Gallery upload failed.")
-            } catch (e: Exception) { message("Gallery upload failed: ${e.localizedMessage}") }
+            } catch (e: Exception) { message("Gallery upload failed: ${networkErrorMessage(e)}") }
         }
     }
 
@@ -1421,7 +1463,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         }
                         val response = ApiClient.service.updateAdminSiteSettings("Bearer $token", field(name.text.toString()), field(tagline.text.toString()), field(phoneField.text.toString()), field(emailField.text.toString()), field(address.text.toString()), field(intro.text.toString()), part(pendingSiteLogoUri, "logo"), part(pendingSitePosterUri, "poster"))
                         if (response.isSuccessful) { pendingSiteLogoUri = null; pendingSitePosterUri = null; message("Branding settings saved."); loadMobileAppSettings() } else message(response.errorBody()?.string() ?: "Settings update failed.")
-                    } catch (e: Exception) { message("Settings update failed: ${e.localizedMessage}") }
+                    } catch (e: Exception) { message("Settings update failed: ${networkErrorMessage(e)}") }
                 }
             }, green)
             paragraph("Note: Android launcher icon is packaged inside the installed APK. To change the launcher icon itself, app resources must be updated and a new APK installed. In-app logo and light/dark theme can change without reinstalling.", 12f)
@@ -1436,7 +1478,52 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             val name = input("Full name"); name.setText(item.stringValue("name") ?: "")
             val email = input("Email"); email.setText(item.stringValue("email") ?: "")
             val city = input("City / District"); city.setText(item.stringValue("city") ?: "")
-            val area = input("Area of interest"); area.setText(item.stringValue("area") ?: "")
+            val areaOptions = listOf(
+                "Choose area of interest",
+                "Education",
+                "Youth Awareness / Yuva Jagran",
+                "Social Service",
+                "Event Management",
+                "Digital Work",
+                "Community Support",
+                "Other"
+            )
+            val savedArea = item.stringValue("area") ?: item.stringValue("interest") ?: item.stringValue("areaOfInterest") ?: ""
+            root.addView(TextView(this).apply {
+                text = "Area of interest"; textSize = 13f
+                setTextColor(if (darkMode) Color.WHITE else ink)
+                setPadding(dp(2), dp(2), 0, dp(5))
+            })
+            val area = android.widget.Spinner(this).apply {
+                val areaAdapter = object : android.widget.ArrayAdapter<String>(this@MainActivity, android.R.layout.simple_spinner_item, areaOptions) {
+                    override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
+                        return (super.getView(position, convertView, parent) as TextView).apply {
+                            textSize = 15f
+                            setTextColor(if (darkMode) Color.WHITE else ink)
+                            setPadding(dp(14), dp(8), dp(12), dp(8))
+                        }
+                    }
+                    override fun getDropDownView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
+                        return (super.getDropDownView(position, convertView, parent) as TextView).apply {
+                            textSize = 15f
+                            setTextColor(ink)
+                            setBackgroundColor(Color.WHITE)
+                            setPadding(dp(16), dp(12), dp(16), dp(12))
+                        }
+                    }
+                }
+                areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                adapter = areaAdapter
+                background = android.graphics.drawable.GradientDrawable().apply {
+                    cornerRadius = dp(12).toFloat()
+                    setColor(if (darkMode) Color.rgb(30, 41, 59) else Color.WHITE)
+                    setStroke(dp(1), if (darkMode) Color.rgb(71, 85, 105) else Color.rgb(220, 226, 235))
+                }
+                layoutParams = LinearLayout.LayoutParams(-1, dp(54)).apply { bottomMargin = dp(10) }
+                val selected = areaOptions.indexOfFirst { it.equals(savedArea, true) }
+                setSelection(if (selected >= 0) selected else 0)
+            }
+            root.addView(area)
             currentProfilePhotoUrl = item.stringValue("photoUrl") ?: ""
             prefs.edit().putString("displayName", item.stringValue("name") ?: "Volunteer").putString("photoUrl", currentProfilePhotoUrl).apply()
             val photoPreview = ImageView(this).apply { scaleType = ImageView.ScaleType.CENTER_CROP; layoutParams = LinearLayout.LayoutParams(dp(112), dp(112)).apply { bottomMargin = dp(8) }; contentDescription = "Profile photo" }
@@ -1445,8 +1532,10 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             actionButton("Upload Profile Photo") { photoPicker.launch("image/*") }
             paragraph("Status: ${item.stringValue("status") ?: "approved"} • Application: ${item.stringValue("applicationNo") ?: "-"}")
             actionButton("Save Profile") {
-                val payload = JsonObject().apply { addProperty("name", name.text.toString().trim()); addProperty("email", email.text.toString().trim()); addProperty("city", city.text.toString().trim()); addProperty("area", area.text.toString().trim()) }
-                lifecycleScope.launch { try { val r = ApiClient.service.updateMyVolunteerProfile("Bearer $token", payload); if (r.isSuccessful) { message("Profile updated."); loadMyVolunteerProfile() } else message(r.errorBody()?.string() ?: "Profile update failed.") } catch (e: Exception) { message(e.localizedMessage ?: "Profile update failed") } }
+                val selectedArea = area.selectedItem?.toString().orEmpty()
+                if (selectedArea.isBlank() || selectedArea == "Choose area of interest") { message("Please select an area of interest."); return@actionButton }
+                val payload = JsonObject().apply { addProperty("name", name.text.toString().trim()); addProperty("email", email.text.toString().trim()); addProperty("city", city.text.toString().trim()); addProperty("area", selectedArea) }
+                lifecycleScope.launch { try { val r = ApiClient.service.updateMyVolunteerProfile("Bearer $token", payload); if (r.isSuccessful) { message("Profile updated."); loadMyVolunteerProfile() } else message(r.errorBody()?.string() ?: "Profile update failed.") } catch (e: Exception) {  message(networkErrorMessage(e, "Profile update failed")) } }
             }
             actionButton("Back to Dashboard", { showRoleHome("volunteer") }, navy2)
         }
@@ -1463,7 +1552,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 val response = ApiClient.service.uploadMyVolunteerPhoto("Bearer $token", part)
                 if (response.isSuccessful) { message("Profile photo updated."); val uploaded = response.body()?.get("photoUrl")?.asString ?: ""; prefs.edit().putString("photoUrl", uploaded).apply(); loadMyVolunteerProfile() }
                 else message(response.errorBody()?.string() ?: "Photo upload failed. Check backend configuration.")
-            } catch (e: Exception) { message("Photo upload failed: ${e.localizedMessage ?: "Please retry."}") }
+            } catch (e: Exception) { message("Photo upload failed: ${networkErrorMessage(e, "Please retry.")}")}
         }
     }
 
@@ -1675,7 +1764,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         fun part(v: String) = v.toRequestBody(txt)
                         val r = ApiClient.service.updateAdminProfile("Bearer $token", part(display.text.toString().trim()), part(email.text.toString().trim()), part(phoneField.text.toString().trim()), part(designation.text.toString().trim()), part(department.text.toString().trim()), part(bio.text.toString().trim()), null)
                         if (r.isSuccessful) { prefs.edit().putString("displayName", display.text.toString().trim()).putString("phone", phoneField.text.toString().trim()).apply(); message("Admin profile updated."); loadAdminProfile() } else message(r.errorBody()?.string() ?: "Profile update failed.")
-                    } catch (e: Exception) { message(e.localizedMessage ?: "Profile update failed.") }
+                    } catch (e: Exception) { message(networkErrorMessage(e, "Profile update failed.")) }
                 }
             }
             actionButton("Back to Dashboard", { showRoleHome("admin") }, navy2)
@@ -1693,7 +1782,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 fun field(v: String) = v.toRequestBody(txt)
                 val r = ApiClient.service.updateAdminProfile("Bearer $token", field(prefs.getString("displayName", "Administrator") ?: "Administrator"), field(prefs.getString("adminEmail", "") ?: ""), field(prefs.getString("phone", "") ?: ""), field(prefs.getString("adminDesignation", "Administrator") ?: "Administrator"), field(prefs.getString("adminDepartment", "Administration") ?: "Administration"), field(prefs.getString("adminBio", "") ?: ""), part)
                 if (r.isSuccessful) { val profile = r.body()?.getAsJsonObject("profile"); currentAdminPhotoUrl = profile?.stringValue("profileImage") ?: ""; prefs.edit().putString("photoUrl", currentAdminPhotoUrl).apply(); message("Admin photo uploaded."); loadAdminProfile() } else message(r.errorBody()?.string() ?: "Admin photo upload failed.")
-            } catch (e: Exception) { message("Admin photo upload failed: ${e.localizedMessage}") }
+            } catch (e: Exception) { message("Admin photo upload failed: ${networkErrorMessage(e)}") }
         }
     }
 
@@ -1733,14 +1822,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     message(body?.stringValue("message") ?: errorBody ?: "Request failed (${response.code()}).")
                 }
             } catch (e: Exception) {
-                val detail = when (e) {
-                    is java.net.UnknownHostException -> "Server address nahi mila. PC ka Wi-Fi IPv4 aur API_BASE_URL check karein."
-                    is java.net.ConnectException -> "Backend se connection nahi hua. Node server/port 5000 aur Windows Firewall check karein."
-                    is java.net.SocketTimeoutException -> "Server response timeout. Phone aur PC same Wi-Fi par hain?"
-                    is java.net.SocketException -> "Network connection band hua. Wi-Fi, IP aur server binding check karein."
-                    else -> e.localizedMessage ?: e.javaClass.simpleName
-                }
-                message("Request failed: $detail")
+                message(networkErrorMessage(e, "Request failed. Please try again."))
             } finally { loading = false }
         }
     }
