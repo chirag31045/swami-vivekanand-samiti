@@ -4106,36 +4106,40 @@ html[data-theme="dark"] .privacyCard p {
 .galleryModalOverlay {
   position: fixed;
   inset: 0;
-
   z-index: 10000;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 20px;
+  padding: 12px;
+  overflow: auto;
 
   background: rgba(15, 23, 42, 0.65);
-
   backdrop-filter: blur(5px);
 
   box-sizing: border-box;
 }
 
 .galleryModal {
-  width: 520px;
+  width: 80%;
   max-width: 100%;
+  max-height: calc(100vh - 24px);
+
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  min-height: 0;
 
   background: var(--admin-surface);
   color: var(--admin-text);
 
   border: 1px solid var(--admin-border);
-
   border-radius: 18px;
 
   overflow: hidden;
-
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 .galleryModalHeader {
@@ -4144,7 +4148,7 @@ html[data-theme="dark"] .privacyCard p {
   align-items: center;
   justify-content: space-between;
 
-  padding: 18px 20px;
+  padding: 14px 16px;
 
   border-bottom: 1px solid var(--admin-border);
 }
@@ -4186,12 +4190,15 @@ html[data-theme="dark"] .privacyCard p {
 }
 
 .galleryModalBody {
-  padding: 20px;
+  padding: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  flex: 0 1 auto;
 }
 
 .galleryPreview {
   width: 100%;
-  height: 230px;
+  height: 200px;
 
   margin-bottom: 15px;
 
@@ -4213,7 +4220,7 @@ html[data-theme="dark"] .privacyCard p {
 }
 
 .galleryUploadBox {
-  min-height: 145px;
+  min-height: 120px;
 
   display: flex;
   flex-direction: column;
@@ -4264,9 +4271,10 @@ html[data-theme="dark"] .privacyCard p {
 
   gap: 8px;
 
-  padding: 14px 20px;
+  padding: 10px 12px;
 
   border-top: 1px solid var(--admin-border);
+  flex-shrink: 0;
 }
 
 .galleryModalFooter button {
@@ -4362,7 +4370,7 @@ html[data-theme="dark"] .privacyCard p {
 
 .galleryViewModal {
   width: min(900px, 95vw);
-  max-height: 92vh;
+  max-height: calc(100vh - 40px);
   overflow: hidden;
   background: var(--admin-surface);
   color: var(--admin-text);
@@ -4370,6 +4378,8 @@ html[data-theme="dark"] .privacyCard p {
   border-radius: 18px;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
   animation: galleryPopupShow 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .galleryViewHeader {
@@ -4412,12 +4422,18 @@ html[data-theme="dark"] .privacyCard p {
   align-items: center;
   justify-content: center;
   background: var(--admin-bg);
-  max-height: 70vh;
+  max-height: 60vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: 0;
+  flex: 0 1 auto;
 }
 
 .galleryViewBody img {
   max-width: 100%;
-  max-height: 65vh;
+  max-height: 55vh;
+  width: auto;
+  height: auto;
   object-fit: contain;
   display: block;
   border-radius: 12px;
@@ -4430,6 +4446,7 @@ html[data-theme="dark"] .privacyCard p {
   justify-content: space-between;
   gap: 15px;
   border-top: 1px solid var(--admin-border);
+  flex-shrink: 0;
 }
 
 .galleryViewFooter span {
@@ -7734,3 +7751,190 @@ body,
     flex-direction: column;
   }
 }
+
+/* Bulk status confirmation modal */
+.bulkConfirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  animation: bulkOverlayIn 0.2s ease-out;
+}
+
+.bulkConfirmModal {
+  --confirm-color: #2563eb;
+  --confirm-bg: #eff6ff;
+  width: 100%;
+  max-width: 440px;
+  padding: 30px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 24px;
+  background: #ffffff;
+  color: #172033;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+  animation: bulkModalIn 0.25s ease-out;
+}
+
+.bulkConfirm-approved {
+  --confirm-color: #15803d;
+  --confirm-bg: #dcfce7;
+}
+
+.bulkConfirm-rejected {
+  --confirm-color: #dc2626;
+  --confirm-bg: #fee2e2;
+}
+
+.bulkConfirm-pending {
+  --confirm-color: #b45309;
+  --confirm-bg: #fef3c7;
+}
+
+.bulkConfirmIcon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--confirm-color);
+  background: var(--confirm-bg);
+  border-radius: 22px;
+}
+
+.bulkConfirmModal h2 {
+  margin: 0 0 12px;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.bulkConfirmModal > p {
+  margin: 0;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.bulkConfirmModal > p strong {
+  color: #1e293b;
+}
+
+.bulkConfirmNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin: 22px 0;
+  padding: 13px;
+  border-radius: 12px;
+  background: var(--confirm-bg);
+  color: var(--confirm-color);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bulkConfirmActions {
+  display: flex;
+  gap: 12px;
+}
+
+.bulkConfirmActions button {
+  flex: 1;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.bulkConfirmActions button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.bulkConfirmActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.bulkConfirmCancel {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.bulkConfirmSubmit {
+  background: var(--confirm-color);
+  color: #ffffff;
+}
+
+.bulkConfirmSpinner {
+  animation: bulkSpin 1s linear infinite;
+}
+
+@keyframes bulkOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bulkModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bulkSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Dark theme support */
+.adminDark .bulkConfirmModal {
+  background: #172033;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.adminDark .bulkConfirmModal > p {
+  color: #cbd5e1;
+}
+
+.adminDark .bulkConfirmModal > p strong {
+  color: #f8fafc;
+}
+
+.adminDark .bulkConfirmCancel {
+  background: #334155;
+  color: #f8fafc;
+}
+
+@media (max-width: 480px) {
+  .bulkConfirmModal {
+    padding: 24px 18px;
+    border-radius: 20px;
+  }
+
+  .bulkConfirmModal h2 {
+    font-size: 21px;
+  }
+
+  .bulkConfirmActions {
+    flex-direction: column-reverse;
+  }
+}
+

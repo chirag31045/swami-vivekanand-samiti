@@ -515,3 +515,51 @@ export async function bulkCreateVolunteers(req, res) {
     });
   }
 }
+
+/* =====================================================
+   BULK UPDATE VOLUNTEER STATUS
+===================================================== */
+
+export async function bulkUpdateVolunteerStatus(req, res) {
+  try {
+    const { ids, status } = req.body || {};
+
+    const allowedStatuses = ["pending", "approved", "rejected"];
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select at least one volunteer.",
+      });
+    }
+
+    if (!allowedStatuses.includes(String(status).toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid volunteer status.",
+      });
+    }
+
+    const validIds = [...new Set(ids.map((id) => String(id)))];
+
+    const result = await Volunteer.updateMany(
+      { _id: { $in: validIds } },
+      { $set: { status: String(status).toLowerCase() } },
+      { runValidators: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Volunteer statuses updated successfully.",
+      matchedCount: result.matchedCount,
+      modifiedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    console.error("Bulk volunteer status update error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update volunteer statuses.",
+    });
+  }
+}

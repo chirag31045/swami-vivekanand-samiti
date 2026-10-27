@@ -162,6 +162,7 @@ export default function AdminDashboard() {
   const [openStatusDropdown, setOpenStatusDropdown] = useState(null);
   const [selectedVolunteers, setSelectedVolunteers] = useState([]);
   const [bulkStatusLoading, setBulkStatusLoading] = useState(false);
+  const [bulkStatusConfirm, setBulkStatusConfirm] = useState(null);
 
   const [galleryModal, setGalleryModal] = useState(false);
   const [galleryEditId, setGalleryEditId] = useState(null);
@@ -733,18 +734,28 @@ export default function AdminDashboard() {
     }
   };
   const changeStatus = async (id, status) => {
-    const data = await apiRequest(`/volunteers/${id}/status`, {
-      method: "PATCH",
-      body: JSON.stringify({ status }),
-    });
+    try {
+      const data = await apiRequest(`/volunteers/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
 
-    if (data?.success) {
+      if (!data?.success) {
+        throw new Error(data?.message || "Failed to update status.");
+      }
+
       setVolunteers((prev) =>
-        prev.map((v) => (v._id === id ? { ...v, status } : v)),
+        prev.map((volunteer) =>
+          volunteer._id === id ? { ...volunteer, status } : volunteer,
+        ),
       );
-      loadVolunteers(volunteerType, page, limit);
-    } else {
-      alert(data?.message || "Failed to update status");
+      await loadVolunteers(volunteerType, page, limit);
+
+      const label = status.charAt(0).toUpperCase() + status.slice(1);
+      showToast(`Volunteer status updated to ${label} successfully!`);
+    } catch (error) {
+      console.error("Volunteer status update failed:", error);
+      showToast(error.message || "Unable to update volunteer status.");
     }
   };
 
@@ -752,24 +763,23 @@ export default function AdminDashboard() {
    BULK CHANGE STATUS
 ========================= */
 
-  const bulkChangeStatus = async (status) => {
+  const bulkChangeStatus = (status) => {
     if (!selectedVolunteers.length) {
-      alert("Please select at least one volunteer.");
+      showToast("Please select at least one volunteer.");
       return;
     }
 
-    const statusText =
-      status === "approved"
-        ? "approve"
-        : status === "rejected"
-          ? "reject"
-          : "move to pending";
+    setBulkStatusConfirm({
+      status,
+      count: selectedVolunteers.length,
+    });
+  };
 
-    const confirmed = window.confirm(
-      `Are you sure you want to ${statusText} ${selectedVolunteers.length} volunteer(s)?`,
-    );
+  const confirmBulkChangeStatus = async () => {
+    if (!bulkStatusConfirm || bulkStatusLoading) return;
 
-    if (!confirmed) return;
+    const { status, count } = bulkStatusConfirm;
+    const selectedIds = [...selectedVolunteers];
 
     try {
       setBulkStatusLoading(true);
@@ -781,7 +791,7 @@ export default function AdminDashboard() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          ids: selectedVolunteers,
+          ids: selectedIds,
           status,
         }),
       });
@@ -789,43 +799,48 @@ export default function AdminDashboard() {
       const data = await response.json();
 
       if (response.status === 401) {
+        setBulkStatusConfirm(null);
         logout();
         return;
       }
 
-      if (!response.ok || !data.success) {
-        alert(data.message || "Failed to update volunteer statuses.");
-        return;
+      if (!response.ok || !data?.success) {
+        throw new Error(
+          data?.message || "Failed to update volunteer statuses.",
+        );
       }
 
-      // Update current table immediately
+      // Close confirmation and clear selection
+      setBulkStatusConfirm(null);
+      setSelectedVolunteers([]);
+
+      // Update the visible rows immediately
       setVolunteers((prev) =>
         prev.map((volunteer) =>
-          selectedVolunteers.includes(volunteer._id)
-            ? {
-                ...volunteer,
-                status,
-              }
+          selectedIds.includes(volunteer._id)
+            ? { ...volunteer, status }
             : volunteer,
         ),
       );
 
-      // Clear selection
-      setSelectedVolunteers([]);
+      // Refresh the currently selected volunteer list
+      await loadVolunteers(volunteerType, page, limit);
 
-      // Refresh data
-      await loadVolunteers();
+      const statusLabel =
+        {
+          approved: "approved",
+          rejected: "rejected",
+          pending: "moved to pending",
+        }[status] || status;
 
-      if (sectionVolunteerType) {
-        await loadVolunteerSection(
-          sectionVolunteerType,
-          sectionPage,
-          sectionLimit,
-        );
-      }
+      showToast(
+        `${count} volunteer${count === 1 ? "" : "s"} ${statusLabel} successfully!`,
+        4500,
+      );
     } catch (error) {
       console.error("Bulk status update error:", error);
-      alert("Something went wrong while updating statuses.");
+      setBulkStatusConfirm(null);
+      showToast(error.message || "Something went wrong. Please try again.");
     } finally {
       setBulkStatusLoading(false);
     }
@@ -2017,14 +2032,19 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="volunteerFilterGrid">
-                  <input
-                    type="text"
-                    placeholder="Search Area"
-                    value={filters.area}
-                    onChange={(e) =>
-                      setFilters({ ...filters, area: e.target.value })
-                    }
-                  />
+                
+                  <select value={filters.area} onChange={(e)=>
+                     setFilters({ ...filters, area: e.target.value })
+                  }>
+                  <option value="">Choose</option>
+                      {AREAS_OF_INTEREST.map((a) => (
+                        <option key={a} value={a}>
+                          {a}
+                        </option>
+                      ))}
+                  </select>
+
+
                   <select
                     value={filters.status}
                     onChange={(e) =>
@@ -4217,6 +4237,90 @@ export default function AdminDashboard() {
                   onClick={handleDeleteVolunteer}
                 >
                   {deleteLoading ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* BULK STATUS CONFIRMATION MODAL */}
+        {bulkStatusConfirm && (
+          <div
+            className="bulkConfirmOverlay"
+            onClick={() => {
+              if (!bulkStatusLoading) setBulkStatusConfirm(null);
+            }}
+          >
+            <div
+              className={`bulkConfirmModal bulkConfirm-${bulkStatusConfirm.status}`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="bulkConfirmTitle"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="bulkConfirmIcon">
+                {bulkStatusConfirm.status === "approved" ? (
+                  <CircleCheck size={32} />
+                ) : bulkStatusConfirm.status === "rejected" ? (
+                  <CircleX size={32} />
+                ) : (
+                  <Clock3 size={32} />
+                )}
+              </div>
+
+              <h2 id="bulkConfirmTitle">
+                {bulkStatusConfirm.status === "approved"
+                  ? "Approve Volunteers?"
+                  : bulkStatusConfirm.status === "rejected"
+                    ? "Reject Volunteers?"
+                    : "Move to Pending?"}
+              </h2>
+
+              <p>
+                Are you sure you want to{" "}
+                <strong>
+                  {bulkStatusConfirm.status === "approved"
+                    ? "approve"
+                    : bulkStatusConfirm.status === "rejected"
+                      ? "reject"
+                      : "move to pending"}
+                </strong>{" "}
+                <strong>{bulkStatusConfirm.count}</strong> selected volunteer
+                {bulkStatusConfirm.count === 1 ? "" : "s"}?
+              </p>
+
+              <div className="bulkConfirmNote">
+                <Users size={18} />
+                <span>Only the selected volunteers will be updated.</span>
+              </div>
+
+              <div className="bulkConfirmActions">
+                <button
+                  type="button"
+                  className="bulkConfirmCancel"
+                  disabled={bulkStatusLoading}
+                  onClick={() => setBulkStatusConfirm(null)}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="bulkConfirmSubmit"
+                  disabled={bulkStatusLoading}
+                  onClick={confirmBulkChangeStatus}
+                >
+                  {bulkStatusLoading ? (
+                    <>
+                      <Loader2 size={17} className="bulkConfirmSpinner" />
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={17} />
+                      Yes, Confirm
+                    </>
+                  )}
                 </button>
               </div>
             </div>
