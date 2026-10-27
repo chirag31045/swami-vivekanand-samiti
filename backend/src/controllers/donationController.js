@@ -1,5 +1,4 @@
 import crypto from "crypto";
-
 import Donation from "../models/donationModel.js";
 import DonationSettings from "../models/donationSettingsModel.js";
 import {
@@ -10,6 +9,7 @@ import {
 import {
   sendDonationReceiptEmail,
 } from "../services/donationMailService.js";
+import { createAdminNotification } from "../services/adminNotificationService.js";
 
 const getSettings = async () => {
   let settings =
@@ -521,6 +521,13 @@ export async function verifyDonationPayment(
       : new Date();
 
     await donation.save();
+    await createAdminNotification({
+      eventKey: `payment:${paymentId || donation.razorpayOrderId}`,
+      type: "payment",
+      title: "New donation received",
+      message: `${donation.donorName} donated ₹${Number(donation.amount).toLocaleString("en-IN")} for ${donation.purpose || "General Seva"}.`,
+      entityId: String(donation._id),
+    });
 
     const emailResult =
       await sendReceiptOnce(

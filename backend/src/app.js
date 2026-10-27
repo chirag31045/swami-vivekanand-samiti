@@ -19,9 +19,13 @@ import donationWebhookRoutes from "./routes/donationWebhookRoutes.js";
 import donationSettingsRoutes from "./routes/donationSettingsRoutes.js";
 import mobileAuthRoutes from "./routes/mobileAuthRoutes.js";
 import appReleaseRoutes from "./routes/appReleaseRoutes.js";
+import { registerPushToken } from "./controllers/pushTokenController.js";
+import { requireAdmin } from "./middleware/auth.js";
 import { requireVolunteer } from "./middleware/auth.js";
 import { getMyProfile, updateMyProfile, getMyDonations, uploadMyPhoto, } from "./controllers/volunteerSelfController.js";
 import { imageUpload } from "./middleware/imageUpload.js";
+import adminNotificationRoutes from "./routes/adminNotificationRoutes.js"
+
 
 import { notFound, errorHandler } from "./middleware/error.js";
 
@@ -145,6 +149,7 @@ app.use("/api/donation-settings", donationSettingsRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/mobile-auth", mobileAuthRoutes);
 app.use("/api/app-releases", appReleaseRoutes);
+app.post("/api/push-tokens", requireAdmin, registerPushToken);
 app.get("/api/volunteer/me", requireVolunteer, getMyProfile);
 app.patch("/api/volunteer/me", requireVolunteer, updateMyProfile);
 app.get("/api/donations/my", requireVolunteer, getMyDonations);
@@ -154,6 +159,8 @@ app.post(
   imageUpload.single("image"),
   uploadMyPhoto
 );
+
+app.use("/api/admin/notifications", adminNotificationRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

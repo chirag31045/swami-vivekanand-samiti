@@ -1,6 +1,7 @@
 import Volunteer from "../models/Volunteer.js";
 import XLSX from "xlsx";
 import bcrypt from "bcryptjs";
+import { createAdminNotification } from "../services/adminNotificationService.js";
 
 /* =====================================================
    CREATE VOLUNTEER
@@ -20,6 +21,13 @@ export async function createVolunteer(req, res) {
       name: String(name).trim(), phone: String(phone).trim(), email: String(email || "").trim(),
       city: String(city || "").trim(), area: String(area || "").trim(), message: String(message || "").trim(),
       passwordHash, applicationNo, status: "pending",
+    });
+    await createAdminNotification({
+      eventKey: `volunteer:${volunteer._id}:created`,
+      type: "volunteer",
+      title: "New volunteer application",
+      message: `${volunteer.name} submitted a volunteer application${volunteer.phone ? ` (${volunteer.phone})` : ""}.`,
+      entityId: String(volunteer._id),
     });
     const item = volunteer.toObject();
     delete item.passwordHash;

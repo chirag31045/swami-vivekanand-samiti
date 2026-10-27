@@ -34,6 +34,7 @@ import {
   UserPlus,
   UserRound,
   EyeOff,
+  Bell,
 } from "lucide-react";
 
 import Pagination from "../pages/Pagination";
@@ -42,6 +43,7 @@ import { useSiteSettings, getAssetUrl } from "../pages/siteSettingsContext";
 import DonationAdmin from "./DonationAdmin";
 import AdminRegistration from "./AdminRegistration";
 import ApkManager from "./ApkManager";
+import { registerAdminWebPush } from "../data/firebasePush";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -85,7 +87,18 @@ export default function AdminDashboard() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminProfile, setAdminProfile] = useState(null);
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [activeSection, setActiveSection] = useState(
+    () =>
+      new URLSearchParams(window.location.search).get("section") || "dashboard",
+  );
+
+  const [notifications, setNotifications] = useState([]);
+  const [notificationPage, setNotificationPage] = useState(1);
+  const [notificationLimit, setNotificationLimit] = useState(10);
+  const [notificationTotal, setNotificationTotal] = useState(0);
+  const [notificationPages, setNotificationPages] = useState(1);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [notificationLoading, setNotificationLoading] = useState(false);
 
   // Volunteers State
   const [volunteers, setVolunteers] = useState([]);
@@ -321,6 +334,86 @@ export default function AdminDashboard() {
       case "pending":
       default:
         return <Clock3 size={20} />;
+    }
+  };
+
+  const loadNotifications = async (
+    nextPage = notificationPage,
+    nextLimit = notificationLimit,
+  ) => {
+    if (!token) return;
+    setNotificationLoading(true);
+    try {
+      const response = await fetch(
+        `${API}/admin/notifications?page=${nextPage}&limit=${nextLimit}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (response.status === 401) {
+        logout();
+        return;
+      }
+      const data = await response.json();
+      if (response.ok && data?.success) {
+        // Accept the current backend response and common wrapped response shapes.
+        const payload =
+          data.data && !Array.isArray(data.data) ? data.data : data;
+        const items = Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(payload.items)
+            ? payload.items
+            : Array.isArray(data.data)
+              ? data.data
+              : [];
+        const pagination = data.pagination || payload.pagination || {};
+        const unreadCount =
+          data.unreadCount ?? payload.unreadCount ?? data.unread ?? 0;
+
+        setNotifications(items);
+
+        setNotificationTotal(Number(pagination.total ?? data.totalItems ?? 0));
+
+        setNotificationPages(
+          Number(pagination.totalPages ?? data.totalPages ?? 1),
+        );
+
+        setUnreadNotifications(Number(unreadCount ?? 0));
+      }
+    } catch (error) {
+      console.error("Notification loading error:", error);
+    } finally {
+      setNotificationLoading(false);
+    }
+  };
+
+  const openNotification = async (item) => {
+    try {
+      if (!item.readAt) {
+        await fetch(`${API}/admin/notifications/${item._id}/read`, {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch (error) {
+      console.error("Mark notification read error:", error);
+    }
+    if (item.type === "payment") openSection("donations");
+    else {
+      openSection("new");
+      setVolunteerType("new");
+      setPage(1);
+    }
+    loadNotifications(notificationPage, notificationLimit);
+  };
+
+  const markAllNotificationsRead = async () => {
+    try {
+      const response = await fetch(`${API}/admin/notifications/read-all`, {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) loadNotifications(notificationPage, notificationLimit);
+    } catch (error) {
+      console.error("Mark all read error:", error);
     }
   };
 
@@ -580,6 +673,13 @@ export default function AdminDashboard() {
     loadGallery();
     loadDonationStats();
     loadAdminProfile();
+    loadNotifications(1, 10);
+    registerAdminWebPush(API, token);
+    const notificationTimer = window.setInterval(
+      () => loadNotifications(1, 10),
+      30000,
+    );
+    return () => window.clearInterval(notificationTimer);
   }, []);
 
   useEffect(() => {
@@ -591,6 +691,11 @@ export default function AdminDashboard() {
   /* Section & Tab Handlers */
   const openSection = (section) => {
     setActiveSection(section);
+    const url = new URL(window.location.href);
+    if (section === "notifications")
+      url.searchParams.set("section", "notifications");
+    else url.searchParams.delete("section");
+    window.history.replaceState({}, "", url.toString());
     setProfileOpen(false);
     setSidebarOpen(false);
 
@@ -1479,6 +1584,7 @@ export default function AdminDashboard() {
     { id: "activities", label: "Activities", icon: FileText },
     { id: "websiteSettings", label: "Website Settings", icon: Settings },
     { id: "donations", label: "Donations", icon: WalletCards },
+    { id: "notifications", label: "Notifications", icon: Bell },
     { id: "adminRegistration", label: "Admin Registration", icon: UserPlus },
     { id: "apkManager", label: "Android APKs", icon: Download },
   ];
@@ -1592,6 +1698,23 @@ export default function AdminDashboard() {
 
           <div className="adminHeaderRight">
             <button
+              type="button"
+              className="adminNotificationHeaderButton"
+              onClick={() => {
+                openSection("notifications");
+                loadNotifications(1, notificationLimit);
+              }}
+              title="Notifications"
+              aria-label="Open notifications"
+            >
+              <Bell size={20} />
+              {unreadNotifications > 0 && (
+                <span className="adminNotificationBadge">
+                  {unreadNotifications > 99 ? "99+" : unreadNotifications}
+                </span>
+              )}
+            </button>
+            <button
               className="adminThemeButton"
               onClick={() => setDarkMode(!darkMode)}
               title="Toggle Theme"
@@ -1665,6 +1788,101 @@ export default function AdminDashboard() {
 
         <div className="adminContent">
           {/* DASHBOARD CARDS */}
+          {activeSection === "notifications" && (
+            <section className="adminPanel adminNotificationsPanel">
+              <div className="adminPanelHeader adminNotificationsHeader">
+                <div>
+                  <h2>Notification Board</h2>
+                  <p>Volunteer applications and donations appear here.</p>
+                </div>
+                <div className="adminNotificationActions">
+                  <button
+                    type="button"
+                    className="adminRefreshButton"
+                    onClick={() =>
+                      loadNotifications(notificationPage, notificationLimit)
+                    }
+                  >
+                    <RefreshCw size={15} /> Refresh
+                  </button>
+                  <button
+                    type="button"
+                    className="adminRefreshButton"
+                    onClick={markAllNotificationsRead}
+                  >
+                    Mark all read
+                  </button>
+                </div>
+              </div>
+              {notificationLoading ? (
+                <div className="adminNotificationEmpty">
+                  Loading notifications…
+                </div>
+              ) : notifications.length === 0 ? (
+                <div className="adminNotificationEmpty">
+                  <Bell size={26} />
+                  <strong>No notifications yet</strong>
+                  <span>
+                    New volunteer applications and donations will show here.
+                  </span>
+                </div>
+              ) : (
+                <div className="adminNotificationList">
+                  {notifications.map((item) => (
+                    <button
+                      type="button"
+                      key={item._id}
+                      className={`adminNotificationRow ${item.readAt ? "isRead" : "isUnread"}`}
+                      onClick={() => openNotification(item)}
+                    >
+                      <span
+                        className={`adminNotificationTypeIcon ${item.type === "payment" ? "paymentType" : "volunteerType"}`}
+                      >
+                        {item.type === "payment" ? (
+                          <HeartHandshake size={20} />
+                        ) : (
+                          <Users size={20} />
+                        )}
+                      </span>
+                      <span className="adminNotificationCopy">
+                        <strong>{item.title}</strong>
+                        <span>{item.message}</span>
+                        <small>
+                          {new Date(item.createdAt).toLocaleString("en-IN", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </small>
+                      </span>
+                      {!item.readAt && (
+                        <span
+                          className="adminNotificationUnreadDot"
+                          aria-label="Unread"
+                        />
+                      )}
+                      <span className="adminNotificationView">View →</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <Pagination
+                currentPage={notificationPage}
+                totalPages={notificationPages}
+                totalItems={notificationTotal}
+                itemsPerPage={notificationLimit}
+                onPageChange={(next) => {
+                  setNotificationPage(next);
+                  loadNotifications(next, notificationLimit);
+                }}
+                onItemsPerPageChange={(next) => {
+                  setNotificationLimit(next);
+                  setNotificationPage(1);
+                  loadNotifications(1, next);
+                }}
+              />
+            </section>
+          )}
+
           {activeSection === "dashboard" && (
             <>
               <div className="adminWelcome">
@@ -3705,17 +3923,35 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div className="addVolunteerField addVolunteerFull">
-                    <label>{editingVolunteer ? "Set / Reset Password (leave blank to keep current)" : "Password *"}</label>
+                    <label>
+                      {editingVolunteer
+                        ? "Set / Reset Password (leave blank to keep current)"
+                        : "Password *"}
+                    </label>
                     <input
                       type="password"
                       autoComplete="new-password"
                       minLength={8}
                       required={!editingVolunteer}
-                      placeholder={editingVolunteer ? "Leave blank to keep current password" : "At least 8 characters"}
+                      placeholder={
+                        editingVolunteer
+                          ? "Leave blank to keep current password"
+                          : "At least 8 characters"
+                      }
                       value={volunteerForm.password || ""}
-                      onChange={(e) => setVolunteerForm({ ...volunteerForm, password: e.target.value })}
+                      onChange={(e) =>
+                        setVolunteerForm({
+                          ...volunteerForm,
+                          password: e.target.value,
+                        })
+                      }
                     />
-                    {editingVolunteer && <small>Current password is never displayed. Enter a new one only if you want to reset it.</small>}
+                    {editingVolunteer && (
+                      <small>
+                        Current password is never displayed. Enter a new one
+                        only if you want to reset it.
+                      </small>
+                    )}
                   </div>
                 </div>
 

@@ -290,7 +290,9 @@ a {
 }
 /* Services / Activities cards hover */
 .cards .card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .cards .card:hover {
@@ -646,7 +648,9 @@ a {
   border-radius: 16px;
   background: #fff;
   border: 1px solid var(--line);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   cursor: pointer;
 }
 
@@ -1039,7 +1043,6 @@ html[data-theme="dark"] .form textarea {
   border-color: #55463a;
 }
 
-
 /* =========================================================
    PRIVACY POLICY
 ========================================================= */
@@ -1372,7 +1375,6 @@ html[data-theme="dark"] .privacyCard p {
 .adminProfileButton:hover .adminProfileImage {
   transform: scale(1.04);
 }
-
 
 .adminProfileDropdown {
   position: absolute;
@@ -2325,12 +2327,7 @@ html[data-theme="dark"] .privacyCard p {
       rgba(153, 27, 30, 0.07),
       transparent 35%
     ),
-    linear-gradient(
-      135deg,
-      #fffaf5 0%,
-      #ffffff 52%,
-      #f8eee3 100%
-    );
+    linear-gradient(135deg, #fffaf5 0%, #ffffff 52%, #f8eee3 100%);
 
   color: #172033;
 }
@@ -2355,12 +2352,10 @@ html[data-theme="dark"] .privacyCard p {
 
   border-bottom: 1px solid #eadfd3;
 
-  box-shadow:
-    0 4px 18px rgba(53, 33, 20, 0.05);
+  box-shadow: 0 4px 18px rgba(53, 33, 20, 0.05);
 
   flex-shrink: 0;
 }
-
 
 /* =========================================================
    BRAND
@@ -2375,7 +2370,6 @@ html[data-theme="dark"] .privacyCard p {
   min-width: 0;
 }
 
-
 .adminLoginBrand img {
   width: 48px;
   height: 48px;
@@ -2385,7 +2379,6 @@ html[data-theme="dark"] .privacyCard p {
   flex-shrink: 0;
 }
 
-
 .adminLoginBrand > div {
   min-width: 0;
 
@@ -2394,7 +2387,6 @@ html[data-theme="dark"] .privacyCard p {
 
   gap: 3px;
 }
-
 
 .adminLoginBrand strong {
   display: block;
@@ -2415,7 +2407,6 @@ html[data-theme="dark"] .privacyCard p {
   line-height: 1.2;
 }
 
-
 .adminLoginBrand span {
   color: #6b7280;
 
@@ -2425,7 +2416,6 @@ html[data-theme="dark"] .privacyCard p {
 
   line-height: 1.2;
 }
-
 
 /* =========================================================
    THEME BUTTON
@@ -2461,7 +2451,6 @@ html[data-theme="dark"] .privacyCard p {
     transform 0.15s ease;
 }
 
-
 .adminLoginTheme:hover {
   background: #f8fafc;
 
@@ -2471,7 +2460,6 @@ html[data-theme="dark"] .privacyCard p {
 
   transform: translateY(-1px);
 }
-
 
 /* =========================================================
    CENTER AREA
@@ -2512,31 +2500,25 @@ html[data-theme="dark"] .privacyCard p {
   border-radius: 20px;
 
   box-shadow:
-    0 24px 60px rgba(72, 43, 22, 0.10),
+    0 24px 60px rgba(72, 43, 22, 0.1),
     0 4px 12px rgba(72, 43, 22, 0.05);
 
   animation: adminLoginCardIn 0.35s ease-out;
 }
 
-
 @keyframes adminLoginCardIn {
   from {
     opacity: 0;
 
-    transform:
-      translateY(12px)
-      scale(0.985);
+    transform: translateY(12px) scale(0.985);
   }
 
   to {
     opacity: 1;
 
-    transform:
-      translateY(0)
-      scale(1);
+    transform: translateY(0) scale(1);
   }
 }
-
 
 /* =========================================================
    LOGIN ICON
@@ -2554,19 +2536,12 @@ html[data-theme="dark"] .privacyCard p {
 
   border-radius: 17px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #fff0f0,
-      #ffe4e4
-    );
+  background: linear-gradient(135deg, #fff0f0, #ffe4e4);
 
   color: #b91c1c;
 
-  box-shadow:
-    0 8px 20px rgba(185, 28, 28, 0.08);
+  box-shadow: 0 8px 20px rgba(185, 28, 28, 0.08);
 }
-
 
 /* =========================================================
    TITLE
@@ -2587,7 +2562,6 @@ html[data-theme="dark"] .privacyCard p {
   letter-spacing: -0.3px;
 }
 
-
 /* =========================================================
    DESCRIPTION
 ========================================================= */
@@ -2604,7 +2578,6 @@ html[data-theme="dark"] .privacyCard p {
   line-height: 1.6;
 }
 
-
 /* =========================================================
    FORM
 ========================================================= */
@@ -2615,7 +2588,6 @@ html[data-theme="dark"] .privacyCard p {
 
   gap: 18px;
 }
-
 
 /* =========================================================
    LABEL
@@ -2633,7 +2605,6 @@ html[data-theme="dark"] .privacyCard p {
 
   font-weight: 650;
 }
-
 
 /* =========================================================
    INPUT
@@ -2665,24 +2636,19 @@ html[data-theme="dark"] .privacyCard p {
     background 0.2s ease;
 }
 
-
 .adminLoginCard input:hover {
   border-color: #b9c0ca;
 }
 
-
 .adminLoginCard input:focus {
   border-color: #991b1e;
 
-  box-shadow:
-    0 0 0 3px rgba(153, 27, 30, 0.10);
+  box-shadow: 0 0 0 3px rgba(153, 27, 30, 0.1);
 }
-
 
 .adminLoginCard input::placeholder {
   color: #9ca3af;
 }
-
 
 /* =========================================================
    PASSWORD
@@ -2696,11 +2662,9 @@ html[data-theme="dark"] .privacyCard p {
   display: block;
 }
 
-
 .adminLoginPassword input {
   padding-right: 48px;
 }
-
 
 .adminLoginPassword > button {
   position: absolute;
@@ -2733,13 +2697,11 @@ html[data-theme="dark"] .privacyCard p {
     color 0.2s ease;
 }
 
-
 .adminLoginPassword > button:hover {
   background: #f3f4f6;
 
   color: #991b1e;
 }
-
 
 /* =========================================================
    ERROR
@@ -2767,7 +2729,6 @@ html[data-theme="dark"] .privacyCard p {
   text-align: center;
 }
 
-
 /* =========================================================
    LOGIN BUTTON
 ========================================================= */
@@ -2788,12 +2749,7 @@ html[data-theme="dark"] .privacyCard p {
 
   border-radius: 11px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #b51e26,
-      #991b1e
-    );
+  background: linear-gradient(135deg, #b51e26, #991b1e);
 
   color: #ffffff;
 
@@ -2803,8 +2759,7 @@ html[data-theme="dark"] .privacyCard p {
 
   cursor: pointer;
 
-  box-shadow:
-    0 10px 22px rgba(153, 27, 30, 0.18);
+  box-shadow: 0 10px 22px rgba(153, 27, 30, 0.18);
 
   transition:
     transform 0.15s ease,
@@ -2812,26 +2767,17 @@ html[data-theme="dark"] .privacyCard p {
     background 0.2s ease;
 }
 
-
 .adminLoginSubmit:hover {
-  background:
-    linear-gradient(
-      135deg,
-      #a51b22,
-      #7f1619
-    );
+  background: linear-gradient(135deg, #a51b22, #7f1619);
 
   transform: translateY(-1px);
 
-  box-shadow:
-    0 14px 28px rgba(153, 27, 30, 0.24);
+  box-shadow: 0 14px 28px rgba(153, 27, 30, 0.24);
 }
-
 
 .adminLoginSubmit:active {
   transform: translateY(0);
 }
-
 
 .adminLoginSubmit:disabled {
   opacity: 0.65;
@@ -2842,7 +2788,6 @@ html[data-theme="dark"] .privacyCard p {
 
   box-shadow: none;
 }
-
 
 /* =========================================================
    13. RESPONSIVE QUERIES
@@ -4076,8 +4021,7 @@ html[data-theme="dark"] .privacyCard p {
   transition: transform 0.25s ease;
 }
 
-.adminGalleryItem:hover
-.adminGalleryImageWrap img {
+.adminGalleryItem:hover .adminGalleryImageWrap img {
   transform: scale(1.04);
 }
 
@@ -4155,7 +4099,6 @@ html[data-theme="dark"] .privacyCard p {
   cursor: not-allowed;
 }
 
-
 /* =========================================================
    GALLERY MODAL
 ========================================================= */
@@ -4192,8 +4135,7 @@ html[data-theme="dark"] .privacyCard p {
 
   overflow: hidden;
 
-  box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
 }
 
 .galleryModalHeader {
@@ -4363,13 +4305,11 @@ html[data-theme="dark"] .privacyCard p {
   cursor: not-allowed;
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 600px) {
-
   .adminGalleryImageWrap {
     height: 170px;
   }
@@ -4509,7 +4449,6 @@ html[data-theme="dark"] .privacyCard p {
   cursor: pointer;
   font-weight: 600;
 }
-
 
 /* =========================================================
    GALLERY DELETE POPUP
@@ -4666,7 +4605,7 @@ html[data-theme="dark"] .privacyCard p {
 }
 
 .adminActivityCard {
-   overflow: hidden;
+  overflow: hidden;
 
   background: var(--admin-surface);
   color: var(--admin-text);
@@ -4814,8 +4753,7 @@ html[data-theme="dark"] .privacyCard p {
   /* No modal scrollbar */
   overflow: hidden !important;
 
-  box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.30);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
 }
 
 /* =========================================================
@@ -4994,8 +4932,7 @@ html[data-theme="dark"] .privacyCard p {
 .activityField textarea:focus {
   border-color: var(--admin-primary);
 
-  box-shadow:
-    0 0 0 3px rgba(165, 30, 35, 0.08);
+  box-shadow: 0 0 0 3px rgba(165, 30, 35, 0.08);
 }
 
 /* =========================================================
@@ -5177,7 +5114,6 @@ html[data-theme="dark"] .privacyCard p {
   overflow: hidden;
   border-radius: 12px;
   background: var(--admin-bg);
-
 }
 
 .activityViewImage img {
@@ -5248,8 +5184,7 @@ html[data-theme="dark"] .privacyCard p {
   text-align: center;
   position: relative;
   overflow: visible !important;
-  box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.30);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
 }
 
 .activityDeleteClose {
@@ -5525,11 +5460,10 @@ html[data-theme="dark"] .privacyCard p {
   align-items: center !important;
   justify-content: center !important;
   padding: 16px !important;
-  background: rgba(15, 23, 42, 0.70) !important;
+  background: rgba(15, 23, 42, 0.7) !important;
   backdrop-filter: blur(7px);
   overflow: hidden !important;
 }
-
 
 /* =========================================================
    VIEW POPUP
@@ -5568,12 +5502,11 @@ html[data-theme="dark"] .privacyCard p {
   display: flex !important;
   flex-direction: column !important;
 
-overflow-y: auto !important;
-overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.30);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
 }
-
 
 /* ================= HEADER ================= */
 
@@ -5630,7 +5563,6 @@ overflow-x: hidden !important;
   cursor: pointer;
 }
 
-
 /* ================= BODY ================= */
 
 .activityViewBody {
@@ -5639,7 +5571,6 @@ overflow-x: hidden !important;
   align-items: center;
   gap: 42px;
 }
-
 
 /* ================= CONTENT ================= */
 
@@ -5651,7 +5582,6 @@ overflow-x: hidden !important;
   flex-direction: column;
   gap: 14px;
 }
-
 
 /* LANGUAGE CARD */
 
@@ -5719,7 +5649,6 @@ overflow-x: hidden !important;
   overflow: visible !important;
 }
 
-
 /* ================= IMAGE ================= */
 
 .activityViewImage {
@@ -5739,7 +5668,7 @@ overflow-x: hidden !important;
 
   border: 0 !important;
 
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
 }
 
 .activityViewImage img {
@@ -5752,7 +5681,6 @@ overflow-x: hidden !important;
 
   object-position: center !important;
 }
-
 
 /* ================= FOOTER ================= */
 
@@ -5794,7 +5722,6 @@ overflow-x: hidden !important;
   cursor: pointer;
 }
 
-
 /* =========================================================
    DELETE POPUP
    ========================================================= */
@@ -5818,9 +5745,8 @@ overflow-x: hidden !important;
 
   overflow: visible !important;
 
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.30);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
 }
-
 
 /* Close */
 .activityDeleteClose {
@@ -5848,7 +5774,6 @@ overflow-x: hidden !important;
 .activityDeleteClose:hover {
   background: #e2e8f0;
 }
-
 
 /* Delete icon */
 .activityDeleteIcon {
@@ -5895,7 +5820,6 @@ overflow-x: hidden !important;
   color: #94a3b8;
 }
 
-
 /* Buttons */
 .activityDeleteActions {
   display: flex;
@@ -5941,7 +5865,6 @@ overflow-x: hidden !important;
   background: #b91c1c;
 }
 
-
 /* =========================================================
    DARK MODE
    ========================================================= */
@@ -5980,7 +5903,6 @@ overflow-x: hidden !important;
   background: #1f2937;
   color: #f8fafc;
 }
-
 
 /* =========================================================
    SMALL SCREEN
@@ -6070,7 +5992,6 @@ overflow-x: hidden !important;
   overflow: hidden !important;
 }
 
-
 .activityViewModal {
   width: min(980px, calc(100vw - 40px)) !important;
 
@@ -6092,7 +6013,6 @@ overflow-x: hidden !important;
 
   transform: none !important;
 }
-
 
 /* ================= HEADER ================= */
 
@@ -6131,7 +6051,6 @@ overflow-x: hidden !important;
   border-radius: 8px !important;
 }
 
-
 /* ================= BODY ================= */
 
 .activityViewBody {
@@ -6155,7 +6074,6 @@ overflow-x: hidden !important;
 
   overflow: visible !important;
 }
-
 
 /* ================= CONTENT ================= */
 
@@ -6228,7 +6146,6 @@ overflow-x: hidden !important;
   overflow: visible !important;
 }
 
-
 /* ================= IMAGE ================= */
 
 .activityViewImage {
@@ -6260,7 +6177,6 @@ overflow-x: hidden !important;
 
   object-position: center !important;
 }
-
 
 /* ================= FOOTER ================= */
 
@@ -6302,13 +6218,11 @@ overflow-x: hidden !important;
   font-weight: 700 !important;
 }
 
-
 /* =========================================================
    LAPTOP 1366x768 / SIMILAR
 ========================================================= */
 
 @media (max-height: 800px) and (min-width: 851px) {
-
   .activityViewModal {
     width: min(960px, calc(100vw - 40px)) !important;
 
@@ -6356,7 +6270,6 @@ overflow-x: hidden !important;
   }
 }
 
-
 /* =========================================================
    DARK MODE
 ========================================================= */
@@ -6394,13 +6307,11 @@ overflow-x: hidden !important;
   border-color: #374151 !important;
 }
 
-
 /* =========================================================
    MOBILE
 ========================================================= */
 
 @media (max-width: 850px) {
-
   .activityViewModal {
     width: calc(100vw - 20px) !important;
 
@@ -6478,14 +6389,12 @@ overflow-x: hidden !important;
   margin-bottom: 15px;
 }
 
-
 /* GRID */
 
 .siteSettingsGrid {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 14px;
 
@@ -6522,16 +6431,13 @@ overflow-x: hidden !important;
 
   padding: 10px 11px;
 
-  border: 1px solid
-    var(--admin-border);
+  border: 1px solid var(--admin-border);
 
   border-radius: 8px;
 
-  background:
-    var(--admin-surface);
+  background: var(--admin-surface);
 
-  color:
-    var(--admin-text);
+  color: var(--admin-text);
 
   outline: none;
 
@@ -6554,22 +6460,17 @@ overflow-x: hidden !important;
 
 .siteSettingsField input:focus,
 .siteSettingsField textarea:focus {
-  border-color:
-    var(--admin-primary);
+  border-color: var(--admin-primary);
 
-  box-shadow:
-    0 0 0 3px
-    rgba(165, 30, 35, 0.08);
+  box-shadow: 0 0 0 3px rgba(165, 30, 35, 0.08);
 }
-
 
 /* MEDIA */
 
 .siteSettingsMediaGrid {
   display: grid;
 
-  grid-template-columns:
-    1fr 1fr;
+  grid-template-columns: 1fr 1fr;
 
   gap: 16px;
 
@@ -6579,11 +6480,9 @@ overflow-x: hidden !important;
 .siteSettingsMediaCard {
   padding: 15px;
 
-  background:
-    var(--admin-bg);
+  background: var(--admin-bg);
 
-  border: 1px solid
-    var(--admin-border);
+  border: 1px solid var(--admin-border);
 
   border-radius: 12px;
 }
@@ -6593,8 +6492,7 @@ overflow-x: hidden !important;
 
   margin-bottom: 9px;
 
-  color:
-    var(--admin-text);
+  color: var(--admin-text);
 
   font-size: 12px;
 
@@ -6611,8 +6509,7 @@ overflow-x: hidden !important;
 
   overflow: hidden;
 
-  border: 1px solid
-    var(--admin-border);
+  border: 1px solid var(--admin-border);
 
   border-radius: 10px;
 
@@ -6661,16 +6558,13 @@ overflow-x: hidden !important;
 
   padding: 0 13px;
 
-  border: 1px solid
-    var(--admin-border);
+  border: 1px solid var(--admin-border);
 
   border-radius: 8px;
 
-  background:
-    var(--admin-surface);
+  background: var(--admin-surface);
 
-  color:
-    var(--admin-text);
+  color: var(--admin-text);
 
   font-size: 12px;
 
@@ -6680,17 +6574,14 @@ overflow-x: hidden !important;
 }
 
 .siteSettingsFileButton:hover {
-  border-color:
-    var(--admin-primary);
+  border-color: var(--admin-primary);
 
-  color:
-    var(--admin-primary);
+  color: var(--admin-primary);
 }
 
 .siteSettingsFileButton input {
   display: none;
 }
-
 
 /* LEADERS */
 
@@ -6705,11 +6596,9 @@ overflow-x: hidden !important;
 .siteLeaderCard {
   padding: 14px;
 
-  background:
-    var(--admin-bg);
+  background: var(--admin-bg);
 
-  border: 1px solid
-    var(--admin-border);
+  border: 1px solid var(--admin-border);
 
   border-radius: 12px;
 }
@@ -6748,31 +6637,25 @@ overflow-x: hidden !important;
   background: #fecaca;
 }
 
-
 /* =========================================================
    DARK MODE
 ========================================================= */
 
-.adminDashboard.adminDark
-  .siteSettingsMediaCard,
-.adminDashboard.adminDark
-  .siteLeaderCard {
+.adminDashboard.adminDark .siteSettingsMediaCard,
+.adminDashboard.adminDark .siteLeaderCard {
   background: #111827;
 
   border-color: #374151;
 }
 
-.adminDashboard.adminDark
-  .siteSettingsPreview {
+.adminDashboard.adminDark .siteSettingsPreview {
   background: #1f2937;
 
   border-color: #374151;
 }
 
-.adminDashboard.adminDark
-  .siteSettingsField input,
-.adminDashboard.adminDark
-  .siteSettingsField textarea {
+.adminDashboard.adminDark .siteSettingsField input,
+.adminDashboard.adminDark .siteSettingsField textarea {
   background: #1f2937;
 
   color: #f8fafc;
@@ -6780,8 +6663,7 @@ overflow-x: hidden !important;
   border-color: #374151;
 }
 
-.adminDashboard.adminDark
-  .siteSettingsFileButton {
+.adminDashboard.adminDark .siteSettingsFileButton {
   background: #1f2937;
 
   color: #f8fafc;
@@ -6789,15 +6671,11 @@ overflow-x: hidden !important;
   border-color: #374151;
 }
 
-.adminDashboard.adminDark
-  .siteSettingsFileButton:hover {
-  border-color:
-    var(--admin-primary);
+.adminDashboard.adminDark .siteSettingsFileButton:hover {
+  border-color: var(--admin-primary);
 
-  color:
-    var(--admin-primary);
+  color: var(--admin-primary);
 }
-
 
 /* =========================================================
    RESPONSIVE
@@ -6845,7 +6723,6 @@ overflow-x: hidden !important;
   min-height: 44px;
   padding: 10px 14px;
 }
-
 
 /* =========================================================
    FINAL RESPONSIVE + DARK MODE FIXES
@@ -7298,7 +7175,6 @@ overflow-x: hidden !important;
   box-sizing: border-box;
 }
 
-
 /* ---------- BACK BUTTON ---------- */
 
 .activityBackBtn {
@@ -7332,7 +7208,6 @@ overflow-x: hidden !important;
   display: block;
   flex-shrink: 0;
 }
-
 
 /* =========================================================
    ACTIVITY DETAIL - DARK MODE
@@ -7371,7 +7246,6 @@ html[data-theme="dark"] .activityBackBtn {
 html[data-theme="dark"] .activityBackBtn:hover {
   background: #d13a40;
 }
-
 
 /* =========================================================
    MOBILE - ACTIVITY DETAIL
@@ -7420,7 +7294,6 @@ html[data-theme="dark"] .activityBackBtn:hover {
     line-height: 1.75;
   }
 }
-
 
 /* =========================================================
    MOBILE SMALL - 600px
@@ -7480,7 +7353,6 @@ html[data-theme="dark"] .activityBackBtn:hover {
   }
 }
 
-
 /* =========================================================
    VERY SMALL MOBILE - 430px
 ========================================================= */
@@ -7515,7 +7387,6 @@ html[data-theme="dark"] .activityBackBtn:hover {
     justify-content: center !important;
   }
 }
-
 
 /* =========================================================
    EXTRA: PREVENT HORIZONTAL OVERFLOW
@@ -7683,4 +7554,183 @@ body,
 /* Prevent page content from hiding behind header */
 .app main {
   padding-top: 140px;
+}
+
+/* Admin notifications: inherits existing light/dark admin theme */
+.adminNotificationHeaderButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--admin-border, rgba(148, 163, 184, 0.35));
+  border-radius: 12px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.adminNotificationHeaderButton:hover {
+  background: rgba(100, 116, 139, 0.12);
+}
+.adminNotificationBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #dc2626;
+  color: white;
+  border: 2px solid var(--admin-card, #fff);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+}
+.adminNotificationHeaderButton.hasUnread .adminNotificationBadge {
+  animation: adminNotificationBadgeIn 180ms ease-out;
+}
+@keyframes adminNotificationBadgeIn {
+  from { transform: scale(0.72); opacity: 0.65; }
+  to { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .adminNotificationHeaderButton.hasUnread .adminNotificationBadge {
+    animation: none;
+  }
+}
+.adminNotificationActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.adminNotificationsPanel {
+  overflow: hidden;
+}
+.adminNotificationList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 10px;
+}
+.adminNotificationRow {
+  width: 100%;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 17px 16px;
+  border: 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.18s ease;
+}
+.adminNotificationRow:hover {
+  background: rgba(100, 116, 139, 0.1);
+}
+.adminNotificationRow.isUnread {
+  background: rgba(37, 99, 235, 0.055);
+}
+.adminNotificationTypeIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+}
+.adminNotificationTypeIcon.volunteerType {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.13);
+}
+.adminNotificationTypeIcon.paymentType {
+  color: #059669;
+  background: rgba(5, 150, 105, 0.13);
+}
+.adminNotificationCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  flex: 1;
+}
+.adminNotificationCopy strong {
+  font-size: 15px;
+  font-weight: 750;
+}
+.adminNotificationCopy span {
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.88;
+  overflow-wrap: anywhere;
+}
+.adminNotificationCopy small {
+  font-size: 11px;
+  opacity: 0.68;
+}
+.adminNotificationUnreadDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2563eb;
+  flex: 0 0 9px;
+}
+.adminNotificationView {
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.78;
+}
+.adminNotificationEmpty {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0.8;
+}
+.adminNotificationEmpty span {
+  font-size: 13px;
+}
+.adminProfileImage {
+  border-radius: 50% !important;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+}
+.adminProfileButton {
+  border-radius: 999px;
+}
+@media (max-width: 600px) {
+  .adminNotificationRow {
+    gap: 10px;
+    padding: 14px 8px;
+  }
+  .adminNotificationTypeIcon {
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+  }
+  .adminNotificationCopy strong {
+    font-size: 13px;
+  }
+  .adminNotificationCopy span {
+    font-size: 12px;
+  }
+  .adminNotificationView {
+    display: none;
+  }
+  .adminNotificationsHeader {
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+  }
 }
