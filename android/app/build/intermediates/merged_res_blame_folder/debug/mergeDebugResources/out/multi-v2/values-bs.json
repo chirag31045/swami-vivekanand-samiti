@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-41:/values-bs/values-bs.xml",
+            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-47:/values-bs/values-bs.xml",
             "map": [
                 {
                     "source": "C:\\Users\\user\\.gradle\\caches\\8.9\\transforms\\d9c45e11e845381d031fbd775a47c0b8\\transformed\\play-services-basement-18.3.0\\res\\values-bs\\values.xml",

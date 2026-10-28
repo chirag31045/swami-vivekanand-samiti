@@ -9,6 +9,12 @@ const schema = new mongoose.Schema(
       default: "user",
     },
     active: { type: Boolean, default: true },
+    userId: { type: String, default: "", index: true },
+    sessionId: { type: String, default: "", index: true },
+    name: { type: String, default: "" },
+    email: { type: String, default: "", lowercase: true, trim: true },
+    phone: { type: String, default: "", trim: true },
+    deviceName: { type: String, default: "Unknown device" },
   },
   { timestamps: true },
 );

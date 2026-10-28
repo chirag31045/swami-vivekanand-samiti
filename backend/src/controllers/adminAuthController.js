@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import Admin from "../models/adminModel.js";
 import RevokedAdminToken from "../models/revokedAdminTokenModel.js";
+import { createDeviceSession, closeDeviceSession } from "../services/deviceSessionService.js";
 
 const safeAdmin = (admin) => ({
   id: admin._id,
@@ -194,6 +195,8 @@ export async function adminLogin(req, res, next) {
       },
     );
 
+    await createDeviceSession({ req, token, decoded: jwt.decode(token), role: "admin", userId: admin._id, name: admin.displayName || admin.username, email: admin.email, phone: admin.phone });
+
     /*
     |--------------------------------------------------------------------------
     | 8. Success
@@ -214,6 +217,8 @@ export async function adminLogout(req, res, next) {
   try {
     const token = req.adminToken;
     const decoded = req.admin;
+
+    if (decoded?.jti) await closeDeviceSession(decoded.jti);
 
     if (token && decoded?.exp) {
       const tokenHash = crypto.createHash("sha256").update(token).digest("hex");

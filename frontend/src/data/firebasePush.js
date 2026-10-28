@@ -22,10 +22,13 @@ export async function registerAdminWebPush(apiBase, adminToken) {
     const messaging = getMessaging(app);
     const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
     if (!token) return;
-    await fetch(`${apiBase}/push-tokens`, {
+    let admin = {};
+    try { admin = JSON.parse(localStorage.getItem("adminUser") || "{}"); } catch { /* ignore invalid cached profile */ }
+    const response = await fetch(`${apiBase}/push-tokens`, {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
-      body: JSON.stringify({ token, platform: "web", role: "admin" }),
+      body: JSON.stringify({ token, platform: "web", role: "admin", name: admin.displayName || admin.username || "Admin", email: admin.email || "", phone: admin.phone || "", deviceName: `Web browser (${navigator.platform || "unknown platform"})` }),
     });
+    if (!response.ok) console.warn("Admin web push token registration failed:", response.status, await response.text());
   } catch (error) {
     console.warn("Web push registration skipped:", error?.message || error);
   }

@@ -2,6 +2,12 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services") version "4.4.2" apply false
+}
+
+// Firebase push is enabled when google-services.json is present in app/.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {
@@ -15,17 +21,17 @@ android {
 
         versionCode = 1
         versionName = "1.0"
-
-        buildConfigField(
-            "String",
-            "API_BASE_URL",
-            "\"https://swami-vivekanand-samiti-backend.vercel.app/api/\""
-        )
+//
 //        buildConfigField(
 //            "String",
 //            "API_BASE_URL",
-//            "\"http://172.25.195.78:5000/api/\""
+//            "\"https://swami-vivekanand-samiti-backend.vercel.app/api/\""
 //        )
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"http://10.112.22.78:5000/api/\""
+        )
     }
 
     buildFeatures {
@@ -55,4 +61,6 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.razorpay:checkout:1.6.40")
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation("com.google.firebase:firebase-messaging")
 }

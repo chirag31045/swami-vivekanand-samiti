@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import Volunteer from "../models/Volunteer.js";
 import Admin from "../models/adminModel.js";
 import MobileOtp from "../models/mobileOtpModel.js";
+import { createDeviceSession } from "../services/deviceSessionService.js";
 
 const cleanPhone = (value) => {
   let digits = String(value || "").replace(/\D/g, "");
@@ -12,7 +14,7 @@ const cleanPhone = (value) => {
 };
 const phoneQuery = (phone) => ({ phone: { $regex: `${phone.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$` } });
 const publicVolunteer = (v) => ({ id: v._id, name: v.name, phone: v.phone, email: v.email || "", city: v.city || "", area: v.area || "", message: v.message || "", status: v.status, photoUrl: v.photoUrl || "", applicationNo: v.applicationNo || "" });
-const issueToken = (v) => jwt.sign({ sub: String(v._id), role: "volunteer", volunteerId: String(v._id) }, process.env.JWT_SECRET, { expiresIn: "30d" });
+const issueToken = (v) => jwt.sign({ sub: String(v._id), role: "volunteer", volunteerId: String(v._id) }, process.env.JWT_SECRET, { expiresIn: "30d", jwtid: crypto.randomUUID() });
 
 export async function registerVolunteerAccount(req, res) {
   try {
@@ -76,7 +78,9 @@ export async function loginVolunteer(req, res) {
       const message = status === "rejected" ? "Your volunteer application was rejected. Login is not allowed." : "Your volunteer application is awaiting admin approval.";
       return res.status(403).json({ success: false, status, message });
     }
-    return res.json({ success: true, token: issueToken(volunteer), role: "volunteer", user: publicVolunteer(volunteer) });
+    const token = issueToken(volunteer);
+    await createDeviceSession({ req, token, decoded: jwt.decode(token), role: "volunteer", userId: volunteer._id, name: volunteer.name, email: volunteer.email, phone: volunteer.phone });
+    return res.json({ success: true, token, role: "volunteer", user: publicVolunteer(volunteer) });
   } catch (error) {
     console.error("Volunteer login failed:", error?.message);
     return res.status(500).json({ success: false, message: "Login could not be completed. Please try again." });
@@ -139,7 +143,7 @@ async function findLoginAccount(phone) {
 const issueAdminOtpToken = (admin) => jwt.sign(
   { id: String(admin._id), username: admin.username, role: "admin", email: admin.email || "" },
   process.env.JWT_SECRET,
-  { expiresIn: process.env.ADMIN_SESSION_EXPIRES_IN || "1d" },
+  { expiresIn: process.env.ADMIN_SESSION_EXPIRES_IN || "1d", jwtid: crypto.randomUUID() },
 );
 const otpFailure = (res, error) => res.status(error.status || 500).json({
   success: false,
@@ -290,12 +294,16 @@ export async function verifyLoginOtp(req, res) {
     if (found.kind === "admin") {
       found.account.lastLoginAt = new Date();
       await found.account.save();
-      return res.json({ success: true, token: issueAdminOtpToken(found.account), role: "admin", admin: {
+      const token = issueAdminOtpToken(found.account);
+      await createDeviceSession({ req, token, decoded: jwt.decode(token), role: "admin", userId: found.account._id, name: found.account.displayName || found.account.username, email: found.account.email, phone: found.account.phone });
+      return res.json({ success: true, token, role: "admin", admin: {
         id: found.account._id, username: found.account.username, displayName: found.account.displayName,
         phone: found.account.phone, email: found.account.email, role: "admin",
       } });
     }
-    return res.json({ success: true, token: issueToken(found.account), role: "volunteer", user: publicVolunteer(found.account) });
+    const token = issueToken(found.account);
+    await createDeviceSession({ req, token, decoded: jwt.decode(token), role: "volunteer", userId: found.account._id, name: found.account.name, email: found.account.email, phone: found.account.phone });
+    return res.json({ success: true, token, role: "volunteer", user: publicVolunteer(found.account) });
   } catch (error) {
     console.error("Verify login OTP failed:", error?.message);
     return res.status(error.status || 500).json({ success: false, message: error.status ? error.message : "OTP login could not be completed. Please retry." });

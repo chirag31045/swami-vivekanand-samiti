@@ -1,5 +1,7 @@
 package org.swamisamiti.mobile
 
+import android.os.Build
+
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -16,13 +18,13 @@ import retrofit2.http.Multipart
 import retrofit2.http.Part
 
 data class PhoneRequest(val phone: String, val name: String? = null)
-data class VolunteerLoginRequest(val phone: String, val password: String)
+data class VolunteerLoginRequest(val phone: String, val password: String, val platform: String = "android", val deviceName: String = "${Build.MANUFACTURER} ${Build.MODEL}", val userAgent: String = "Android ${Build.VERSION.RELEASE}")
 data class VolunteerRegisterRequest(val name: String, val phone: String, val password: String, val email: String = "", val city: String = "", val area: String = "", val message: String = "")
 data class OtpSendRequest(val phone: String, val purpose: String = "login")
-data class OtpVerifyRequest(val phone: String, val otp: String)
+data class OtpVerifyRequest(val phone: String, val otp: String, val platform: String = "android", val deviceName: String = "${Build.MANUFACTURER} ${Build.MODEL}", val userAgent: String = "Android ${Build.VERSION.RELEASE}")
 data class PasswordResetRequest(val phone: String, val otp: String, val newPassword: String)
 data class PasswordChangeRequest(val currentPassword: String, val newPassword: String)
-data class AdminLoginRequest(val username: String, val password: String)
+data class AdminLoginRequest(val username: String, val password: String, val platform: String = "android", val deviceName: String = "${Build.MANUFACTURER} ${Build.MODEL}", val userAgent: String = "Android ${Build.VERSION.RELEASE}")
 data class DonationOrderRequest(val donorName: String, val email: String, val phone: String, val amount: Double, val purpose: String)
 data class ApiResult(
     val success: Boolean = false,
@@ -48,6 +50,9 @@ interface ApiService {
 
     @POST("admin/login") suspend fun adminLogin(@Body body: AdminLoginRequest): Response<JsonObject>
     @POST("admin/logout") suspend fun adminLogout(@Header("Authorization") bearer: String): Response<JsonObject>
+    @POST("device-sessions/logout") suspend fun logoutDeviceSession(@Header("Authorization") bearer: String): Response<JsonObject>
+    @GET("admin/notifications") suspend fun adminNotifications(@Header("Authorization") bearer: String, @Query("page") page: Int = 1, @Query("limit") limit: Int = 25): Response<JsonObject>
+    @PATCH("admin/notifications/{id}/read") suspend fun markAdminNotificationRead(@Header("Authorization") bearer: String, @Path("id") id: String): Response<JsonObject>
     @GET("admin/profile") suspend fun currentAdmin(@Header("Authorization") bearer: String): Response<JsonObject>
     @Multipart @PUT("admin/profile") suspend fun updateAdminProfile(@Header("Authorization") bearer: String, @Part("displayName") displayName: okhttp3.RequestBody, @Part("email") email: okhttp3.RequestBody, @Part("phone") phone: okhttp3.RequestBody, @Part("designation") designation: okhttp3.RequestBody, @Part("department") department: okhttp3.RequestBody, @Part("bio") bio: okhttp3.RequestBody, @Part profileImage: MultipartBody.Part?): Response<JsonObject>
 

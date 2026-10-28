@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-41:/values-v23/values-v23.xml",
+            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-47:/values-v23/values-v23.xml",
             "map": [
                 {
                     "source": "C:\\Users\\user\\.gradle\\caches\\8.9\\transforms\\a92079a35573fb6362848d88369ef5c8\\transformed\\cardview-1.0.0\\res\\values-v23\\values-v23.xml",

@@ -1,6 +1,7 @@
 import Volunteer from "../models/Volunteer.js";
 import XLSX from "xlsx";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { createAdminNotification } from "../services/adminNotificationService.js";
 
 /* =====================================================
@@ -482,6 +483,9 @@ export async function bulkCreateVolunteers(req, res) {
         area,
         message,
         status,
+        // Imported records need a hash because Volunteer.passwordHash is required.
+        // A random inaccessible password lets the volunteer set up credentials through the approved-account flow.
+        passwordHash: await bcrypt.hash(crypto.randomBytes(24).toString("hex"), 12),
       });
     }
 
@@ -493,8 +497,18 @@ export async function bulkCreateVolunteers(req, res) {
       });
     }
 
-    const insertedVolunteers =
-      await Volunteer.insertMany(volunteers);
+    const insertedVolunteers = await Volunteer.insertMany(volunteers);
+
+    // Send one push per imported volunteer so website/admin bulk imports are not silent.
+    for (const volunteer of insertedVolunteers) {
+      await createAdminNotification({
+        eventKey: `volunteer:${volunteer._id}:created`,
+        type: "volunteer",
+        title: "New volunteer application",
+        message: `${volunteer.name} submitted a volunteer application${volunteer.phone ? ` (${volunteer.phone})` : ""}.`,
+        entityId: String(volunteer._id),
+      });
+    }
 
     return res.status(201).json({
       success: true,

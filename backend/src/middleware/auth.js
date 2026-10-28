@@ -67,7 +67,11 @@ export async function requireVolunteer(req, res, next) {
   try {
     const header = req.headers.authorization || "";
     if (!header.startsWith("Bearer ")) return res.status(401).json({ success: false, message: "Volunteer login required." });
-    const decoded = jwt.verify(header.slice(7).trim(), process.env.JWT_SECRET);
+    const rawToken = header.slice(7).trim();
+    const decoded = jwt.verify(rawToken, process.env.JWT_SECRET);
+    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+    const revoked = await RevokedAdminToken.exists({ tokenHash });
+    if (revoked) return res.status(401).json({ success: false, message: "Session logged out. Please login again." });
     if (decoded.role !== "volunteer" || !decoded.volunteerId) return res.status(403).json({ success: false, message: "Volunteer access denied." });
     const Volunteer = (await import("../models/Volunteer.js")).default;
     const volunteer = await Volunteer.findById(decoded.volunteerId);

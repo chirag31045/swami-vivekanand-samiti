@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-41:/values-km/values-km.xml",
+            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-47:/values-km/values-km.xml",
             "map": [
                 {
                     "source": "C:\\Users\\user\\.gradle\\caches\\8.9\\transforms\\b6c5e032a003934e4adfaba9fa53f2ca\\transformed\\appcompat-1.7.0\\res\\values-km\\values-km.xml",

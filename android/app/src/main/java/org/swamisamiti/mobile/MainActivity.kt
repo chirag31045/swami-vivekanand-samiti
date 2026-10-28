@@ -1,8 +1,17 @@
 package org.swamisamiti.mobile
 
 import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.Typeface
 import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import androidx.appcompat.app.AlertDialog
+import com.google.firebase.messaging.FirebaseMessaging
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContracts
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -12,6 +21,7 @@ import android.os.Bundle
 import android.os.Build
 import android.view.Gravity
 import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ImageView
@@ -52,6 +62,8 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     private var pendingSiteLogoUri: Uri? = null
     private var pendingSitePosterUri: Uri? = null
     private var currentScreenTitle = ""
+    private var offlineDialog: AlertDialog? = null
+    private var wasNetworkOffline = false
     private val photoPicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri -> if (uri != null) uploadVolunteerPhoto(uri) }
     private val adminPhotoPicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri -> if (uri != null) uploadAdminPhoto(uri) }
     private val activityImagePicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri -> if (uri != null) { pendingActivityImageUri = uri; message("Activity image selected.") } }
@@ -89,8 +101,97 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         navy2 = prefs.getInt("themeNavy2", Color.rgb(30, 49, 72))
         saffron = prefs.getInt("themeAccent", Color.rgb(232, 133, 37))
         token = prefs.getString("token", "") ?: ""
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+        }
         if (token.isNotBlank()) showRoleHome(prefs.getString("role", "user") ?: "user") else showWelcome()
+        registerCurrentPushToken()
+        registerNetworkWatcher()
+        if (intent?.getBooleanExtra("open_notifications", false) == true && token.isNotBlank()) showAdminNotifications()
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra("open_notifications", false) && token.isNotBlank()) showAdminNotifications()
+    }
+
+    private fun registerCurrentPushToken() {
+        try {
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { pushToken ->
+                lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val role = prefs.getString("role", "user") ?: "user"
+                        if (!(role.equals("admin", true) || role.equals("superadmin", true)) || token.isBlank()) return@launch
+                        val payload = JSONObject()
+                            .put("token", pushToken)
+                            .put("platform", "android")
+                            .put("role", "admin")
+                            .put("name", prefs.getString("displayName", "Admin") ?: "Admin")
+                            .put("email", prefs.getString("email", "") ?: "")
+                            .put("phone", prefs.getString("phone", "") ?: "")
+                            .put("deviceName", "${Build.MANUFACTURER} ${Build.MODEL}".trim())
+                        val base = BuildConfig.API_BASE_URL.removeSuffix("/")
+                        val req = Request.Builder().url("$base/push-tokens").header("Authorization", "Bearer $token").post(payload.toString().toRequestBody("application/json; charset=utf-8".toMediaType())).build()
+                        okhttp3.OkHttpClient().newCall(req).execute().close()
+                    } catch (e: Exception) { android.util.Log.e("SamitiPush", "Token registration failed", e) }
+                }
+            }
+        } catch (e: Exception) { android.util.Log.e("SamitiPush", "Firebase token unavailable", e) }
+    }
+
+    private fun registerNetworkWatcher() {
+        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        fun online(): Boolean = cm.activeNetwork?.let { cm.getNetworkCapabilities(it)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true } ?: false
+        cm.registerDefaultNetworkCallback(object : ConnectivityManager.NetworkCallback() {
+            override fun onLost(network: Network) { runOnUiThread { wasNetworkOffline = true; networkBanner("Internet connection lost. Please check your connectivity.", Color.rgb(239, 58, 78)); showOfflineDialog() } }
+            override fun onAvailable(network: Network) {
+                runOnUiThread {
+                    if (wasNetworkOffline) {
+                        wasNetworkOffline = false
+                        offlineDialog?.dismiss()
+                        offlineDialog = null
+                        networkBanner("Connected to the internet", Color.rgb(16, 185, 129))
+                    }
+                }
+            }
+            override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
+                val hasInternet = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                val downKbps = capabilities.linkDownstreamBandwidthKbps
+                val validated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                runOnUiThread {
+                    if (hasInternet && (!validated || downKbps in 1..999)) {
+                        networkBanner("Slow internet connection. Some content may take longer to load.", Color.rgb(245, 158, 11))
+                    }
+                }
+            }
+        })
+        if (!online()) { wasNetworkOffline = true; showOfflineDialog() }
+    }
+
+    private fun networkBanner(text: String, color: Int) {
+        val label = TextView(this).apply {
+            this.text = text; textSize = 14f; setTextColor(Color.WHITE); setPadding(dp(20), dp(14), dp(20), dp(14))
+            background = android.graphics.drawable.GradientDrawable().apply { setColor(color); cornerRadius = dp(8).toFloat() }
+        }
+        Toast(this).apply { duration = Toast.LENGTH_LONG; view = label; setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, dp(55)); show() }
+    }
+
+    private fun showOfflineDialog() {
+        if (isFinishing || isDestroyed || offlineDialog?.isShowing == true) return
+        val content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER; setPadding(dp(24), dp(24), dp(24), dp(18)) }
+        content.addView(TextView(this).apply { text = "⚠"; textSize = 48f; gravity = Gravity.CENTER; setTextColor(Color.RED) })
+        content.addView(TextView(this).apply { text = "No Internet Connection"; textSize = 21f; gravity = Gravity.CENTER; setTextColor(if (darkMode) Color.WHITE else ink); setPadding(0, dp(10), 0, dp(8)) })
+        content.addView(TextView(this).apply { text = "Please turn on your mobile data or connect to Wi-Fi"; textSize = 14f; gravity = Gravity.CENTER; setTextColor(muted) })
+        offlineDialog = AlertDialog.Builder(this).setView(content).setPositiveButton("Try Again", null).setCancelable(false).create()
+        offlineDialog?.setOnShowListener { offlineDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+            val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+            val online = cm.activeNetwork?.let { cm.getNetworkCapabilities(it)?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true } ?: false
+            if (online) { wasNetworkOffline = false; offlineDialog?.dismiss(); offlineDialog = null; message("Connected to the internet") } else message("No connection found. Please check your network.")
+        } }
+        offlineDialog?.show()
+    }
+
 
     @Deprecated("Use system back dispatcher")
     override fun onBackPressed() {
@@ -105,6 +206,37 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+    /** Creates a circular logo view; reused anywhere the Samiti logo appears. */
+    private fun circularLogo(sizeDp: Int, marginEndDp: Int = 0): ImageView {
+        return ImageView(this).apply {
+            setImageResource(R.drawable.samiti_logo)
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            contentDescription = "Swami Vivekanand Samiti logo"
+            background = null
+            setPadding(0, 0, 0, 0)
+            clipToOutline = true
+            outlineProvider = object : ViewOutlineProvider() {
+                override fun getOutline(view: View, outline: Outline) {
+                    outline.setOval(0, 0, view.width, view.height)
+                }
+            }
+            layoutParams = LinearLayout.LayoutParams(dp(sizeDp), dp(sizeDp)).apply {
+                if (marginEndDp > 0) marginEnd = dp(marginEndDp)
+            }
+        }
+    }
+
+    /** Makes a logo loaded from a URL circular as well. */
+    private fun clipImageAsCircle(image: ImageView) {
+        image.scaleType = ImageView.ScaleType.CENTER_CROP
+        image.clipToOutline = true
+        image.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setOval(0, 0, view.width, view.height)
+            }
+        }
+    }
 
     private fun setup(title: String, showLogout: Boolean = false) {
         currentScreenTitle = title
@@ -133,12 +265,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL
             layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
         }
-        val logo = ImageView(this).apply {
-            setImageResource(R.drawable.samiti_logo)
-            scaleType = ImageView.ScaleType.FIT_CENTER
-            layoutParams = LinearLayout.LayoutParams(dp(40), dp(40)).apply { rightMargin = dp(8) }
-            contentDescription = "Swami Vivekanand Samiti logo"
-        }
+        val logo = circularLogo(40, 8)
         brand.addView(logo)
         val brandText = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; layoutParams = LinearLayout.LayoutParams(0, -2, 1f) }
         brandText.addView(TextView(this).apply {
@@ -153,19 +280,51 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         })
         brand.addView(brandText)
         top.addView(brand)
-        if (showLogout) {
-            top.addView(TextView(this).apply {
-                text = if (darkMode) "☀ Light" else "☾ Dark"; textSize = 12f; gravity = Gravity.CENTER
-                setTextColor(Color.WHITE); setPadding(dp(9), dp(10), dp(9), dp(10))
+        val currentRole = (prefs.getString("role", "user") ?: "user").lowercase()
+        val isAdminRole = currentRole == "admin" || currentRole == "superadmin"
+        if (showLogout && isAdminRole) {
+            // Keep notifications in the top app bar, like the reference screenshot.
+            val notificationButton = android.widget.FrameLayout(this).apply {
+                contentDescription = "Open notifications"
                 background = android.graphics.drawable.GradientDrawable().apply {
-                    cornerRadius = dp(10).toFloat(); setColor(navy2)
+                    shape = android.graphics.drawable.GradientDrawable.OVAL
+                    setColor(if (darkMode) Color.rgb(30, 41, 59) else Color.rgb(239, 244, 250))
+                    setStroke(dp(1), if (darkMode) Color.rgb(71, 85, 105) else Color.rgb(215, 224, 235))
                 }
-                contentDescription = "Toggle dark mode"
-                setOnClickListener { darkMode = !darkMode; prefs.edit().putBoolean("darkMode", darkMode).apply(); showRoleHome(prefs.getString("role", "volunteer") ?: "volunteer") }
+                layoutParams = LinearLayout.LayoutParams(dp(44), dp(44)).apply { leftMargin = dp(4); rightMargin = dp(4) }
+                isClickable = true
+                isFocusable = true
+                setOnClickListener { showAdminNotifications() }
+            }
+            notificationButton.addView(TextView(this).apply {
+                text = "🔔"
+                textSize = 21f
+                gravity = Gravity.CENTER
+                setTextColor(if (darkMode) Color.WHITE else navy)
+                layoutParams = android.widget.FrameLayout.LayoutParams(-1, -1)
+                contentDescription = "Notifications"
             })
+            notificationButton.addView(View(this).apply {
+                background = android.graphics.drawable.GradientDrawable().apply {
+                    shape = android.graphics.drawable.GradientDrawable.OVAL
+                    setColor(Color.rgb(220, 38, 38))
+                    setStroke(dp(1), if (darkMode) Color.rgb(15, 23, 42) else Color.WHITE)
+                }
+                layoutParams = android.widget.FrameLayout.LayoutParams(dp(9), dp(9), Gravity.TOP or Gravity.END).apply {
+                    topMargin = dp(5); rightMargin = dp(5)
+                }
+                contentDescription = "Unread notifications"
+            })
+            top.addView(notificationButton)
         }
         page.addView(top)
-        val scroll = ScrollView(this).apply { isFillViewport = true; clipToPadding = false; overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS }
+        val scroll = ScrollView(this).apply {
+            isFillViewport = true
+            clipToPadding = false
+            isSmoothScrollingEnabled = true
+            isScrollbarFadingEnabled = true
+            overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+        }
         root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             // Leave space for gesture navigation / Android bottom navigation bar.
@@ -185,34 +344,142 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 setPadding(dp(16), dp(12), dp(16), dp(12))
             }
             drawerNav = nav
-            val navScroll = ScrollView(this).apply { isFillViewport = false; clipToPadding = false }
+            // Fixed profile header: only the menu items below this header scroll.
+            val profileHeader = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                setPadding(dp(8), dp(12), dp(8), dp(14))
+                setBackgroundColor(if (darkMode) Color.rgb(15, 23, 42) else Color.WHITE)
+                layoutParams = LinearLayout.LayoutParams(-1, -2)
+            }
+
+            val savedPhoto = prefs.getString("photoUrl", "") ?: ""
+            val profilePhoto = circularLogo(76).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(76), dp(76)).apply {
+                    rightMargin = dp(14)
+                }
+                if (savedPhoto.isNotBlank()) {
+                    com.bumptech.glide.Glide.with(this@MainActivity)
+                        .load(savedPhoto)
+                        .circleCrop()
+                        .placeholder(R.drawable.samiti_logo)
+                        .error(R.drawable.samiti_logo)
+                        .into(this)
+                }
+                contentDescription = "Profile photo"
+            }
+            profileHeader.addView(profilePhoto)
+
+            val profileDetails = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER_VERTICAL
+                layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
+            }
+            val profileName = (prefs.getString("displayName", "") ?: "").ifBlank {
+                if ((prefs.getString("role", "user") ?: "user").equals("admin", true) ||
+                    (prefs.getString("role", "user") ?: "user").equals("superadmin", true)
+                ) "Administrator" else "Volunteer"
+            }
+            profileDetails.addView(TextView(this).apply {
+                text = profileName
+                textSize = 16f
+                maxLines = 2
+                ellipsize = android.text.TextUtils.TruncateAt.END
+                setTextColor(if (darkMode) Color.WHITE else navy)
+                setTypeface(typeface, Typeface.BOLD)
+                setPadding(0, 0, 0, dp(3))
+            })
+            val profilePhone = (prefs.getString("phone", "") ?: "").ifBlank {
+                prefs.getString("adminPhone", "") ?: ""
+            }
+            if (profilePhone.isNotBlank()) {
+                profileDetails.addView(TextView(this).apply {
+                    text = profilePhone
+                    textSize = 12f
+                    maxLines = 1
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                    setTextColor(if (darkMode) Color.rgb(148, 163, 184) else muted)
+                    setPadding(0, 0, 0, dp(3))
+                })
+            }
+            val profileEmail = (prefs.getString("adminEmail", "") ?: "").ifBlank {
+                prefs.getString("email", "") ?: ""
+            }
+            if (profileEmail.isNotBlank()) {
+                profileDetails.addView(TextView(this).apply {
+                    text = profileEmail
+                    textSize = 12f
+                    maxLines = 2
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                    setTextColor(if (darkMode) Color.rgb(148, 163, 184) else muted)
+                })
+            }
+            profileHeader.addView(profileDetails)
+            nav.addView(profileHeader)
+
+            val navScroll = ScrollView(this).apply {
+                isFillViewport = false
+                clipToPadding = false
+                isSmoothScrollingEnabled = true
+                isScrollbarFadingEnabled = true
+                overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+            }
             val navContent = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
             navScroll.addView(navContent)
             nav.addView(navScroll, LinearLayout.LayoutParams(-1, 0, 1f))
             val menuContainer = navContent
-            menuContainer.addView(ImageView(this).apply {
-                scaleType = ImageView.ScaleType.CENTER_CROP
-                layoutParams = LinearLayout.LayoutParams(dp(76), dp(76)).apply { bottomMargin = dp(10) }
-                val savedPhoto = prefs.getString("photoUrl", "") ?: ""
-                if (savedPhoto.isNotBlank()) com.bumptech.glide.Glide.with(this@MainActivity).load(savedPhoto).placeholder(R.drawable.samiti_logo).error(R.drawable.samiti_logo).into(this)
-                else setImageResource(R.drawable.samiti_logo)
-                contentDescription = "Profile photo"
-            })
-            menuContainer.addView(TextView(this).apply {
-                text = (prefs.getString("displayName", "") ?: "").ifBlank { if ((prefs.getString("role", "user") ?: "user").equals("admin", true)) "Administrator" else "Volunteer" }
-                textSize = 16f; setTextColor(if (darkMode) Color.WHITE else navy); setTypeface(typeface, Typeface.BOLD); setPadding(0, dp(2), 0, dp(2))
-            })
-            menuContainer.addView(TextView(this).apply {
-                text = prefs.getString("phone", "") ?: ""
-                textSize = 12f; setTextColor(muted); setPadding(0, 0, 0, dp(12))
-            })
             fun navItem(label: String, emoji: String, action: () -> Unit) {
-                val item = TextView(this).apply {
-                    text = "$emoji   $label"; textSize = 15f; setTextColor(if (darkMode) Color.WHITE else ink)
-                    gravity = Gravity.CENTER_VERTICAL; setPadding(dp(12), 0, dp(8), 0)
-                    background = android.graphics.drawable.GradientDrawable().apply { cornerRadius = dp(10).toFloat(); setColor(if (darkMode) Color.rgb(30,41,59) else Color.rgb(246,248,251)) }
-                    layoutParams = LinearLayout.LayoutParams(-1, dp(48)).apply { bottomMargin = dp(7) }
+                val item = LinearLayout(this).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_VERTICAL
+                    setPadding(dp(12), 0, dp(12), 0)
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        cornerRadius = dp(14).toFloat()
+                        setColor(if (darkMode) Color.rgb(30, 41, 59) else Color.rgb(246, 248, 251))
+                        setStroke(dp(1), if (darkMode) Color.rgb(45, 58, 78) else Color.rgb(235, 239, 245))
+                    }
+                    isClickable = true
+                    isFocusable = true
+                    foreground = android.util.TypedValue().let { out ->
+                        theme.resolveAttribute(android.R.attr.selectableItemBackground, out, true)
+                        getDrawable(out.resourceId)
+                    }
+                    layoutParams = LinearLayout.LayoutParams(-1, dp(54)).apply { bottomMargin = dp(9) }
                     setOnClickListener { drawer.closeDrawer(Gravity.START); action() }
+                }
+                val iconBadge = TextView(this).apply {
+                    text = emoji
+                    textSize = 19f
+                    gravity = Gravity.CENTER
+                    setTextColor(if (darkMode) Color.rgb(226, 232, 240) else navy)
+                    background = android.graphics.drawable.GradientDrawable().apply {
+                        cornerRadius = dp(11).toFloat()
+                        setColor(if (darkMode) Color.rgb(39, 55, 78) else Color.rgb(229, 238, 248))
+                    }
+                    layoutParams = LinearLayout.LayoutParams(dp(36), dp(36)).apply { rightMargin = dp(12) }
+                }
+                item.addView(iconBadge)
+                item.addView(TextView(this).apply {
+                    text = label
+                    textSize = 15f
+                    setTextColor(if (darkMode) Color.rgb(248, 250, 252) else Color.rgb(30, 41, 59))
+                    typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+                    gravity = Gravity.CENTER_VERTICAL
+                    layoutParams = LinearLayout.LayoutParams(0, -1, 1f)
+                })
+                if (label == "Dark Theme" || label == "Light Theme") {
+                    item.addView(TextView(this).apply {
+                        text = if (darkMode) "ON" else "OFF"
+                        textSize = 10f
+                        setTypeface(typeface, Typeface.BOLD)
+                        gravity = Gravity.CENTER
+                        setTextColor(Color.WHITE)
+                        background = android.graphics.drawable.GradientDrawable().apply {
+                            cornerRadius = dp(20).toFloat()
+                            setColor(if (darkMode) Color.rgb(22, 163, 74) else Color.rgb(100, 116, 139))
+                        }
+                        setPadding(dp(9), dp(5), dp(9), dp(5))
+                    })
                 }
                 menuContainer.addView(item)
             }
@@ -223,6 +490,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             navItem("Gallery", "▧") { loadGallery(admin) }
             if (admin) {
                 navItem("Volunteers", "♙") { loadVolunteers() }
+                navItem("Notifications", "🔔") { showAdminNotifications() }
                 navItem("Donations & Finance", "₹") { loadDonations() }
                 navItem("Mobile App Settings", "▣") { loadMobileAppSettings() }
                 navItem("Admin Profile", "◉") { loadAdminProfile() }
@@ -230,6 +498,15 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 navItem("My Donations", "₹") { loadMyDonations() }
                 navItem("Website Information", "ℹ") { loadSettings(false) }
                 navItem("Privacy Policy", "▤") { loadPrivacyPolicy() }
+            }
+            navItem(if (darkMode) "Light Theme" else "Dark Theme", if (darkMode) "☀️" else "🌙") {
+                darkMode = !darkMode
+                prefs.edit().putBoolean("darkMode", darkMode).apply()
+                showRoleHome(prefs.getString("role", "user") ?: "user")
+                activeDrawer?.startAnimation(android.view.animation.AlphaAnimation(0.88f, 1f).apply {
+                    duration = 220
+                    fillAfter = true
+                })
             }
             navItem("Change Password", "🔒") { showChangePassword() }
             navItem("My Profile", "◉") { if (admin) loadAdminProfile() else loadMyVolunteerProfile() }
@@ -267,8 +544,9 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     }
 
     private fun paragraph(value: String, size: Float = 14f, color: Int = muted) {
+        val readableColor = if (darkMode && (color == muted || color == ink)) Color.rgb(203, 213, 225) else color
         root.addView(TextView(this).apply {
-            text = value; textSize = size; setTextColor(color); setLineSpacing(dp(2).toFloat(), 1f)
+            text = value; textSize = size; setTextColor(readableColor); setLineSpacing(dp(2).toFloat(), 1f)
             setPadding(0, dp(3), 0, dp(8))
         })
     }
@@ -345,10 +623,14 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     setAutofillHints("phone")
                 }
             }
-            setTextColor(ink)
-            setHintTextColor(muted)
+            setTextColor(if (darkMode) Color.WHITE else ink)
+            setHintTextColor(if (darkMode) Color.rgb(148, 163, 184) else muted)
             setPadding(dp(14), 0, dp(14), 0)
-            background = getDrawable(android.R.drawable.edit_text)
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(12).toFloat()
+                setColor(if (darkMode) Color.rgb(30, 41, 59) else Color.WHITE)
+                setStroke(dp(1), if (darkMode) Color.rgb(71, 85, 105) else Color.rgb(220, 226, 234))
+            }
             layoutParams = LinearLayout.LayoutParams(-1, dp(54)).apply { bottomMargin = dp(10) }
         }
         if (password) {
@@ -422,14 +704,13 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     }
     private fun showWelcome() {
         setup("Seva • Sanskar • Samarpan")
+        root.alpha = 0f
+        root.animate().alpha(1f).setDuration(240L).start()
 
         // Minimal entry screen: keep only login and account creation.
         val hero = card()
         hero.setPadding(dp(18), dp(22), dp(18), dp(22))
-        hero.addView(ImageView(this).apply {
-            setImageResource(R.drawable.samiti_logo)
-            contentDescription = "Swami Vivekanand Samiti logo"
-            scaleType = ImageView.ScaleType.FIT_CENTER
+        hero.addView(circularLogo(100).apply {
             layoutParams = LinearLayout.LayoutParams(dp(100), dp(100)).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
                 bottomMargin = dp(14)
@@ -439,8 +720,9 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             text = "Your Samiti, on your mobile"
             textSize = 22f
             gravity = Gravity.CENTER
-            setTextColor(navy)
+            setTextColor(if (darkMode) Color.rgb(248, 250, 252) else navy)
             setTypeface(typeface, Typeface.BOLD)
+            setShadowLayer(if (darkMode) 1f else 0f, 0f, 0f, Color.TRANSPARENT)
             setPadding(dp(6), dp(4), dp(6), dp(8))
         })
         hero.addView(TextView(this).apply {
@@ -468,9 +750,9 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         root.addView(TextView(this).apply {
             text = getAppVersion()
             textSize = 12f
-            setTextColor(Color.GRAY)
+            setTextColor(if (darkMode) Color.rgb(148, 163, 184) else Color.GRAY)
             gravity = Gravity.CENTER
-            setPadding(8, dp(16), 8, dp(8))
+            setPadding(dp(8), dp(16), dp(8), dp(8))
             layoutParams = LinearLayout.LayoutParams(
                 -1,
                 -2
@@ -500,7 +782,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                 override fun getDropDownView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
                     return (super.getDropDownView(position, convertView, parent) as TextView).apply {
                         textSize = 15f
-                        setTextColor(ink)
+                        setTextColor(if (darkMode) Color.WHITE else ink)
                         setBackgroundColor(Color.WHITE)
                         setPadding(dp(16), dp(12), dp(16), dp(12))
                     }
@@ -561,6 +843,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                                 .putString("role", role)
                                 .putString("phone", normalizedPhone)
                                 .putString("displayName", volunteerBody.user?.get("name")?.toString().orEmpty())
+                                .putString("email", volunteerBody.user?.get("email")?.toString().orEmpty())
                                 .apply()
                             showRoleHome(role)
                         } else {
@@ -586,6 +869,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                                             ?.asJsonObjectOrNull()
                                             ?.stringValue("displayName") ?: "Admin"
                                     )
+                                    .putString("email", adminBody.get("admin")?.asJsonObjectOrNull()?.stringValue("email") ?: "")
                                     .apply()
                                 showRoleHome("admin")
                             } else {
@@ -649,6 +933,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             .putString("role", role)
             .putString("phone", returnedPhone.ifBlank { phoneNumber })
             .putString("displayName", displayName)
+            .putString("email", if (role.equals("admin", true) || role.equals("superadmin", true)) body.admin?.get("email")?.toString().orEmpty() else body.user?.get("email")?.toString().orEmpty())
             .apply()
         showRoleHome(role)
     }
@@ -902,7 +1187,11 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                         val authToken = body?.stringValue("token")
                         if (r.isSuccessful && body?.booleanValue("success") == true && !authToken.isNullOrBlank()) {
                             token = authToken
-                            prefs.edit().putString("token", token).putString("role", "admin").apply()
+                            prefs.edit().putString("token", token).putString("role", "admin")
+                                .putString("phone", body.get("admin")?.asJsonObjectOrNull()?.stringValue("phone") ?: username.text.toString().trim())
+                                .putString("email", body.get("admin")?.asJsonObjectOrNull()?.stringValue("email") ?: "")
+                                .putString("displayName", body.get("admin")?.asJsonObjectOrNull()?.stringValue("displayName") ?: "Admin")
+                                .apply()
                             showRoleHome("admin")
                         } else message(body?.stringValue("message") ?: "Admin login failed. Please check your credentials.")
                     } catch (e: Exception) {
@@ -922,6 +1211,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
     private fun showRoleHome(role: String) {
         val isAdmin = role.equals("admin", true) || role.equals("superadmin", true)
         setup(if (isAdmin) "Admin Dashboard" else "Member Dashboard", showLogout = true)
+        if (isAdmin) registerCurrentPushToken()
         heading(if (isAdmin) "Welcome back, Admin 👋" else "Namaste 🙏", 23f)
         paragraph(if (isAdmin) "Manage your Samiti website modules from your phone." else "View the latest Samiti information and member services.")
         if (isAdmin) {
@@ -949,12 +1239,24 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL }
         val badge = TextView(this).apply {
             text = icon; textSize = 22f; gravity = Gravity.CENTER; setTextColor(saffron)
-            setBackgroundColor(Color.rgb(255, 244, 229)); layoutParams = LinearLayout.LayoutParams(dp(48), dp(48))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(13).toFloat()
+                setColor(if (darkMode) Color.rgb(39, 55, 78) else Color.rgb(255, 244, 229))
+            }
+            layoutParams = LinearLayout.LayoutParams(dp(52), dp(52))
         }
         row.addView(badge)
         val copy = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(12), 0, 0, 0); layoutParams = LinearLayout.LayoutParams(0, -2, 1f) }
-        copy.addView(TextView(this).apply { text = title; textSize = 16f; setTextColor(navy); setTypeface(typeface, Typeface.BOLD); maxLines = 2 })
-        copy.addView(TextView(this).apply { text = description; textSize = 13f; setTextColor(muted); setPadding(0, dp(3), 0, 0); setLineSpacing(dp(2).toFloat(), 1f) })
+        copy.addView(TextView(this).apply {
+            text = title; textSize = 16f
+            setTextColor(if (darkMode) Color.rgb(248, 250, 252) else navy)
+            setTypeface(typeface, Typeface.BOLD); maxLines = 2
+        })
+        copy.addView(TextView(this).apply {
+            text = description; textSize = 13f
+            setTextColor(if (darkMode) Color.rgb(203, 213, 225) else muted)
+            setPadding(0, dp(3), 0, 0); setLineSpacing(dp(2).toFloat(), 1f)
+        })
         row.addView(copy); c.addView(row)
         c.addView(MaterialButton(this).apply {
             text = "Open $title"; isAllCaps = false; textSize = 13f; cornerRadius = dp(11)
@@ -1403,11 +1705,19 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
         heading(findTextValue(settings, listOf("siteName", "websiteName", "title", "name")) ?: "Swami Vivekanand Vichar Prachar Seva Samiti")
         val logoUrl = findTextValue(settings, listOf("logo", "logoUrl", "siteLogo"))
         if (!logoUrl.isNullOrBlank()) {
-            val image = ImageView(this).apply { scaleType = ImageView.ScaleType.FIT_CENTER; layoutParams = LinearLayout.LayoutParams(-1, dp(130)).apply { bottomMargin = dp(10) } }
+            val image = ImageView(this).apply {
+                clipImageAsCircle(this)
+                layoutParams = LinearLayout.LayoutParams(dp(120), dp(120)).apply {
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    bottomMargin = dp(10)
+                }
+            }
             root.addView(image)
-            com.bumptech.glide.Glide.with(this).load(logoUrl).placeholder(R.drawable.samiti_logo).error(R.drawable.samiti_logo).into(image)
+            com.bumptech.glide.Glide.with(this).load(logoUrl).circleCrop().placeholder(R.drawable.samiti_logo).error(R.drawable.samiti_logo).into(image)
         } else {
-            root.addView(ImageView(this).apply { setImageResource(R.drawable.samiti_logo); scaleType = ImageView.ScaleType.FIT_CENTER; layoutParams = LinearLayout.LayoutParams(-1, dp(120)) })
+            root.addView(circularLogo(120).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(120), dp(120)).apply { gravity = Gravity.CENTER_HORIZONTAL }
+            })
         }
         val description = findTextValue(settings, listOf("description", "about", "aboutUs", "tagline", "intro"))
         if (!description.isNullOrBlank()) paragraph(description, 15f, if (darkMode) Color.LTGRAY else muted)
@@ -1454,8 +1764,14 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             val intro = input("Contact introduction").apply { setText(settings.stringValue("contactIntroEn") ?: "") }
             val logoUrl = settings.stringValue("logo") ?: ""
             if (logoUrl.isNotBlank()) {
-                val image = ImageView(this).apply { scaleType = ImageView.ScaleType.FIT_CENTER; layoutParams = LinearLayout.LayoutParams(dp(110), dp(110)).apply { bottomMargin = dp(8) } }
-                root.addView(image); com.bumptech.glide.Glide.with(this).load(logoUrl).placeholder(R.drawable.samiti_logo).into(image)
+                val image = ImageView(this).apply {
+                    clipImageAsCircle(this)
+                    layoutParams = LinearLayout.LayoutParams(dp(110), dp(110)).apply {
+                        gravity = Gravity.CENTER_HORIZONTAL
+                        bottomMargin = dp(8)
+                    }
+                }
+                root.addView(image); com.bumptech.glide.Glide.with(this).load(logoUrl).circleCrop().placeholder(R.drawable.samiti_logo).error(R.drawable.samiti_logo).into(image)
             }
             actionButton("Choose Samiti Logo") { siteLogoPicker.launch("image/*") }
             actionButton("Choose Website Poster") { sitePosterPicker.launch("image/*") }
@@ -1516,7 +1832,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
                     override fun getDropDownView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
                         return (super.getDropDownView(position, convertView, parent) as TextView).apply {
                             textSize = 15f
-                            setTextColor(ink)
+                            setTextColor(if (darkMode) Color.WHITE else ink)
                             setBackgroundColor(Color.WHITE)
                             setPadding(dp(16), dp(12), dp(16), dp(12))
                         }
@@ -1536,9 +1852,9 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             root.addView(area)
             currentProfilePhotoUrl = item.stringValue("photoUrl") ?: ""
             prefs.edit().putString("displayName", item.stringValue("name") ?: "Volunteer").putString("photoUrl", currentProfilePhotoUrl).apply()
-            val photoPreview = ImageView(this).apply { scaleType = ImageView.ScaleType.CENTER_CROP; layoutParams = LinearLayout.LayoutParams(dp(112), dp(112)).apply { bottomMargin = dp(8) }; contentDescription = "Profile photo" }
+            val photoPreview = ImageView(this).apply { scaleType = ImageView.ScaleType.CENTER_CROP; background = android.graphics.drawable.GradientDrawable().apply { shape = android.graphics.drawable.GradientDrawable.OVAL; setColor(Color.rgb(30, 41, 59)) }; clipToOutline = true; layoutParams = LinearLayout.LayoutParams(dp(112), dp(112)).apply { bottomMargin = dp(8) }; contentDescription = "Profile photo" }
             root.addView(photoPreview)
-            if (currentProfilePhotoUrl.isNotBlank()) com.bumptech.glide.Glide.with(this).load(currentProfilePhotoUrl).placeholder(android.R.drawable.ic_menu_camera).error(android.R.drawable.ic_menu_camera).into(photoPreview) else photoPreview.setImageResource(android.R.drawable.ic_menu_camera)
+            if (currentProfilePhotoUrl.isNotBlank()) com.bumptech.glide.Glide.with(this).load(currentProfilePhotoUrl).circleCrop().placeholder(android.R.drawable.ic_menu_camera).error(android.R.drawable.ic_menu_camera).into(photoPreview) else photoPreview.setImageResource(android.R.drawable.ic_menu_camera)
             actionButton("Upload Profile Photo") { photoPicker.launch("image/*") }
             paragraph("Status: ${item.stringValue("status") ?: "approved"} • Application: ${item.stringValue("applicationNo") ?: "-"}")
             actionButton("Save Profile") {
@@ -1763,9 +2079,11 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             val bio = input("Bio").apply { setText(item.stringValue("bio") ?: "") }
             currentAdminPhotoUrl = item.stringValue("profileImage") ?: ""
             prefs.edit().putString("adminEmail", item.stringValue("email") ?: "").putString("adminDesignation", item.stringValue("designation") ?: "Administrator").putString("adminDepartment", item.stringValue("department") ?: "Administration").putString("adminBio", item.stringValue("bio") ?: "").putString("photoUrl", currentAdminPhotoUrl).apply()
-            val preview = ImageView(this).apply { scaleType = ImageView.ScaleType.CENTER_CROP; layoutParams = LinearLayout.LayoutParams(dp(110), dp(110)).apply { bottomMargin = dp(8) } }
+            val preview = circularLogo(110).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(110), dp(110)).apply { gravity = Gravity.CENTER_HORIZONTAL; bottomMargin = dp(8) }
+            }
             root.addView(preview)
-            if (currentAdminPhotoUrl.isNotBlank()) com.bumptech.glide.Glide.with(this).load(currentAdminPhotoUrl).placeholder(R.drawable.samiti_logo).into(preview) else preview.setImageResource(R.drawable.samiti_logo)
+            if (currentAdminPhotoUrl.isNotBlank()) com.bumptech.glide.Glide.with(this).load(currentAdminPhotoUrl).circleCrop().placeholder(R.drawable.samiti_logo).error(R.drawable.samiti_logo).into(preview)
             actionButton("Upload Profile Photo") { adminPhotoPicker.launch("image/*") }
             actionButton("Save Admin Profile") {
                 lifecycleScope.launch {
@@ -1807,10 +2125,41 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
             obj.entrySet().forEach { entry ->
                 val c = card()
                 c.addView(TextView(this).apply { text = prettyLabel(entry.key); textSize = 12f; setTextColor(muted) })
-                c.addView(TextView(this).apply { text = safeValue(entry.value); textSize = 15f; setTextColor(ink); setPadding(0, dp(4), 0, 0) })
+                c.addView(TextView(this).apply { text = safeValue(entry.value); textSize = 15f; setTextColor(if (darkMode) Color.WHITE else ink); setPadding(0, dp(4), 0, 0) })
             }
         }
         actionButton("Back to Dashboard", { showRoleHome(prefs.getString("role", "user") ?: "user") }, navy2)
+    }
+
+    private fun showAdminNotifications() {
+        setup("Notifications", showLogout = true)
+        paragraph("Recent volunteer applications and donations", 14f)
+        actionButton("Refresh notifications", { showAdminNotifications() }, navy2)
+        request("Loading notifications…", { ApiClient.service.adminNotifications("Bearer $token", 1, 50) }) { body ->
+            val items = body.getAsJsonArray("items")
+            if (items == null || items.size() == 0) { paragraph("No notifications yet.", 14f); return@request }
+            items.forEach { element ->
+                val item = element.asJsonObject
+                val id = item.stringValue("_id") ?: ""
+                val type = item.stringValue("type") ?: "volunteer"
+                val title = item.stringValue("title") ?: "Notification"
+                val text = item.stringValue("message") ?: ""
+                val created = item.stringValue("createdAt") ?: ""
+                val card = MaterialCardView(this).apply {
+                    radius = dp(14).toFloat(); cardElevation = dp(1).toFloat(); setCardBackgroundColor(if (darkMode) Color.rgb(30,41,59) else Color.WHITE)
+                    layoutParams = LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(10) }
+                }
+                val inner = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(14), dp(12), dp(14), dp(12)) }
+                inner.addView(TextView(this).apply { this.text = title; textSize = 16f; setTypeface(typeface, Typeface.BOLD); setTextColor(if (darkMode) Color.WHITE else ink) })
+                inner.addView(TextView(this).apply { this.text = text; textSize = 14f; setTextColor(if (darkMode) Color.LTGRAY else ink); setPadding(0, dp(5), 0, dp(5)) })
+                inner.addView(TextView(this).apply { this.text = created.take(19).replace('T', ' '); textSize = 11f; setTextColor(muted) })
+                inner.addView(MaterialButton(this).apply { this.text = if (type == "payment") "Open donations" else "Open volunteers"; setOnClickListener {
+                    lifecycleScope.launch { try { if (id.isNotBlank()) ApiClient.service.markAdminNotificationRead("Bearer $token", id) } catch (_: Exception) { } }
+                    if (type == "payment") loadDonations() else loadVolunteers()
+                } })
+                card.addView(inner); root.addView(card)
+            }
+        }
     }
 
     private fun request(
@@ -1848,7 +2197,7 @@ class MainActivity : AppCompatActivity(), PaymentResultWithDataListener {
 
     private fun logout() {
         lifecycleScope.launch {
-            try { if (token.isNotBlank()) ApiClient.service.adminLogout("Bearer $token") } catch (_: Exception) { }
+            try { if (token.isNotBlank()) ApiClient.service.logoutDeviceSession("Bearer $token") } catch (e: Exception) { android.util.Log.w("DeviceAudit", "Logout audit request failed", e) }
             prefs.edit().clear().apply()
             token = ""
             showWelcome()

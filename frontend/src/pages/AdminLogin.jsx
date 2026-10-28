@@ -32,7 +32,7 @@ export default function AdminLogin() {
       const response = await fetch(`${API}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, platform: "web", deviceName: `Web browser (${navigator.platform || "unknown platform"})`, userAgent: navigator.userAgent }),
       });
 
       const data = await response.json();

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-41:/values-lo/values-lo.xml",
+            "outputFile": "org.swamisamiti.mobile.app-mergeDebugResources-47:/values-lo/values-lo.xml",
             "map": [
                 {
                     "source": "C:\\Users\\user\\.gradle\\caches\\8.9\\transforms\\3e85dc3a27e7bbf172ac49206d18ddee\\transformed\\core-1.15.0\\res\\values-lo\\values-lo.xml",
