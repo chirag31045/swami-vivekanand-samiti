@@ -416,7 +416,8 @@
   padding: 10px 9px;
   border: 1px solid #e7e7e7;
   border-radius: 12px;
-  background: #fff;
+  background: var(--maroon);
+  color: #fff !important;
   opacity: 0.65;
 }
 .donationStep span {
@@ -1658,4 +1659,150 @@ html[data-theme="dark"] .donationFieldHint {
   span {
   color: #f3f4f6 !important;
 }
+}
+
+/* =================================================
+   DONATION ADMIN TABLE - DESKTOP FINAL ALIGNMENT
+   Scoped only to Donation page
+================================================= */
+
+.adminDashboard .donationAdminPage,
+.adminDashboard .donationAdminPage * {
+  box-sizing: border-box;
+}
+
+.adminDashboard .donationAdminPage {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTableWrap {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden !important;
+  border-radius: 12px;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse;
+}
+
+/* Balanced column widths: total 100% */
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(1),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(1) {
+  width: 11%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(2),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(2) {
+  width: 13%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(3),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(3) {
+  width: 7%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(4),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(4) {
+  width: 10%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(5),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(5) {
+  width: 9%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(6),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(6) {
+  width: 8%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(7),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(7) {
+  width: 17%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(8),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(8) {
+  width: 16%;
+}
+
+.adminDashboard .donationAdminPage .donationAdminTable th:nth-child(9),
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(9) {
+  width: 9%;
+}
+
+/* Cell alignment */
+.adminDashboard .donationAdminPage .donationAdminTable th,
+.adminDashboard .donationAdminPage .donationAdminTable td {
+  padding: 11px 6px !important;
+  vertical-align: middle !important;
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* Payment ID */
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(7) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Paid At */
+.adminDashboard .donationAdminPage .donationAdminTable td:nth-child(8) {
+  font-size: 10.5px;
+  overflow-wrap: anywhere;
+}
+
+/* Action column */
+.adminDashboard .donationAdminPage .donationAdminTable th:last-child,
+.adminDashboard .donationAdminPage .donationAdminTable td:last-child {
+  text-align: center !important;
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+  white-space: nowrap !important;
+}
+
+/* View button - never wrap */
+.adminDashboard .donationAdminPage .donationViewButton {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap !important;
+  gap: 5px;
+  width: auto !important;
+  min-width: 66px !important;
+  max-width: 100%;
+  min-height: 36px;
+  padding: 7px 8px !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+.adminDashboard .donationAdminPage .donationViewButton svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Keep mobile card layout unchanged */
+@media (max-width: 900px) {
+  .adminDashboard .donationAdminPage .donationAdminTable {
+    table-layout: auto !important;
+  }
+
+  .adminDashboard .donationAdminPage .donationAdminTable th,
+  .adminDashboard .donationAdminPage .donationAdminTable td {
+    width: auto;
+  }
 }

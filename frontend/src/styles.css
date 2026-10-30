@@ -171,7 +171,8 @@ a {
 
 .secondary {
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--maroon);
+  color: #fff !important;
   padding: 12px 18px;
   border-radius: 10px;
   display: inline-flex;
@@ -630,6 +631,48 @@ a {
   color: var(--muted);
   line-height: 1.7;
   margin-bottom: 20px;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .documentGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .documentCard {
+    padding: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .documentGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .documentCard {
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .documentCard h3 {
+    font-size: 18px;
+  }
+
+  .documentCard p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 360px) {
+  .documentCard {
+    padding: 16px 12px;
+  }
 }
 
 /* =========================================================
@@ -5123,6 +5166,64 @@ html[data-theme="dark"] .privacyCard p {
 .activityModalFooter button:last-child:hover {
   background: var(--admin-primary-hover);
 }
+
+/* Footer - Light Theme */
+.activityModalFooter {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-top: 1px solid #e2e8f0 !important;
+
+  padding: 12px 18px !important;
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Footer - Dark Theme */
+.adminDashboard.adminDark .activityModalFooter,
+.adminDark .activityModalFooter {
+  background-color: #151923 !important;
+  color: #f1f5f9 !important;
+  border-top: 1px solid #374151 !important;
+}
+
+/* Cancel Button */
+.activityModalFooter button:first-child {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px;
+  padding: 9px 16px;
+}
+
+/* Cancel Button - Dark */
+.adminDashboard.adminDark .activityModalFooter button:first-child,
+.adminDark .activityModalFooter button:first-child {
+  background-color: #252d3b !important;
+  color: #f1f5f9 !important;
+  border-color: #475569 !important;
+}
+
+/* Add / Update Button */
+.activityModalFooter button:last-child {
+  background-color: #a51e23 !important;
+  color: #ffffff !important;
+  border: 1px solid #a51e23 !important;
+  border-radius: 8px;
+  padding: 9px 16px;
+}
+
+/* Hover */
+.activityModalFooter button:last-child:hover {
+  background-color: #85191d !important;
+}
+
 /* =========================================================
    VIEW
 ========================================================= */
@@ -5184,6 +5285,75 @@ html[data-theme="dark"] .privacyCard p {
   white-space: pre-line;
 }
 
+/* Activity View Close Button - Dark Mode */
+.adminDark .activityViewHeader button {
+  width: 38px !important;
+  height: 38px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: #dc2626 !important;
+  color: #ffffff !important;
+
+  border: 1px solid #dc2626 !important;
+  border-radius: 9px !important;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adminDark .activityViewHeader button svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.adminDark .activityViewHeader button:hover {
+  background: #b91c1c !important;
+  border-color: #b91c1c !important;
+  transform: scale(1.05);
+}
+
+/* Light Mode */
+.activityViewHeader button {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fee2e2;
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+
+  cursor: pointer;
+}
+
+.activityViewHeader button:hover {
+  background: #fecaca;
+}
+/* FORCE RED - Activity View Bottom Close Button */
+.adminDashboard .activityViewModal .activityModalFooter button,
+.adminDashboard.adminDark .activityViewModal .activityModalFooter button {
+  background: #dc2626 !important;
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+  border: 1px solid #dc2626 !important;
+  border-color: #dc2626 !important;
+  box-shadow: none !important;
+}
+
+.adminDashboard .activityViewModal .activityModalFooter button:hover,
+.adminDashboard.adminDark .activityViewModal .activityModalFooter button:hover {
+  background: #b91c1c !important;
+  background-color: #b91c1c !important;
+  color: #ffffff !important;
+  border-color: #b91c1c !important;
+}
 /* =========================================================
    DELETE
 ========================================================= */
@@ -7416,18 +7586,18 @@ body,
   overflow-x: hidden;
 }
 
+/* Password fields - common layout fix */
 .volunteerPasswordGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
-  margin: 8px 0 18px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .volunteerPasswordGrid > label {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   min-width: 0;
+  width: 100%;
 }
 
 .volunteerPasswordInput {
@@ -7438,32 +7608,73 @@ body,
   box-sizing: border-box;
   overflow: hidden;
   border: 1px solid #d1d5db;
-  border-radius: 10px;
-  background: #fff;
+  border-radius: 11px;
+  background: #ffffff;
 }
 
 .volunteerPasswordInput input {
-  flex: 1;
-  width: 100%;
+  flex: 1 1 auto;
+  width: 0;
   min-width: 0;
+  height: 50px;
   box-sizing: border-box;
-  border: 0;
+  padding: 12px 14px;
+  border: none !important;
   outline: none;
-  padding: 13px;
-  background: transparent;
-  color: #111827;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #111827 !important;
+}
+
+.volunteerPasswordInput input:focus {
+  outline: none;
+  box-shadow: none !important;
 }
 
 .volunteerPasswordInput .passwordToggle {
-  flex-shrink: 0;
-  border: 0;
-  padding: 12px;
-  background: transparent;
+  flex: 0 0 auto;
+  height: 50px;
+  padding: 0 14px;
+  border: none !important;
+  border-radius: 0;
+  background: transparent !important;
   color: #1d4ed8;
+  white-space: nowrap;
   cursor: pointer;
   font-weight: 600;
 }
 
+/* Dark theme */
+[data-theme="dark"] .volunteerPasswordInput,
+.dark .volunteerPasswordInput,
+.dark-theme .volunteerPasswordInput {
+  background: #211a17;
+  border-color: #665047;
+}
+
+[data-theme="dark"] .volunteerPasswordInput input,
+.dark .volunteerPasswordInput input,
+.dark-theme .volunteerPasswordInput input {
+  background: transparent !important;
+  color: #fff3e8 !important;
+  -webkit-text-fill-color: #fff3e8;
+}
+
+[data-theme="dark"] .volunteerPasswordInput input::placeholder,
+.dark .volunteerPasswordInput input::placeholder,
+.dark-theme .volunteerPasswordInput input::placeholder {
+  color: #b9a69b;
+  opacity: 1;
+}
+
+[data-theme="dark"] .volunteerPasswordInput .passwordToggle,
+.dark .volunteerPasswordInput .passwordToggle,
+.dark-theme .volunteerPasswordInput .passwordToggle {
+  background: transparent !important;
+  color: #f0bd59 !important;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
   .volunteerPasswordGrid {
     grid-template-columns: minmax(0, 1fr);
@@ -7471,69 +7682,68 @@ body,
   }
 }
 
-.password-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.password-status--set {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.password-status--missing {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.password-state-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 13px 16px;
-  border-radius: 12px;
-  margin: 0 0 18px;
-}
-.password-state-detail span {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
 /* Edit Volunteer popup */
 .adminDashboard .addVolunteerOverlay {
-  position: fixed;
-  inset: 0;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto;
-  box-sizing: border-box;
+ position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 16px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+
+  background: rgba(0, 0, 0, 0.68) !important;
+  backdrop-filter: blur(6px);
 }
 
 .adminDashboard .addVolunteerModal {
-  width: 100%;
-  max-width: 640px;
-  max-height: calc(100dvh - 32px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-sizing: border-box;
+  position: relative !important;
+
+  width: min(650px, calc(100vw - 32px)) !important;
+  max-width: 650px !important;
+  max-height: calc(100dvh - 32px) !important;
+  height: auto !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  padding: 22px !important;
+  margin: auto !important;
+
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+
+  border-radius: 18px !important;
+  background: var(--admin-surface) !important;
+  color: var(--admin-text) !important;
+
+  box-shadow: 0 25px 70px rgba(0,0,0,0.35); 
 }
 
 .adminDashboard .addVolunteerModal form {
-  min-height: 0;
-  overflow-y: auto;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+
   overscroll-behavior: contain;
 }
 
+.adminDashboard .addVolunteerModal form::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
 .adminDashboard .addVolunteerModalHeader {
-  flex-shrink: 0;
+  flex: 0 0 auto !important;
+  margin-bottom: 18px !important;
 }
 
 .adminDashboard .addVolunteerActions {
@@ -7981,4 +8191,6948 @@ body,
 }
 .logoPreview img {
   display: block;
+}
+/* Footer contact section */
+.footerContact {
+  min-width: 0;
+}
+
+.footerContact h4 {
+  margin: 8px 0 22px;
+}
+
+.footerContact .footerContactItem {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+
+  width: 100%;
+  margin: 12px 0 !important;
+  line-height: 1.7 !important;
+  text-align: left;
+  min-width: 0;
+}
+
+.footerContact .footerContactIcon {
+  display: block;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 5px;
+}
+
+.footerContact .footerContactItem a {
+  display: block !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Social icons */
+.footerContact .socials {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.footerContact .socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+
+  border: 1px solid #725050;
+  border-radius: 50%;
+  color: #f5e9d4;
+  text-decoration: none;
+}
+
+.footerContact .socials a svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.footerContact .socials a:hover {
+  background: #512323;
+  transform: translateY(-2px);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .footerContact .footerContactItem {
+    gap: 8px !important;
+  }
+
+  .footerContact .socials {
+    gap: 10px;
+  }
+
+  .footerContact .socials a {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .footerContact .socials a svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+
+/* Fixed WhatsApp button - bottom left */
+.floatingWhatsApp {
+  position: fixed;
+  left: 18px;
+  bottom: 24px;
+  z-index: 99999;
+
+  width: 56px;
+  height: 56px;
+  box-sizing: border-box;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #25d366;
+  color: #ffffff;
+  text-decoration: none;
+
+  box-shadow: 0 5px 18px rgba(37, 211, 102, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floatingWhatsApp svg {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.floatingWhatsApp:hover {
+  transform: scale(1.08);
+  box-shadow: 0 7px 22px rgba(37, 211, 102, 0.45);
+}
+
+@media (max-width: 600px) {
+  .floatingWhatsApp {
+    left: 16px;
+    bottom: 18px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .floatingWhatsApp svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+
+/* Contact page - modern cards */
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: stretch;
+}
+
+.contactCard {
+  min-width: 0;
+  padding: 26px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 6px 22px rgba(67, 19, 19, 0.06);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.contactCard:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+  box-shadow: 0 14px 32px rgba(67, 19, 19, 0.12);
+}
+
+.contactCard h3 {
+  margin: 12px 0 16px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.contactCard > span {
+  display: inline-block;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.contactCard p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  color: var(--muted);
+  line-height: 1.65;
+  min-width: 0;
+}
+
+.contactCard p svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: var(--gold);
+  margin: 0;
+  position: static;
+}
+
+.contactCard p a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+  transition: color 0.2s ease;
+}
+
+.contactCard p a:hover {
+  color: var(--maroon);
+}
+
+/* Location map */
+.contactMap {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  margin: 16px 0;
+}
+
+.contactMap iframe {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Social buttons */
+.contactSocials {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.contactSocials a {
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.4;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.contactSocials a svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+.contactSocials a:hover {
+  transform: translateY(-3px);
+  border-color: var(--gold);
+  background: #fff3d8;
+  color: var(--maroon);
+}
+
+/* Dark theme */
+html[data-theme="dark"] .contactCard {
+  background: #211b17;
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .contactSocials a {
+  background: #191512;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .contactSocials a:hover {
+  background: #3a2920;
+  border-color: var(--gold);
+  color: #f0bd59;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .contactGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .contactCard.wide {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .contactGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .contactCard,
+  .contactCard.wide {
+    grid-column: 1 / -1;
+    padding: 20px 17px;
+    border-radius: 15px;
+  }
+
+  .contactCard h3 {
+    font-size: 19px;
+  }
+
+  .contactCard p {
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 14px;
+  }
+
+  .contactCard p svg {
+    margin-top: 3px;
+  }
+
+  .contactSocials {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .contactSocials a {
+    justify-content: flex-start;
+    min-height: 46px;
+  }
+
+  .contactMap iframe {
+    height: 280px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactCard,
+  .contactSocials a {
+    transition: none;
+  }
+
+  .contactCard:hover,
+  .contactSocials a:hover {
+    transform: none;
+  }
+}
+
+/* =========================================
+   FINAL FIX - ACTIVITY ADD / UPDATE MODAL
+   Extra bottom spacing guaranteed
+========================================= */
+
+.activityModalOverlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Keep equal space on all sides */
+  padding: 40px 24px !important;
+
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+
+  background: rgba(15, 23, 42, 0.72) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Modal height limited to available screen */
+.activityModalOverlay > .activityModal {
+  position: relative !important;
+
+  width: min(1080px, 100%) !important;
+
+  height: auto !important;
+  max-height: calc(100dvh - 80px) !important;
+  min-height: 0 !important;
+
+  margin: 0 auto !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  flex: 0 1 auto !important;
+  box-sizing: border-box !important;
+
+  overflow: hidden !important;
+
+  background: #ffffff !important;
+  border-radius: 18px !important;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* Header remains fixed */
+.activityModal .activityModalHeader {
+  flex: 0 0 auto !important;
+}
+
+/* Only body scrolls */
+.activityModal .activityModalBody {
+  flex: 1 1 auto !important;
+
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Footer remains visible */
+.activityModal .activityModalFooter {
+  position: relative !important;
+
+  flex: 0 0 auto !important;
+  min-height: 62px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+/* Mobile */
+@media (max-width: 650px) {
+  .activityModalOverlay {
+    padding: 20px 12px !important;
+  }
+
+  .activityModalOverlay > .activityModal {
+    width: 100% !important;
+    max-height: calc(100dvh - 40px) !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* Short laptop screens */
+@media (max-height: 650px) {
+  .activityModalOverlay {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+
+  .activityModalOverlay > .activityModal {
+    max-height: calc(100dvh - 40px) !important;
+  }
+}
+
+
+/* =========================================
+   BULK ACTIVITY MODAL - FINAL UI FIX
+   Solid background + proper screen spacing
+========================================= */
+
+.activityModalOverlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 40px 18px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+
+  background: rgba(15, 23, 42, 0.72) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Main modal - solid white background */
+.activityModalOverlay .activityBulkModal {
+  width: min(1100px, 100%) !important;
+
+  height: min(760px, calc(100dvh - 80px)) !important;
+  max-height: calc(100dvh - 80px) !important;
+  min-height: 0 !important;
+
+  margin: auto !important;
+  padding: 0 !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  background: #ffffff !important;
+  color: #1e293b !important;
+
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35) !important;
+
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Header */
+.activityBulkModal .activityModalHeader {
+  flex: 0 0 auto !important;
+  background: #ffffff !important;
+  padding: 16px 24px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Info box */
+.activityBulkModal .bulkActivityInfo {
+  flex: 0 0 auto !important;
+
+  background: #f8fafc !important;
+  color: #1e293b !important;
+
+  margin: 12px 22px 0 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Image upload - remove transparency */
+.activityBulkModal .bulkActivityImageUpload {
+  flex: 0 0 auto !important;
+  margin: 12px 22px !important;
+}
+
+.activityBulkModal .bulkActivityImageUpload label {
+  background: #f8fafc !important;
+  color: #334155 !important;
+
+  border: 2px dashed #94a3b8 !important;
+  border-radius: 14px !important;
+
+  min-height: 85px !important;
+  opacity: 1 !important;
+}
+
+.activityBulkModal .bulkActivityImageUpload label svg {
+  color: #475569 !important;
+}
+
+.activityBulkModal .bulkActivityImageUpload label strong {
+  color: #1e293b !important;
+}
+
+.activityBulkModal .bulkActivityImageUpload label span {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Activity list - only this section scrolls */
+.activityBulkModal .bulkActivityList {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  padding: 12px 22px 18px !important;
+  background: #ffffff !important;
+
+  overscroll-behavior: contain !important;
+}
+
+/* Each activity card */
+.activityBulkModal .bulkActivityItem {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+
+  border: 1px solid #dbe3ed !important;
+  border-radius: 14px !important;
+
+  margin-bottom: 14px !important;
+}
+
+/* Activity title */
+.activityBulkModal .bulkActivityNumber strong {
+  color: #1e293b !important;
+}
+
+/* Inputs */
+.activityBulkModal .bulkActivityFields input,
+.activityBulkModal .bulkActivityFields textarea {
+  background: #ffffff !important;
+  color: #1e293b !important;
+
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+}
+
+/* Footer always visible */
+.activityBulkModal .activityModalFooter {
+  flex: 0 0 auto !important;
+
+  position: relative !important;
+  background: #ffffff !important;
+
+  border-top: 1px solid #e2e8f0 !important;
+  padding: 13px 22px !important;
+
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+/* Dark mode */
+.adminDark .activityModalOverlay .activityBulkModal {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #374151 !important;
+}
+
+.adminDark .activityBulkModal .activityModalHeader,
+.adminDark .activityBulkModal .activityModalFooter,
+.adminDark .activityBulkModal .bulkActivityList {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #374151 !important;
+}
+
+.adminDark .activityBulkModal .bulkActivityInfo,
+.adminDark .activityBulkModal .bulkActivityItem,
+.adminDark .activityBulkModal .bulkActivityImageUpload label {
+  background: #1f2937 !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+.adminDark .activityBulkModal .bulkActivityNumber strong,
+.adminDark .activityBulkModal .bulkActivityImageUpload label strong {
+  color: #f8fafc !important;
+}
+
+.adminDark .activityBulkModal .bulkActivityFields input,
+.adminDark .activityBulkModal .bulkActivityFields textarea {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+/* Small screens */
+@media (max-width: 650px) {
+  .activityModalOverlay {
+    padding: 12px !important;
+  }
+
+  .activityModalOverlay .activityBulkModal {
+    width: 100% !important;
+    height: calc(100dvh - 24px) !important;
+    max-height: calc(100dvh - 24px) !important;
+    border-radius: 14px !important;
+  }
+
+  .activityBulkModal .activityModalHeader {
+    padding: 13px 15px !important;
+  }
+
+  .activityBulkModal .bulkActivityInfo {
+    margin: 10px 12px 0 !important;
+  }
+
+  .activityBulkModal .bulkActivityImageUpload {
+    margin: 10px 12px !important;
+  }
+
+  .activityBulkModal .bulkActivityList {
+    padding: 10px 12px !important;
+  }
+
+  .activityBulkModal .bulkActivityFields {
+    grid-template-columns: 1fr !important;
+  }
+
+  .activityBulkModal .activityModalFooter {
+    padding: 11px 12px !important;
+  }
+}
+
+/* =========================================
+   ADD / EDIT VOLUNTEER - MOBILE RESPONSIVE
+========================================= */
+
+@media screen and (max-width: 768px) {
+
+  .adminDashboard .addVolunteerOverlay {
+    position: fixed !important;
+    inset: 0 !important;
+    padding: 12px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .adminDashboard .addVolunteerModal {
+    width: 100% !important;
+    max-width: 520px !important;
+    max-height: calc(100dvh - 24px) !important;
+    padding: 18px !important;
+    margin: auto !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+  }
+
+  /* Modal Header */
+  .adminDashboard .addVolunteerModalHeader {
+    margin-bottom: 16px !important;
+    gap: 10px !important;
+  }
+
+  .adminDashboard .addVolunteerModalHeader h2 {
+    font-size: 19px !important;
+    line-height: 1.4 !important;
+  }
+
+  .adminDashboard .addVolunteerClose {
+    flex-shrink: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  /* Form fields - single column */
+  .adminDashboard .addVolunteerGrid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 13px !important;
+  }
+
+  .adminDashboard .addVolunteerField {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .adminDashboard .addVolunteerField label {
+    font-size: 13px !important;
+  }
+
+  .adminDashboard .addVolunteerField input,
+  .adminDashboard .addVolunteerField select,
+  .adminDashboard .addVolunteerField textarea {
+    width: 100% !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
+    padding: 11px 12px !important;
+  }
+
+  .adminDashboard .addVolunteerField textarea {
+    min-height: 85px !important;
+  }
+
+  /* Form scrolling without visible scrollbar */
+  .adminDashboard .addVolunteerModal form {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .adminDashboard .addVolunteerModal form::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Footer buttons */
+  .adminDashboard .addVolunteerActions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    padding-top: 13px !important;
+    margin-top: 14px !important;
+  }
+
+  .adminDashboard .addVolunteerActions button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    padding: 10px 8px !important;
+    white-space: normal !important;
+  }
+}
+
+/* Small Mobile */
+@media screen and (max-width: 480px) {
+
+  .adminDashboard .addVolunteerOverlay {
+    padding: 8px !important;
+  }
+
+  .adminDashboard .addVolunteerModal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100dvh - 16px) !important;
+    padding: 15px !important;
+    border-radius: 13px !important;
+  }
+
+  .adminDashboard .addVolunteerModalHeader h2 {
+    font-size: 17px !important;
+  }
+
+  .adminDashboard .addVolunteerGrid {
+    gap: 11px !important;
+  }
+
+  .adminDashboard .addVolunteerField input,
+  .adminDashboard .addVolunteerField select,
+  .adminDashboard .addVolunteerField textarea {
+    font-size: 14px !important;
+  }
+
+  .adminDashboard .addVolunteerActions {
+    gap: 8px !important;
+  }
+
+  .adminDashboard .addVolunteerActions button {
+    font-size: 12px !important;
+    padding: 10px 5px !important;
+  }
+}
+
+/* Very Small Mobile */
+@media screen and (max-width: 360px) {
+
+  .adminDashboard .addVolunteerModal {
+    padding: 12px !important;
+  }
+
+  .adminDashboard .addVolunteerActions button {
+    font-size: 11px !important;
+  }
+}
+
+/* =====================================
+   VOLUNTEER TABLE PASSWORD BADGES
+===================================== */
+
+.passwordTableBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 78px;
+  padding: 7px 12px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.passwordBadgeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.passwordIsSet {
+  color: #16a36a;
+  background: rgba(22, 163, 106, 0.13);
+  border-color: rgba(22, 163, 106, 0.3);
+}
+
+.passwordIsSet .passwordBadgeDot {
+  background: #16c784;
+  box-shadow: 0 0 7px rgba(22, 199, 132, 0.5);
+}
+
+.passwordIsNotSet {
+  color: #e59a28;
+  background: rgba(229, 154, 40, 0.13);
+  border-color: rgba(229, 154, 40, 0.3);
+}
+
+.passwordIsNotSet .passwordBadgeDot {
+  background: #f5ad38;
+}
+
+/* =====================================
+   VIEW MODAL PASSWORD CARD
+===================================== */
+
+.adminDashboard .password-state-detail {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 14px 26px;
+  padding: 15px 17px;
+  border: 1px solid var(--admin-border, #374151);
+  border-radius: 13px;
+  box-sizing: border-box;
+}
+
+.adminDashboard .password-state-detail.is-set {
+  background: rgba(22, 163, 106, 0.09);
+  border-color: rgba(22, 163, 106, 0.35);
+}
+
+.adminDashboard .password-state-detail.not-set {
+  background: rgba(229, 154, 40, 0.09);
+  border-color: rgba(229, 154, 40, 0.35);
+}
+
+.passwordDetailIcon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.is-set .passwordDetailIcon {
+  color: #16c784;
+  background: rgba(22, 163, 106, 0.16);
+}
+
+.not-set .passwordDetailIcon {
+  color: #f5ad38;
+  background: rgba(229, 154, 40, 0.16);
+}
+
+.passwordDetailContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
+
+.passwordDetailLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  color: #9ca3af;
+}
+
+.passwordDetailContent strong {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--admin-text, #fff);
+}
+
+.passwordDetailContent p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #9ca3af;
+}
+
+.passwordDetailStatus {
+  flex-shrink: 0;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.is-set .passwordDetailStatus {
+  color: #16c784;
+  background: rgba(22, 163, 106, 0.16);
+}
+
+.not-set .passwordDetailStatus {
+  color: #f5ad38;
+  background: rgba(229, 154, 40, 0.16);
+}
+
+/* =====================================
+   VIEW VOLUNTEER MODAL
+   COMPACT - NO OUTER SCROLLBAR
+===================================== */
+
+.adminDashboard .volunteerViewOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.adminDashboard .volunteerViewModal {
+  width: min(760px, 100%);
+  max-height: calc(100dvh - 36px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  box-sizing: border-box;
+}
+
+.adminDashboard .volunteerViewHeader {
+  flex-shrink: 0;
+}
+
+.adminDashboard .volunteerViewTopInfo {
+  flex-shrink: 0;
+}
+
+.adminDashboard .volunteerViewDetails {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px 26px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.adminDashboard .volunteerViewDetails::-webkit-scrollbar {
+  display: none;
+}
+
+.adminDashboard .volunteerViewFooter {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 3;
+  padding: 12px 26px;
+  background: var(--admin-surface, #202938);
+  border-top: 1px solid var(--admin-border, #374151);
+}
+
+.adminDashboard .volunteerViewCloseButton {
+  min-width: 100px;
+  min-height: 40px;
+  border-radius: 10px;
+}
+
+/* Details fields */
+
+.adminDashboard .volunteerViewField {
+  min-width: 0;
+}
+
+.adminDashboard .volunteerViewField strong {
+  overflow-wrap: anywhere;
+}
+
+/* =====================================
+   MOBILE RESPONSIVE
+===================================== */
+
+@media (max-width: 600px) {
+  .adminDashboard .volunteerViewOverlay {
+    padding: 10px;
+  }
+
+  .adminDashboard .volunteerViewModal {
+    width: 100%;
+    max-height: calc(100dvh - 20px);
+    border-radius: 14px;
+  }
+
+  .adminDashboard .volunteerViewHeader {
+    padding: 16px;
+  }
+
+  .adminDashboard .volunteerViewTopInfo {
+    padding: 12px 16px;
+  }
+
+  .adminDashboard .password-state-detail {
+    margin: 10px 14px;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .passwordDetailIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .passwordDetailContent strong {
+    font-size: 13px;
+  }
+
+  .passwordDetailContent p {
+    font-size: 11px;
+  }
+
+  .passwordDetailStatus {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .adminDashboard .volunteerViewDetails {
+    padding: 12px 14px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .adminDashboard .volunteerViewFooter {
+    padding: 10px 14px;
+  }
+}
+
+/* =====================================
+   FIX PASSWORD BADGE TABLE SPACING
+===================================== */
+
+/* Password column ko sufficient width do */
+.adminDashboard table th:nth-last-child(2),
+.adminDashboard table td:nth-last-child(2) {
+  min-width: 105px !important;
+  width: 105px !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  box-sizing: border-box;
+}
+
+/* Badge ko compact aur properly centered rakho */
+.adminDashboard .passwordTableBadge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 76px !important;
+  max-width: 100%;
+  padding: 7px 9px !important;
+  margin: 3px 5px !important;
+  border-radius: 30px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  position: relative;
+}
+
+/* Action column se proper gap */
+.adminDashboard table th:last-child,
+.adminDashboard table td:last-child {
+  min-width: 125px !important;
+  padding-left: 12px !important;
+  text-align: center !important;
+}
+
+/* Action buttons ke beech spacing */
+.adminDashboard .volunteerActionButtons {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 7px !important;
+}
+
+/* Table cells alignment */
+.adminDashboard table td {
+  vertical-align: middle !important;
+}
+
+/* =========================================
+   VOLUNTEER TABLE - PERFECT FIT
+   NO SIDE CUTTING / NO BOTTOM SCROLL
+========================================= */
+
+.adminDashboard .volunteerTableWrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
+.adminDashboard .volunteerTableWrapper table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: collapse;
+}
+
+/* Table cells */
+.adminDashboard .volunteerTableWrapper th,
+.adminDashboard .volunteerTableWrapper td {
+  padding: 12px 5px !important;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* Password column */
+.adminDashboard .volunteerTableWrapper th:nth-last-child(2),
+.adminDashboard .volunteerTableWrapper td:nth-last-child(2) {
+  width: 82px !important;
+  min-width: 82px !important;
+  padding: 8px 2px !important;
+}
+
+/* Password badge */
+.adminDashboard .passwordTableBadge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 70px !important;
+  min-width: 70px !important;
+  padding: 7px 4px !important;
+  margin: 0 !important;
+  font-size: 11px !important;
+  box-sizing: border-box;
+}
+
+/* Action column */
+.adminDashboard .volunteerTableWrapper th:last-child,
+.adminDashboard .volunteerTableWrapper td:last-child {
+  width: 116px !important;
+  min-width: 116px !important;
+  padding: 7px 3px !important;
+}
+
+.adminDashboard .volunteerActionButtons {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 4px !important;
+  flex-wrap: nowrap !important;
+}
+
+.adminDashboard .volunteerActionButtons button {
+  width: 30px !important;
+  height: 34px !important;
+  min-width: 30px !important;
+  flex-shrink: 0 !important;
+  padding: 5px !important;
+}
+
+/* =========================================
+   SMALLER DESKTOP / TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+  .adminDashboard .volunteerTableWrapper th,
+  .adminDashboard .volunteerTableWrapper td {
+    padding: 10px 3px !important;
+    font-size: 11px !important;
+  }
+
+  .adminDashboard .volunteerTableWrapper th:nth-last-child(2),
+  .adminDashboard .volunteerTableWrapper td:nth-last-child(2) {
+    width: 76px !important;
+    min-width: 76px !important;
+  }
+
+  .adminDashboard .passwordTableBadge {
+    width: 66px !important;
+    min-width: 66px !important;
+    font-size: 10px !important;
+  }
+
+  .adminDashboard .volunteerTableWrapper th:last-child,
+  .adminDashboard .volunteerTableWrapper td:last-child {
+    width: 105px !important;
+    min-width: 105px !important;
+  }
+
+  .adminDashboard .volunteerActionButtons button {
+    width: 27px !important;
+    min-width: 27px !important;
+    height: 31px !important;
+  }
+}
+
+/* ==========================================
+   DIVINE COSMIC POSTER ANIMATION
+   Royal Blue + Pearl Gold
+========================================== */
+
+.hero .heroPoster {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 480px;
+  margin: 25px auto;
+  padding: 10px;
+  border-radius: 24px;
+
+  background: linear-gradient(
+    135deg,
+    #fff5d6,
+    #d8b65d,
+    #fdf0c0,
+    #b9d9e9,
+    #fff5d6
+  );
+  background-size: 300% 300%;
+
+  box-shadow:
+    0 0 15px rgba(255, 224, 151, .65),
+    0 0 45px rgba(92, 173, 224, .35),
+    0 25px 55px rgba(0, 15, 45, .25);
+
+  animation: posterBorderFlow 8s ease infinite,
+             posterLevitate 6s ease-in-out infinite;
+}
+
+/* Rotating cosmic mandala */
+.hero .heroPoster::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: -35px;
+  border-radius: 50%;
+
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 232, 174, .8) 0deg 1deg,
+    transparent 1deg 12deg,
+    rgba(123, 205, 255, .6) 12deg 13deg,
+    transparent 13deg 24deg
+  );
+
+  -webkit-mask-image: radial-gradient(
+    circle,
+    transparent 28%,
+    black 48%,
+    transparent 72%
+  );
+  mask-image: radial-gradient(
+    circle,
+    transparent 28%,
+    black 48%,
+    transparent 72%
+  );
+
+  filter: blur(2px);
+  animation: mandalaSpin 45s linear infinite;
+  pointer-events: none;
+}
+
+/* Soft divine aura */
+.hero .heroPoster::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -24px;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 235, 180, .65) 0%,
+    rgba(100, 190, 255, .3) 38%,
+    rgba(255, 255, 255, .12) 55%,
+    transparent 75%
+  );
+
+  filter: blur(25px);
+  animation: divineAura 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Actual poster */
+.hero .heroPoster img {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 17px;
+
+  border: 2px solid rgba(255, 242, 205, .95);
+
+  box-shadow:
+    0 10px 35px rgba(0, 15, 40, .3),
+    0 0 20px rgba(255, 231, 173, .4);
+
+  animation: posterImageFloat 6s ease-in-out infinite;
+  transition: filter .5s ease, box-shadow .5s ease;
+}
+
+/* Premium hover */
+.hero .heroPoster:hover img {
+  filter: brightness(1.06) saturate(1.08);
+  box-shadow:
+    0 15px 45px rgba(0, 15, 40, .35),
+    0 0 35px rgba(255, 230, 165, .75);
+}
+
+/* Animations */
+@keyframes mandalaSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes divineAura {
+  from {
+    opacity: .5;
+    transform: scale(.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes posterLevitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes posterImageFloat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.012); }
+}
+
+@keyframes posterBorderFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero .heroPoster {
+    max-width: 420px;
+    padding: 7px;
+    margin: 20px auto;
+  }
+
+  .hero .heroPoster img {
+    animation: none;
+  }
+
+  .hero .heroPoster::before {
+    opacity: .55;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .hero .heroPoster,
+  .hero .heroPoster img,
+  .hero .heroPoster::before,
+  .hero .heroPoster::after {
+    animation: none !important;
+  }
+}
+
+/* =====================================
+   HERO CTA BUTTONS - PREMIUM ANIMATION
+===================================== */
+
+/* Both buttons */
+.hero a[href*="about"],
+.hero a[href*="donat"],
+.hero a[href*="support"],
+.hero button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-height: 52px;
+  padding: 14px 27px;
+  margin: 8px 10px 8px 0;
+
+  border-radius: 50px;
+  overflow: hidden;
+  isolation: isolate;
+
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-decoration: none;
+
+  cursor: pointer;
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    background .35s ease;
+}
+
+/* About the Samiti */
+.hero a[href*="about"] {
+  color: #102444;
+  border: 1px solid #ffe8b0;
+
+  background: linear-gradient(
+    120deg,
+    #fff4d4,
+    #e9bd68,
+    #fff0c3
+  );
+
+  box-shadow:
+    0 7px 22px rgba(218, 172, 83, .3),
+    inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* Support the Cause */
+.hero a[href*="donat"],
+.hero a[href*="support"] {
+  color: #fff;
+  border: 1px solid rgba(255, 229, 174, .8);
+
+  background: linear-gradient(
+    120deg,
+    #123b69,
+    #1c5c91,
+    #123b69
+  );
+
+  box-shadow:
+    0 7px 24px rgba(12, 55, 99, .35),
+    inset 0 1px 0 rgba(255,255,255,.2);
+}
+
+/* Moving shine */
+.hero a[href*="about"]::before,
+.hero a[href*="donat"]::before,
+.hero a[href*="support"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -50%;
+  left: -80%;
+  width: 45%;
+  height: 200%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.65),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: buttonShine 4s ease-in-out infinite;
+}
+
+/* Hover effects */
+.hero a[href*="about"]:hover,
+.hero a[href*="donat"]:hover,
+.hero a[href*="support"]:hover {
+  transform: translateY(-5px) scale(1.035);
+}
+
+.hero a[href*="about"]:hover {
+  box-shadow:
+    0 13px 32px rgba(218, 172, 83, .45),
+    0 0 20px rgba(255, 226, 157, .3);
+}
+
+.hero a[href*="donat"]:hover,
+.hero a[href*="support"]:hover {
+  box-shadow:
+    0 13px 32px rgba(22, 91, 151, .45),
+    0 0 22px rgba(115, 192, 255, .3);
+}
+
+/* Click feedback */
+.hero a[href*="about"]:active,
+.hero a[href*="donat"]:active,
+.hero a[href*="support"]:active {
+  transform: scale(.96);
+}
+
+/* Animation */
+@keyframes buttonShine {
+  0%, 65% { left: -80%; }
+  100% { left: 140%; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero a[href*="about"],
+  .hero a[href*="donat"],
+  .hero a[href*="support"] {
+    min-height: 47px;
+    padding: 12px 19px;
+    font-size: 13px;
+    margin: 6px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .hero a[href*="about"]::before,
+  .hero a[href*="donat"]::before,
+  .hero a[href*="support"]::before {
+    animation: none;
+  }
+}
+
+/* ==========================================
+   SAMITI HEADER - MODERN PREMIUM THEME
+   DESIGN ONLY | NO SPACING OR TEXT CHANGES
+========================================== */
+
+/* 1. PRE HEADER */
+.topbar,
+.top-bar,
+.pre-header,
+.preHeader,
+.header-top,
+.topHeader {
+  background: linear-gradient(
+    110deg,
+    #421416,
+    #702124,
+    #511719
+  ) !important;
+
+  color: #fff7e8 !important;
+  border-bottom: 1px solid rgba(255, 218, 150, .35);
+  box-shadow: 0 3px 15px rgba(60, 15, 20, .12);
+  transition: background .3s ease;
+}
+
+/* Pre-header text */
+.topbar a,
+.top-bar a,
+.pre-header a,
+.preHeader a,
+.header-top a,
+.topHeader a {
+  color: #fff2d5 !important;
+  transition: color .3s ease;
+}
+
+.topbar a:hover,
+.top-bar a:hover,
+.pre-header a:hover,
+.preHeader a:hover,
+.header-top a:hover,
+.topHeader a:hover {
+  color: #ffd77e !important;
+}
+
+/* Language and Dark Mode */
+.topbar select,
+.top-bar select,
+.pre-header select,
+.preHeader select,
+.header-top select,
+.topHeader select,
+.topbar button,
+.top-bar button,
+.pre-header button,
+.preHeader button,
+.header-top button,
+.topHeader button {
+  transition: background .3s ease,
+              border-color .3s ease,
+              box-shadow .3s ease;
+
+  border-color: rgba(255, 222, 158, .5) !important;
+}
+
+.topbar select:hover,
+.top-bar select:hover,
+.pre-header select:hover,
+.preHeader select:hover,
+.header-top select:hover,
+.topHeader select:hover,
+.topbar button:hover,
+.top-bar button:hover,
+.pre-header button:hover,
+.preHeader button:hover,
+.header-top button:hover,
+.topHeader button:hover {
+  border-color: #ffe3a5 !important;
+  box-shadow: 0 0 12px rgba(255, 218, 150, .22);
+}
+
+/* 2. MAIN HEADER */
+header,
+.site-header,
+.main-header {
+  background: linear-gradient(
+    110deg,
+    #fffdf8,
+    #fff9ed,
+    #ffffff
+  ) !important;
+
+  border-bottom: 1px solid rgba(201, 153, 65, .3);
+  box-shadow: 0 5px 22px rgba(15, 35, 55, .07);
+
+  transition: box-shadow .3s ease,
+              background .3s ease;
+}
+
+/* Navigation links */
+header nav a,
+.site-header nav a,
+.main-header nav a {
+  transition: color .3s ease,
+              text-shadow .3s ease;
+}
+
+header nav a:hover,
+.site-header nav a:hover,
+.main-header nav a:hover {
+  color: #a66b1c !important;
+  text-shadow: 0 0 12px rgba(214, 163, 67, .18);
+}
+
+/* 3. VOLUNTEER BUTTON - GOLD */
+header a[href*="volunteer"],
+.site-header a[href*="volunteer"],
+.main-header a[href*="volunteer"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    115deg,
+    #f6d58d,
+    #c99435,
+    #fbe6b0,
+    #d6a343
+  ) !important;
+
+  background-size: 250% 250% !important;
+
+  color: #26344a !important;
+  border: 1px solid rgba(255, 235, 190, .9);
+
+  box-shadow:
+    0 5px 16px rgba(190, 139, 46, .24),
+    inset 0 1px 0 rgba(255, 255, 255, .6);
+
+  animation: volunteerGoldFlow 6s ease infinite;
+
+  transition: box-shadow .35s ease,
+              filter .35s ease;
+}
+
+/* 4. DONATE BUTTON - NAVY BLUE */
+header a[href*="donat"],
+.site-header a[href*="donat"],
+.main-header a[href*="donat"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    115deg,
+    #174b79,
+    #0c2e52,
+    #28648f,
+    #123d68
+  ) !important;
+
+  background-size: 250% 250% !important;
+
+  color: #ffffff !important;
+  border: 1px solid rgba(190, 220, 245, .55);
+
+  box-shadow:
+    0 5px 18px rgba(14, 57, 96, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .2);
+
+  animation: donateBlueFlow 6s ease infinite;
+
+  transition: box-shadow .35s ease,
+              filter .35s ease;
+}
+
+/* 5. COMMON MOVING LIGHT */
+header a[href*="volunteer"]::before,
+header a[href*="donat"]::before,
+.site-header a[href*="volunteer"]::before,
+.site-header a[href*="donat"]::before,
+.main-header a[href*="volunteer"]::before,
+.main-header a[href*="donat"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -100%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, .65),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: headerButtonShine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* 6. BUTTON HOVER */
+header a[href*="volunteer"]:hover,
+header a[href*="donat"]:hover,
+.site-header a[href*="volunteer"]:hover,
+.site-header a[href*="donat"]:hover,
+.main-header a[href*="volunteer"]:hover,
+.main-header a[href*="donat"]:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 9px 25px rgba(30, 65, 100, .24),
+    0 0 16px rgba(255, 220, 150, .22);
+}
+
+/* 7. ANIMATIONS */
+@keyframes headerButtonShine {
+  0%, 65% {
+    left: -100%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+@keyframes volunteerGoldFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes donateBlueFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 8. ACCESSIBILITY */
+@media (prefers-reduced-motion: reduce) {
+  header a[href*="volunteer"],
+  header a[href*="donat"],
+  .site-header a[href*="volunteer"],
+  .site-header a[href*="donat"],
+  .main-header a[href*="volunteer"],
+  .main-header a[href*="donat"] {
+    animation: none !important;
+  }
+
+  header a[href*="volunteer"]::before,
+  header a[href*="donat"]::before {
+    animation: none !important;
+  }
+}
+
+/* ==========================================
+   PREMIUM TOP STRIP & HEADER DIVIDER
+   NO HEIGHT / SPACING / TEXT CHANGES
+========================================== */
+
+/* TOP REGISTRATION STRIP */
+.topbar,
+.top-bar,
+.pre-header,
+.preHeader,
+.header-top,
+.topHeader {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    110deg,
+    #481416 0%,
+    #641b20 25%,
+    #842d2d 50%,
+    #641b20 75%,
+    #481416 100%
+  ) !important;
+
+  background-size: 200% 100% !important;
+
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 222, 160, .65) !important;
+
+  box-shadow:
+    0 3px 12px rgba(65, 15, 20, .12),
+    inset 0 -1px 0 rgba(255, 255, 255, .08);
+
+  animation: premiumTopFlow 12s ease infinite;
+}
+
+/* Moving light on top strip */
+.topbar::before,
+.top-bar::before,
+.pre-header::before,
+.preHeader::before,
+.header-top::before,
+.topHeader::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: -100%;
+  width: 35%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 230, 175, .12),
+    transparent
+  );
+
+  transform: skewX(-25deg);
+  animation: topStripShine 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Keep top strip content above shine */
+.topbar > *,
+.top-bar > *,
+.pre-header > *,
+.preHeader > *,
+.header-top > *,
+.topHeader > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* MAIN HEADER BOTTOM GOLDEN LINE */
+header,
+.site-header,
+.main-header {
+  position: relative;
+  border-bottom: 0 !important;
+}
+
+/* Elegant animated divider */
+header::after,
+.site-header::after,
+.main-header::after {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #c99435 20%,
+    #ffe8ad 50%,
+    #c99435 80%,
+    transparent 100%
+  );
+
+  background-size: 200% 100%;
+  animation: headerLineFlow 6s linear infinite;
+  pointer-events: none;
+}
+
+/* PRE-HEADER BOTTOM GOLD ACCENT */
+.topbar,
+.top-bar,
+.pre-header,
+.preHeader,
+.header-top,
+.topHeader {
+  background-clip: padding-box;
+}
+
+/* Animations */
+@keyframes premiumTopFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes topStripShine {
+  0%, 70% {
+    left: -100%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+@keyframes headerLineFlow {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: -100% 50%;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .topbar,
+  .top-bar,
+  .pre-header,
+  .preHeader,
+  .header-top,
+  .topHeader,
+  header::after,
+  .site-header::after,
+  .main-header::after {
+    animation: none !important;
+  }
+
+  .topbar::before,
+  .top-bar::before,
+  .pre-header::before,
+  .preHeader::before,
+  .header-top::before,
+  .topHeader::before {
+    animation: none !important;
+  }
+}
+
+/* ==========================================
+   SAMITI LOGO - DIVINE ROYAL ANIMATION
+   WEBSITE WIDE | ORIGINAL LOGO PRESERVED
+========================================== */
+
+/* Common logo images */
+header img,
+.site-header img,
+.main-header img,
+.logo img,
+.site-logo img,
+.brand-logo img,
+.footer img,
+footer img {
+  transition:
+    transform .5s ease,
+    filter .5s ease,
+    drop-shadow .5s ease;
+}
+
+/* Logo image identification */
+header img[alt*="logo" i],
+header img[alt*="samiti" i],
+.site-header img[alt*="logo" i],
+.site-header img[alt*="samiti" i],
+.main-header img[alt*="logo" i],
+.logo img,
+.site-logo img,
+.brand-logo img,
+footer img[alt*="logo" i],
+.footer img[alt*="logo" i] {
+  animation: samitiLogoFloat 5s ease-in-out infinite;
+
+  filter:
+    drop-shadow(0 3px 5px rgba(190, 139, 46, .2))
+    drop-shadow(0 0 9px rgba(255, 215, 130, .18));
+
+  transform-origin: center;
+  will-change: transform, filter;
+}
+
+/* Hover premium effect */
+header a:hover img,
+.site-header a:hover img,
+.main-header a:hover img,
+.logo:hover img,
+.site-logo:hover img,
+.brand-logo:hover img,
+footer a:hover img,
+.footer a:hover img {
+  transform: scale(1.09) rotate(-3deg);
+
+  filter:
+    drop-shadow(0 4px 7px rgba(214, 163, 67, .5))
+    drop-shadow(0 0 15px rgba(255, 215, 130, .5));
+}
+
+/* Logo float */
+@keyframes samitiLogoFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-3px) scale(1.025);
+  }
+}
+
+/* Optional logo wrapper glow */
+.logo,
+.site-logo,
+.brand-logo {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Soft golden aura behind logo */
+.logo::before,
+.site-logo::before,
+.brand-logo::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -8px;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(255, 213, 130, .32),
+    rgba(214, 163, 67, .10) 50%,
+    transparent 75%
+  );
+
+  filter: blur(9px);
+  opacity: .75;
+  animation: samitiLogoAura 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes samitiLogoAura {
+  from {
+    opacity: .35;
+    transform: scale(.9);
+  }
+
+  to {
+    opacity: .9;
+    transform: scale(1.12);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  header img,
+  .site-header img,
+  .main-header img,
+  .logo img,
+  .site-logo img,
+  .brand-logo img,
+  footer img,
+  .footer img {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .logo::before,
+  .site-logo::before,
+  .brand-logo::before {
+    animation: none !important;
+  }
+}
+
+/* ==========================================
+   DARK MODE - PREMIUM HEADER THEME
+   MIDNIGHT NAVY + ROYAL BLUE + GOLD
+========================================== */
+
+/* Pre-header strip */
+.dark .topbar,
+.dark .top-bar,
+.dark .pre-header,
+.dark .preHeader,
+.dark .header-top,
+.dark .topHeader,
+[data-theme="dark"] .topbar,
+[data-theme="dark"] .top-bar,
+[data-theme="dark"] .pre-header,
+[data-theme="dark"] .preHeader,
+[data-theme="dark"] .header-top,
+[data-theme="dark"] .topHeader {
+  background: linear-gradient(
+    110deg,
+    #081629 0%,
+    #102b49 25%,
+    #173d62 50%,
+    #102b49 75%,
+    #081629 100%
+  ) !important;
+
+  background-size: 200% 100% !important;
+  color: #f4e6c4 !important;
+
+  border-bottom: 1px solid rgba(224, 184, 103, .55) !important;
+
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, .3),
+    inset 0 -1px 0 rgba(255, 255, 255, .04);
+
+  animation: darkTopFlow 12s ease infinite;
+}
+
+/* Top strip links */
+.dark .topbar a,
+.dark .top-bar a,
+.dark .pre-header a,
+.dark .preHeader a,
+.dark .header-top a,
+.dark .topHeader a,
+[data-theme="dark"] .topbar a,
+[data-theme="dark"] .top-bar a,
+[data-theme="dark"] .pre-header a,
+[data-theme="dark"] .preHeader a,
+[data-theme="dark"] .header-top a,
+[data-theme="dark"] .topHeader a {
+  color: #f8e8c3 !important;
+}
+
+/* Language & Dark mode controls */
+.dark .topbar select,
+.dark .top-bar select,
+.dark .pre-header select,
+.dark .preHeader select,
+.dark .header-top select,
+.dark .topHeader select,
+.dark .topbar button,
+.dark .top-bar button,
+.dark .pre-header button,
+.dark .preHeader button,
+.dark .header-top button,
+.dark .topHeader button,
+[data-theme="dark"] .topbar select,
+[data-theme="dark"] .pre-header select,
+[data-theme="dark"] .header-top select,
+[data-theme="dark"] .topbar button,
+[data-theme="dark"] .pre-header button,
+[data-theme="dark"] .header-top button {
+  color: #fff0cf !important;
+  background: rgba(255, 255, 255, .07) !important;
+  border-color: rgba(224, 184, 103, .5) !important;
+}
+
+/* Main header */
+.dark header,
+.dark .site-header,
+.dark .main-header,
+[data-theme="dark"] header,
+[data-theme="dark"] .site-header,
+[data-theme="dark"] .main-header {
+  background: linear-gradient(
+    110deg,
+    #0b1728,
+    #11263d,
+    #0b1728
+  ) !important;
+
+  border-bottom: 0 !important;
+
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, .3),
+    inset 0 -1px 0 rgba(255, 255, 255, .04);
+}
+
+/* Navigation */
+.dark header nav a,
+.dark .site-header nav a,
+.dark .main-header nav a,
+[data-theme="dark"] header nav a,
+[data-theme="dark"] .site-header nav a,
+[data-theme="dark"] .main-header nav a {
+  color: #e8edf5 !important;
+  transition: color .3s ease, text-shadow .3s ease;
+}
+
+.dark header nav a:hover,
+.dark .site-header nav a:hover,
+.dark .main-header nav a:hover,
+[data-theme="dark"] header nav a:hover,
+[data-theme="dark"] .site-header nav a:hover,
+[data-theme="dark"] .main-header nav a:hover {
+  color: #f3cc7c !important;
+  text-shadow: 0 0 12px rgba(243, 204, 124, .3);
+}
+
+/* Animated gold bottom line */
+.dark header::after,
+.dark .site-header::after,
+.dark .main-header::after,
+[data-theme="dark"] header::after,
+[data-theme="dark"] .site-header::after,
+[data-theme="dark"] .main-header::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #a97829,
+    #ffe6a5,
+    #c5943e,
+    transparent
+  ) !important;
+
+  background-size: 200% 100% !important;
+}
+
+/* Dark mode buttons */
+.dark header a[href*="volunteer"],
+.dark .site-header a[href*="volunteer"],
+[data-theme="dark"] header a[href*="volunteer"],
+[data-theme="dark"] .site-header a[href*="volunteer"] {
+  color: #172b43 !important;
+  background: linear-gradient(
+    120deg,
+    #ffe9b5,
+    #c99435,
+    #f9d98f
+  ) !important;
+}
+
+.dark header a[href*="donat"],
+.dark .site-header a[href*="donat"],
+[data-theme="dark"] header a[href*="donat"],
+[data-theme="dark"] .site-header a[href*="donat"] {
+  color: #fff !important;
+  background: linear-gradient(
+    120deg,
+    #225785,
+    #102d4c,
+    #3476a9
+  ) !important;
+}
+
+/* Dark theme animation */
+@keyframes darkTopFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .dark .topbar,
+  .dark .pre-header,
+  .dark .header-top,
+  [data-theme="dark"] .topbar,
+  [data-theme="dark"] .pre-header,
+  [data-theme="dark"] .header-top {
+    animation: none !important;
+  }
+}
+
+/* =====================================================
+   SWAMI VIVEKANAND SAMITI
+   COMPLETE WEBSITE PREMIUM ANIMATION
+   ROYAL NAVY + CHAMPAGNE GOLD
+===================================================== */
+
+:root {
+  --sv-navy: #102d4d;
+  --sv-navy-dark: #091c32;
+  --sv-blue: #1b527d;
+  --sv-gold: #d5a64d;
+  --sv-gold-light: #ffe8ad;
+  --sv-white: #ffffff;
+  --sv-shadow: 0 12px 32px rgba(13, 39, 65, .10);
+}
+
+/* =====================================================
+   1. FOOTER - PREMIUM ROYAL DESIGN
+===================================================== */
+
+footer,
+.site-footer,
+.main-footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    125deg,
+    #081b30 0%,
+    #102d4d 45%,
+    #153c5e 100%
+  ) !important;
+
+  color: #f4f6fa !important;
+
+  border-top: 2px solid rgba(213, 166, 77, .65);
+
+  box-shadow: 0 -10px 35px rgba(8, 28, 48, .12);
+}
+
+/* Footer moving glow */
+footer::before,
+.site-footer::before,
+.main-footer::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -100px;
+  left: -10%;
+  width: 120%;
+  height: 200px;
+
+  background: radial-gradient(
+    ellipse,
+    rgba(213, 166, 77, .15),
+    transparent 70%
+  );
+
+  animation: footerAura 7s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Footer headings */
+footer h2,
+footer h3,
+footer h4,
+.site-footer h2,
+.site-footer h3,
+.site-footer h4,
+.main-footer h2,
+.main-footer h3,
+.main-footer h4 {
+  color: #ffe2a0 !important;
+  transition: color .3s ease;
+}
+
+/* Footer text */
+footer p,
+footer li,
+footer span,
+.site-footer p,
+.site-footer li,
+.site-footer span,
+.main-footer p,
+.main-footer li,
+.main-footer span {
+  color: rgba(245, 248, 252, .85);
+  transition: color .3s ease;
+}
+
+/* Footer links */
+footer a,
+.site-footer a,
+.main-footer a {
+  color: #e6edf5 !important;
+  text-decoration: none;
+  transition:
+    color .3s ease,
+    transform .3s ease;
+}
+
+footer a:hover,
+.site-footer a:hover,
+.main-footer a:hover {
+  color: #ffdf96 !important;
+  transform: translateX(4px);
+}
+
+/* Footer social icons */
+footer a svg,
+footer a i,
+.site-footer a svg,
+.site-footer a i,
+.main-footer a svg,
+.main-footer a i {
+  transition: transform .35s ease, filter .35s ease;
+}
+
+footer a:hover svg,
+footer a:hover i,
+.site-footer a:hover svg,
+.site-footer a:hover i,
+.main-footer a:hover svg,
+.main-footer a:hover i {
+  transform: translateY(-4px) scale(1.12);
+  filter: drop-shadow(0 0 7px rgba(255, 222, 150, .55));
+}
+
+/* Footer divider */
+footer hr,
+.site-footer hr,
+.main-footer hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 220, 150, .65),
+    transparent
+  );
+}
+
+/* =====================================================
+   2. KEY SERVICES / SERVICE CARDS
+===================================================== */
+
+.service-card,
+.services-card,
+.key-service-card,
+.service-item,
+.key-services .card,
+.services .card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #f8fbff
+  );
+
+  border: 1px solid rgba(213, 166, 77, .22);
+  border-radius: 18px;
+
+  box-shadow: var(--sv-shadow);
+
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease,
+    border-color .4s ease;
+}
+
+/* Golden light sweep */
+.service-card::before,
+.services-card::before,
+.key-service-card::before,
+.service-item::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -100%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 224, 155, .24),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  transition: left .8s ease;
+  pointer-events: none;
+}
+
+.service-card:hover::before,
+.services-card:hover::before,
+.key-service-card:hover::before,
+.service-item:hover::before {
+  left: 150%;
+}
+
+/* Service hover */
+.service-card:hover,
+.services-card:hover,
+.key-service-card:hover,
+.service-item:hover,
+.key-services .card:hover,
+.services .card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(213, 166, 77, .65);
+
+  box-shadow:
+    0 18px 40px rgba(13, 39, 65, .13),
+    0 0 18px rgba(213, 166, 77, .10);
+}
+
+/* Service icons */
+.service-card svg,
+.services-card svg,
+.key-service-card svg,
+.service-item svg {
+  transition: transform .4s ease, filter .4s ease;
+}
+
+.service-card:hover svg,
+.services-card:hover svg,
+.key-service-card:hover svg,
+.service-item:hover svg {
+  transform: scale(1.15) rotate(-5deg);
+  filter: drop-shadow(0 4px 7px rgba(213, 166, 77, .3));
+}
+
+/* =====================================================
+   3. ALL COMMON CONTENT CARDS
+===================================================== */
+
+.card,
+.gallery-item,
+.certificate-card,
+.volunteer-card,
+.donation-card,
+.event-card,
+.feature-card {
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    border-color .35s ease;
+}
+
+.card:hover,
+.gallery-item:hover,
+.certificate-card:hover,
+.volunteer-card:hover,
+.donation-card:hover,
+.event-card:hover,
+.feature-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 15px 35px rgba(13, 39, 65, .12),
+    0 0 12px rgba(213, 166, 77, .10);
+}
+
+/* =====================================================
+   4. SECTION HEADINGS
+===================================================== */
+
+section h2 {
+  transition: color .35s ease;
+  text-wrap: balance;
+}
+
+section h2:hover {
+  color: var(--sv-blue);
+}
+
+/* Heading underline */
+.section-title::after,
+.section-heading::after {
+  content: "";
+  display: block;
+  width: 55px;
+  height: 3px;
+  margin-top: 10px;
+
+  background: linear-gradient(
+    90deg,
+    var(--sv-gold),
+    var(--sv-gold-light)
+  );
+
+  border-radius: 10px;
+  transition: width .4s ease;
+}
+
+.section-title:hover::after,
+.section-heading:hover::after {
+  width: 100px;
+}
+
+/* =====================================================
+   5. TEXT & PARAGRAPHS
+===================================================== */
+
+section p {
+  transition: color .3s ease;
+}
+
+section strong,
+section b {
+  color: var(--sv-navy);
+  font-weight: 750;
+}
+
+/* =====================================================
+   6. IMAGES & GALLERY
+===================================================== */
+
+.gallery-item,
+.gallery-card {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.gallery-item img,
+.gallery-card img {
+  transition:
+    transform .65s cubic-bezier(.2, .7, .3, 1),
+    filter .5s ease;
+}
+
+.gallery-item:hover img,
+.gallery-card:hover img {
+  transform: scale(1.055);
+  filter: brightness(1.06) saturate(1.08);
+}
+
+/* =====================================================
+   7. GLOBAL BUTTON HOVER
+===================================================== */
+
+button,
+.btn,
+.button,
+input[type="submit"] {
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    filter .3s ease;
+}
+
+button:hover,
+.btn:hover,
+.button:hover,
+input[type="submit"]:hover {
+  filter: brightness(1.06);
+}
+
+button:active,
+.btn:active,
+.button:active,
+input[type="submit"]:active {
+  transform: scale(.97);
+}
+
+/* =====================================================
+   8. FOOTER ANIMATION
+===================================================== */
+
+@keyframes footerAura {
+  from {
+    opacity: .35;
+    transform: translateX(-3%) scale(.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(3%) scale(1.08);
+  }
+}
+
+/* =====================================================
+   9. DARK MODE SUPPORT
+===================================================== */
+
+.dark .service-card,
+.dark .services-card,
+.dark .key-service-card,
+.dark .service-item,
+.dark .card,
+.dark .feature-card,
+[data-theme="dark"] .service-card,
+[data-theme="dark"] .services-card,
+[data-theme="dark"] .key-service-card,
+[data-theme="dark"] .service-item,
+[data-theme="dark"] .card,
+[data-theme="dark"] .feature-card {
+  background: linear-gradient(
+    145deg,
+    #10243b,
+    #142e49
+  );
+
+  border-color: rgba(213, 166, 77, .24);
+  color: #f0f4fa;
+}
+
+.dark section h2,
+[data-theme="dark"] section h2 {
+  color: #f2d18a;
+}
+
+.dark section p,
+[data-theme="dark"] section p {
+  color: #d9e2ee;
+}
+
+.dark section strong,
+.dark section b,
+[data-theme="dark"] section strong,
+[data-theme="dark"] section b {
+  color: #f3d18b;
+}
+
+/* =====================================================
+   10. MOBILE RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+  .service-card:hover,
+  .services-card:hover,
+  .key-service-card:hover,
+  .service-item:hover,
+  .card:hover,
+  .gallery-item:hover {
+    transform: translateY(-3px);
+  }
+
+  footer,
+  .site-footer,
+  .main-footer {
+    background: linear-gradient(
+      160deg,
+      #081b30,
+      #102d4d
+    ) !important;
+  }
+}
+
+/* =====================================================
+   11. ACCESSIBILITY
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  footer::before,
+  .site-footer::before,
+  .main-footer::before {
+    animation: none !important;
+  }
+
+  .service-card,
+  .services-card,
+  .key-service-card,
+  .service-item,
+  .card,
+  .gallery-item,
+  .certificate-card,
+  .volunteer-card,
+  .donation-card,
+  .event-card,
+  .feature-card,
+  footer a {
+    transition: none !important;
+  }
+}
+
+/* ==================================================
+   SAMITI - SERVICES & FOOTER PREMIUM THEME
+   NAVY BLUE + CHAMPAGNE GOLD
+================================================== */
+
+:root {
+  --sv-navy: #102d4d;
+  --sv-navy-deep: #081b30;
+  --sv-gold: #d5a64d;
+  --sv-gold-light: #ffe8ad;
+}
+
+/* ================================================
+   1. KEY SERVICE AREAS SECTION
+================================================ */
+
+.key-services,
+.key-service-section,
+.services-section {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Section heading */
+.key-services h2,
+.key-service-section h2,
+.services-section h2 {
+  color: var(--sv-navy);
+  transition: color .35s ease, text-shadow .35s ease;
+}
+
+.key-services h2:hover,
+.key-service-section h2:hover,
+.services-section h2:hover {
+  color: #b27d29;
+  text-shadow: 0 0 16px rgba(213, 166, 77, .18);
+}
+
+/* Service cards */
+.key-services .card,
+.key-services .service-card,
+.key-service-section .card,
+.key-service-section .service-card,
+.services-section .card,
+.services-section .service-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  border: 1px solid rgba(213, 166, 77, .25);
+  border-radius: 18px;
+
+  box-shadow: 0 8px 26px rgba(16, 45, 77, .08);
+
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease,
+    border-color .4s ease;
+}
+
+/* Moving golden light */
+.key-services .card::before,
+.key-services .service-card::before,
+.key-service-section .card::before,
+.key-service-section .service-card::before,
+.services-section .card::before,
+.services-section .service-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -100%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 224, 155, .3),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+/* Shine on hover */
+.key-services .card:hover::before,
+.key-services .service-card:hover::before,
+.key-service-section .card:hover::before,
+.key-service-section .service-card:hover::before,
+.services-section .card:hover::before,
+.services-section .service-card:hover::before {
+  animation: serviceCardShine .85s ease;
+}
+
+@keyframes serviceCardShine {
+  from { left: -100%; }
+  to { left: 150%; }
+}
+
+/* Service hover */
+.key-services .card:hover,
+.key-services .service-card:hover,
+.key-service-section .card:hover,
+.key-service-section .service-card:hover,
+.services-section .card:hover,
+.services-section .service-card:hover {
+  transform: translateY(-7px);
+  border-color: rgba(213, 166, 77, .7);
+
+  box-shadow:
+    0 16px 36px rgba(16, 45, 77, .13),
+    0 0 17px rgba(213, 166, 77, .12);
+}
+
+/* Service icons */
+.key-services .card svg,
+.key-services .service-card svg,
+.key-service-section .card svg,
+.key-service-section .service-card svg,
+.services-section .card svg,
+.services-section .service-card svg {
+  transition: transform .4s ease, filter .4s ease;
+}
+
+.key-services .card:hover svg,
+.key-services .service-card:hover svg,
+.key-service-section .card:hover svg,
+.key-service-section .service-card:hover svg,
+.services-section .card:hover svg,
+.services-section .service-card:hover svg {
+  transform: scale(1.12) rotate(-5deg);
+  filter: drop-shadow(0 4px 8px rgba(213, 166, 77, .4));
+}
+
+/* ================================================
+   2. INSPIRATION SECTION
+================================================ */
+
+.inspiration,
+.inspiration-section,
+#inspiration {
+  position: relative;
+}
+
+.inspiration h2,
+.inspiration-section h2,
+#inspiration h2 {
+  color: var(--sv-navy);
+  transition: color .3s ease;
+}
+
+.inspiration p,
+.inspiration-section p,
+#inspiration p {
+  transition: color .3s ease;
+}
+
+/* Inspiration quote/card */
+.inspiration .card,
+.inspiration-section .card,
+#inspiration .card {
+  border: 1px solid rgba(213, 166, 77, .25);
+  border-radius: 18px;
+
+  box-shadow: 0 8px 26px rgba(16, 45, 77, .07);
+
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease;
+}
+
+.inspiration .card:hover,
+.inspiration-section .card:hover,
+#inspiration .card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 15px 35px rgba(16, 45, 77, .13),
+    0 0 15px rgba(213, 166, 77, .13);
+}
+
+/* ================================================
+   3. PRIVACY POLICY / IMPORTANT LINKS
+================================================ */
+
+footer a,
+.site-footer a,
+.main-footer a {
+  position: relative;
+  text-decoration: none !important;
+  transition:
+    color .3s ease,
+    text-shadow .3s ease;
+}
+
+/* Golden animated underline */
+footer a::after,
+.site-footer a::after,
+.main-footer a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+
+  width: 0;
+  height: 1.5px;
+
+  background: linear-gradient(
+    90deg,
+    var(--sv-gold),
+    var(--sv-gold-light)
+  );
+
+  transition: width .35s ease;
+}
+
+footer a:hover::after,
+.site-footer a:hover::after,
+.main-footer a:hover::after {
+  width: 100%;
+}
+
+footer a:hover,
+.site-footer a:hover,
+.main-footer a:hover {
+  color: var(--sv-gold-light) !important;
+  text-shadow: 0 0 12px rgba(255, 220, 150, .22);
+}
+
+/* ================================================
+   4. FOOTER BUTTONS
+================================================ */
+
+footer button,
+.site-footer button,
+.main-footer button,
+footer .btn,
+.site-footer .btn,
+.main-footer .btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    filter .35s ease;
+}
+
+footer button:hover,
+.site-footer button:hover,
+.main-footer button:hover,
+footer .btn:hover,
+.site-footer .btn:hover,
+.main-footer .btn:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 9px 24px rgba(213, 166, 77, .2),
+    0 0 13px rgba(255, 224, 155, .12);
+}
+
+/* ================================================
+   5. FOOTER HEADINGS & TEXT
+================================================ */
+
+footer h2,
+footer h3,
+footer h4,
+.site-footer h2,
+.site-footer h3,
+.site-footer h4,
+.main-footer h2,
+.main-footer h3,
+.main-footer h4 {
+  color: var(--sv-gold-light) !important;
+  text-shadow: 0 0 16px rgba(213, 166, 77, .12);
+}
+
+footer p,
+footer li,
+.site-footer p,
+.site-footer li,
+.main-footer p,
+.main-footer li {
+  color: rgba(245, 248, 252, .88);
+  transition: color .3s ease;
+}
+
+/* Footer social icons */
+footer a svg,
+.site-footer a svg,
+.main-footer a svg {
+  transition: transform .35s ease, filter .35s ease;
+}
+
+footer a:hover svg,
+.site-footer a:hover svg,
+.main-footer a:hover svg {
+  transform: translateY(-4px) scale(1.12);
+  filter: drop-shadow(0 0 8px rgba(255, 220, 150, .5));
+}
+
+/* ================================================
+   6. DARK MODE
+================================================ */
+
+.dark .key-services h2,
+.dark .key-service-section h2,
+.dark .services-section h2,
+.dark .inspiration h2,
+.dark .inspiration-section h2,
+[data-theme="dark"] .key-services h2,
+[data-theme="dark"] .key-service-section h2,
+[data-theme="dark"] .services-section h2,
+[data-theme="dark"] .inspiration h2,
+[data-theme="dark"] .inspiration-section h2 {
+  color: #f4d38e;
+}
+
+.dark .key-services .card,
+.dark .key-services .service-card,
+.dark .key-service-section .card,
+.dark .services-section .card,
+.dark .inspiration .card,
+.dark .inspiration-section .card,
+[data-theme="dark"] .key-services .card,
+[data-theme="dark"] .key-services .service-card,
+[data-theme="dark"] .key-service-section .card,
+[data-theme="dark"] .services-section .card,
+[data-theme="dark"] .inspiration .card,
+[data-theme="dark"] .inspiration-section .card {
+  background: linear-gradient(145deg, #10243b, #142e49);
+  border-color: rgba(213, 166, 77, .25);
+  color: #f3f6fb;
+}
+
+/* ================================================
+   7. MOBILE & ACCESSIBILITY
+================================================ */
+
+@media (max-width: 768px) {
+  .key-services .card:hover,
+  .key-services .service-card:hover,
+  .key-service-section .card:hover,
+  .services-section .card:hover,
+  .inspiration .card:hover,
+  .inspiration-section .card:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key-services *,
+  .key-service-section *,
+  .services-section *,
+  .inspiration *,
+  .inspiration-section *,
+  footer *,
+  .site-footer *,
+  .main-footer * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* ==========================================================
+   SWAMI VIVEKANAND SAMITI
+   COMPLETE PUBLIC WEBSITE PREMIUM THEME
+   Royal Navy + Champagne Gold
+   CSS ONLY | NO TEXT / SPACING / LAYOUT CHANGES
+========================================================== */
+
+.app {
+  --public-navy: #102d4d;
+  --public-deep: #081b30;
+  --public-blue: #19466e;
+  --public-gold: #d5a64d;
+  --public-gold-light: #ffe7ad;
+  --public-cream: #fffaf0;
+  --public-text: #252b35;
+  --public-muted: #687587;
+  --public-border: rgba(201, 154, 61, .28);
+}
+
+/* ==========================================================
+   1. GLOBAL PUBLIC BACKGROUND
+========================================================== */
+
+.app {
+  background: var(--public-cream);
+  color: var(--public-text);
+}
+
+.app main {
+  background: linear-gradient(
+    180deg,
+    #fffaf0 0%,
+    #f8f7f1 45%,
+    #fffaf0 100%
+  );
+}
+
+.app main > section {
+  position: relative;
+}
+
+/* Smooth text and link transitions */
+.app main h1,
+.app main h2,
+.app main h3,
+.app main h4,
+.app main p,
+.app main a,
+.app main button {
+  transition:
+    color .3s ease,
+    text-shadow .3s ease,
+    border-color .3s ease;
+}
+
+/* ==========================================================
+   2. TOPBAR - PREMIUM REGISTRATION STRIP
+========================================================== */
+
+.app .topbar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    110deg,
+    #35121a,
+    #64202a,
+    #842d32,
+    #64202a,
+    #35121a
+  ) !important;
+
+  background-size: 250% 100% !important;
+
+  border-bottom: 1px solid rgba(255, 220, 150, .65);
+
+  box-shadow:
+    0 4px 15px rgba(20, 25, 40, .15),
+    inset 0 -1px 0 rgba(255, 255, 255, .08);
+
+  animation: samitiTopFlow 14s ease infinite;
+}
+
+.app .topbar::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: -100%;
+  width: 35%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 230, 175, .16),
+    transparent
+  );
+
+  transform: skewX(-25deg);
+  animation: samitiTopShine 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.app .topbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+.app .topControls select,
+.app .themeToggle {
+  border: 1px solid rgba(255, 225, 165, .48);
+  transition: all .3s ease;
+}
+
+.app .topControls select:hover,
+.app .themeToggle:hover {
+  border-color: var(--public-gold-light);
+  box-shadow: 0 0 14px rgba(255, 220, 150, .25);
+  color: var(--public-gold-light);
+}
+
+/* ==========================================================
+   3. MAIN HEADER
+========================================================== */
+
+.app .header {
+  background: rgba(255, 253, 248, .96) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border-bottom: 1px solid rgba(201, 154, 61, .42);
+
+  box-shadow:
+    0 5px 24px rgba(16, 45, 77, .08),
+    0 1px 0 rgba(255, 255, 255, .8);
+
+  transition: box-shadow .35s ease;
+}
+
+.app .header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #c99435,
+    #ffe8ad,
+    #c99435,
+    transparent
+  );
+
+  background-size: 200% 100%;
+  animation: samitiHeaderLine 7s linear infinite;
+  pointer-events: none;
+}
+
+/* Logo */
+.app .brand img,
+.app .footerLogo {
+  transition:
+    transform .5s ease,
+    filter .5s ease;
+}
+
+.app .brand:hover img,
+.app .footerLogoLink:hover .footerLogo {
+  transform: scale(1.08) rotate(-4deg);
+  filter: drop-shadow(0 0 10px rgba(213, 166, 77, .48));
+}
+
+/* Brand name */
+.app .brand strong {
+  transition: color .3s ease;
+}
+
+.app .brand:hover strong {
+  color: #c08a30;
+}
+
+/* Navigation */
+.app .nav > a:not(.volunteerBtn):not(.donateBtn) {
+  position: relative;
+  transition:
+    color .3s ease,
+    transform .3s ease;
+}
+
+.app .nav > a:not(.volunteerBtn):not(.donateBtn)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  width: 0;
+  height: 2px;
+
+  background: linear-gradient(
+    90deg,
+    var(--public-gold),
+    var(--public-gold-light)
+  );
+
+  transition: width .35s ease;
+}
+
+.app .nav > a:not(.volunteerBtn):not(.donateBtn):hover::after,
+.app .nav > a:not(.volunteerBtn):not(.donateBtn).active::after {
+  width: 100%;
+}
+
+.app .nav > a:not(.volunteerBtn):not(.donateBtn):hover {
+  color: #a97824;
+  transform: translateY(-2px);
+}
+
+/* ==========================================================
+   4. HEADER ACTION BUTTONS
+========================================================== */
+
+.app .volunteerBtn,
+.app .donateBtn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    filter .35s ease;
+}
+
+.app .volunteerBtn {
+  background: linear-gradient(
+    115deg,
+    #f5d58e,
+    #c99435,
+    #ffe9b7,
+    #c99435
+  ) !important;
+
+  background-size: 250% 250% !important;
+  color: #17304a !important;
+
+  box-shadow:
+    0 5px 16px rgba(190, 139, 46, .2),
+    inset 0 1px 0 rgba(255, 255, 255, .65);
+
+  animation: samitiGoldFlow 7s ease infinite;
+}
+
+.app .donateBtn {
+  background: linear-gradient(
+    115deg,
+    #174b79,
+    #0a2847,
+    #28648f,
+    #123d68
+  ) !important;
+
+  background-size: 250% 250% !important;
+  color: #fff !important;
+
+  box-shadow:
+    0 5px 18px rgba(14, 57, 96, .25),
+    inset 0 1px 0 rgba(255, 255, 255, .2);
+
+  animation: samitiBlueFlow 7s ease infinite;
+}
+
+.app .volunteerBtn::before,
+.app .donateBtn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -100%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, .55),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: samitiButtonShine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.app .volunteerBtn:hover,
+.app .donateBtn:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 12px 28px rgba(16, 45, 77, .22),
+    0 0 18px rgba(213, 166, 77, .2);
+}
+
+/* ==========================================================
+   5. HOME HERO
+========================================================== */
+
+.app .hero {
+  position: relative;
+  isolation: isolate;
+
+  background: linear-gradient(
+    120deg,
+    #fffaf0,
+    #f5f7f7,
+    #f1f6fa
+  );
+}
+
+.app .hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 82% 45%,
+      rgba(45, 119, 174, .14),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 8% 85%,
+      rgba(213, 166, 77, .13),
+      transparent 35%
+    );
+
+  animation: samitiAmbient 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.app .heroContent {
+  animation: samitiContentEnter .9s ease both;
+}
+
+.app .heroContent h1 {
+  color: #202c3a;
+}
+
+.app .heroContent h1 em {
+  color: #9b2427;
+  text-shadow: 0 4px 18px rgba(155, 36, 39, .08);
+}
+
+.app .heroContent p {
+  color: #5b6675;
+}
+
+.app .hero .actions .primary,
+.app .hero .actions .secondary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease;
+}
+
+.app .hero .actions .primary {
+  background: linear-gradient(
+    120deg,
+    #f4d58e,
+    #c99435,
+    #ffe8ad
+  );
+
+  background-size: 200% 200%;
+  color: #17304a !important;
+  animation: samitiGoldFlow 7s ease infinite;
+}
+
+.app .hero .actions .secondary {
+  background: linear-gradient(
+    120deg,
+    #174b79,
+    #0b2a49,
+    #28648f
+  );
+
+  background-size: 200% 200%;
+  color: white !important;
+  animation: samitiBlueFlow 7s ease infinite;
+}
+
+.app .hero .actions .primary:hover,
+.app .hero .actions .secondary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(16, 45, 77, .23);
+}
+
+/* Poster */
+.app .heroPoster {
+  position: relative;
+  border-color: #bd8b37;
+  box-shadow:
+    0 15px 40px rgba(16, 45, 77, .18),
+    0 0 0 4px rgba(213, 166, 77, .13),
+    0 0 35px rgba(213, 166, 77, .15);
+
+  transition: box-shadow .5s ease;
+}
+
+.app .heroPoster:hover {
+  box-shadow:
+    0 22px 48px rgba(16, 45, 77, .24),
+    0 0 0 5px rgba(213, 166, 77, .2),
+    0 0 45px rgba(213, 166, 77, .25);
+}
+
+.app .heroPoster img {
+  transition: transform .6s ease, filter .6s ease;
+}
+
+.app .heroPoster:hover img {
+  transform: scale(1.025);
+  filter: saturate(1.08);
+}
+
+/* ==========================================================
+   6. ALL PUBLIC SECTION HEADINGS
+========================================================== */
+
+.app .sectionHead,
+.app .section > div:first-child,
+.app .pageHero > * {
+  animation: samitiContentEnter .7s ease both;
+}
+
+.app .eyebrow,
+.app .activityEyebrow {
+  color: #bd872e;
+  text-shadow: 0 0 12px rgba(213, 166, 77, .12);
+}
+
+.app .section h2,
+.app .pageHero h1,
+.app .activityDetailContent h1 {
+  text-wrap: balance;
+}
+
+/* ==========================================================
+   7. KEY SERVICE AREAS AND ALL CARDS
+========================================================== */
+
+.app .cards .card,
+.app .card,
+.app .objectiveCard,
+.app .documentCard,
+.app .contactCard,
+.app .financeCards > div,
+.app .certificateSection > div,
+.app .trustBox {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  border: 1px solid var(--public-border);
+
+  box-shadow:
+    0 7px 24px rgba(16, 45, 77, .055);
+
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease,
+    border-color .4s ease,
+    background .4s ease;
+}
+
+/* Moving light sweep */
+.app .cards .card::before,
+.app .card::before,
+.app .objectiveCard::before,
+.app .documentCard::before,
+.app .contactCard::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -110%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 223, 155, .25),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+/* Card hover */
+.app .cards .card:hover,
+.app .card:hover,
+.app .objectiveCard:hover,
+.app .documentCard:hover,
+.app .contactCard:hover,
+.app .financeCards > div:hover,
+.app .certificateSection > div:hover,
+.app .trustBox:hover {
+  transform: translateY(-7px);
+
+  border-color: rgba(201, 154, 61, .75);
+
+  box-shadow:
+    0 18px 38px rgba(16, 45, 77, .13),
+    0 0 18px rgba(213, 166, 77, .13);
+}
+
+.app .cards .card:hover::before,
+.app .card:hover::before,
+.app .objectiveCard:hover::before,
+.app .documentCard:hover::before,
+.app .contactCard:hover::before {
+  animation: samitiCardShine .85s ease;
+}
+
+/* Card headings */
+.app .card h3,
+.app .objectiveCard h3,
+.app .documentCard h3,
+.app .contactCard h3 {
+  transition: color .3s ease;
+}
+
+.app .card:hover h3,
+.app .objectiveCard:hover h3,
+.app .documentCard:hover h3,
+.app .contactCard:hover h3 {
+  color: #b47b23;
+}
+
+/* Service icons */
+.app .iconCircle {
+  background: linear-gradient(
+    135deg,
+    #fff0c8,
+    #e9c879
+  );
+
+  color: #173b5c;
+
+  box-shadow: 0 4px 12px rgba(201, 154, 61, .16);
+
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.app .card:hover .iconCircle {
+  transform: scale(1.12) rotate(-6deg);
+  box-shadow: 0 7px 18px rgba(201, 154, 61, .3);
+}
+
+/* ==========================================================
+   8. INSPIRATION QUOTE SECTION
+========================================================== */
+
+.app .quoteBand {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    125deg,
+    #081b30,
+    #102d4d 48%,
+    #183f62
+  ) !important;
+
+  color: white;
+}
+
+.app .quoteBand::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 15% 50%,
+      rgba(213, 166, 77, .2),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 40%,
+      rgba(75, 157, 220, .18),
+      transparent 38%
+    );
+
+  animation: samitiAmbient 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.app .quoteBand .eyebrow {
+  color: var(--public-gold-light);
+}
+
+.app .quoteBand h2 {
+  color: #fff;
+  text-shadow: 0 0 22px rgba(255, 255, 255, .12);
+  animation: samitiQuoteEnter 1s ease both;
+}
+
+.app .quoteBand p {
+  color: var(--public-gold-light);
+}
+
+/* ==========================================================
+   9. ABOUT US PAGE
+========================================================== */
+
+.app .pageHero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    115deg,
+    #081b30,
+    #102d4d 55%,
+    #193f61
+  ) !important;
+}
+
+.app .pageHero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(213, 166, 77, .2),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 85% 30%,
+      rgba(100, 170, 220, .15),
+      transparent 38%
+    );
+
+  animation: samitiAmbient 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.app .pageHero h1 {
+  color: #fff;
+  text-shadow: 0 3px 22px rgba(0, 0, 0, .2);
+}
+
+.app .pageHero p {
+  color: #e0eaf4;
+}
+
+.app .pageHero .eyebrow {
+  color: var(--public-gold-light);
+}
+
+.app .aboutLogo {
+  filter: drop-shadow(0 12px 20px rgba(16, 45, 77, .12));
+  transition: transform .5s ease, filter .5s ease;
+}
+
+.app .aboutLogo:hover {
+  transform: scale(1.04);
+  filter: drop-shadow(0 12px 24px rgba(213, 166, 77, .3));
+}
+
+.app .infoList div {
+  transition: background .3s ease, padding-left .3s ease;
+}
+
+.app .infoList div:hover {
+  background: rgba(213, 166, 77, .07);
+  padding-left: 8px;
+}
+
+/* ==========================================================
+   10. CERTIFICATES / DOCUMENTS
+========================================================== */
+
+.app .certificateSection > div,
+.app .documentCard {
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fffaf0
+  );
+}
+
+.app .pdfFrame {
+  box-shadow: 0 5px 18px rgba(16, 45, 77, .08);
+  transition: box-shadow .4s ease;
+}
+
+.app .certificateSection > div:hover .pdfFrame {
+  box-shadow: 0 12px 28px rgba(16, 45, 77, .16);
+}
+
+.app .documentCard svg,
+.app .financeCards svg {
+  transition: transform .4s ease, filter .4s ease;
+}
+
+.app .documentCard:hover svg,
+.app .financeCards > div:hover svg {
+  transform: scale(1.13);
+  filter: drop-shadow(0 0 9px rgba(213, 166, 77, .45));
+}
+
+/* ==========================================================
+   11. SERVICES / ACTIVITY DETAIL
+========================================================== */
+
+.app .activityDetailPage {
+  background: linear-gradient(
+    140deg,
+    #fffaf0,
+    #f1f5f8,
+    #fffaf0
+  );
+}
+
+.app .activityDetailContent h1 {
+  color: var(--public-navy);
+}
+
+.app .activityDetailImage {
+  box-shadow:
+    0 15px 38px rgba(16, 45, 77, .14),
+    0 0 0 4px rgba(213, 166, 77, .12);
+
+  transition: transform .5s ease, box-shadow .5s ease;
+}
+
+.app .activityDetailImage:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 22px 45px rgba(16, 45, 77, .2),
+    0 0 0 5px rgba(213, 166, 77, .22);
+}
+
+.app .activityBackBtn {
+  background: linear-gradient(
+    115deg,
+    #174b79,
+    #0b2947,
+    #28648f
+  );
+
+  box-shadow: 0 5px 15px rgba(16, 45, 77, .2);
+}
+
+.app .activityBackBtn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(16, 45, 77, .25);
+}
+
+/* ==========================================================
+   12. GALLERY
+========================================================== */
+
+.app .gallery img {
+  border: 2px solid rgba(213, 166, 77, .2);
+
+  box-shadow: 0 7px 22px rgba(16, 45, 77, .08);
+
+  transition:
+    transform .45s ease,
+    box-shadow .45s ease,
+    border-color .45s ease,
+    filter .45s ease;
+}
+
+.app .gallery img:hover {
+  transform: translateY(-7px) scale(1.025);
+
+  border-color: var(--public-gold);
+
+  filter: saturate(1.1);
+
+  box-shadow:
+    0 18px 36px rgba(16, 45, 77, .18),
+    0 0 18px rgba(213, 166, 77, .18);
+}
+
+/* ==========================================================
+   13. CONTACT AND SOCIAL BUTTONS
+========================================================== */
+
+.app .contactCard span {
+  color: #bd872e;
+}
+
+.app .contactCard svg {
+  transition: transform .35s ease, filter .35s ease;
+}
+
+.app .contactCard:hover svg {
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 8px rgba(213, 166, 77, .35));
+}
+
+.app .socialBtn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease;
+}
+
+.app .socialBtn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 26px rgba(16, 45, 77, .2);
+}
+
+.app .socials a {
+  transition:
+    transform .35s ease,
+    background .35s ease,
+    box-shadow .35s ease;
+}
+
+.app .socials a:hover {
+  transform: translateY(-5px) scale(1.08);
+  background: #b88939;
+  box-shadow: 0 0 16px rgba(213, 166, 77, .35);
+}
+
+/* ==========================================================
+   14. DONATION / VOLUNTEER FORMS
+========================================================== */
+
+.app .form,
+.app .bankBox {
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fffaf1
+  );
+
+  border-color: var(--public-border);
+
+  box-shadow: 0 8px 25px rgba(16, 45, 77, .06);
+
+  transition: box-shadow .35s ease, border-color .35s ease;
+}
+
+.app .form:focus-within,
+.app .bankBox:hover {
+  border-color: rgba(201, 154, 61, .7);
+  box-shadow: 0 12px 30px rgba(16, 45, 77, .12);
+}
+
+.app .form input,
+.app .form select,
+.app .form textarea {
+  border-color: #d9c9aa;
+  transition: border-color .3s ease, box-shadow .3s ease;
+}
+
+.app .form input:focus,
+.app .form select:focus,
+.app .form textarea:focus {
+  outline: none;
+  border-color: var(--public-gold);
+  box-shadow: 0 0 0 3px rgba(213, 166, 77, .15);
+}
+
+/* All public primary buttons */
+.app main .primary,
+.app main .secondary,
+.app main .popupOk {
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    filter .3s ease;
+}
+
+.app main .primary:hover,
+.app main .secondary:hover,
+.app main .popupOk:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.06);
+  box-shadow: 0 9px 22px rgba(16, 45, 77, .18);
+}
+
+/* ==========================================================
+   15. FINANCIAL TRANSPARENCY / TABLE
+========================================================== */
+
+.app .financeCards > div {
+  background: linear-gradient(145deg, #fff, #fffaf0);
+}
+
+.app .tableWrap {
+  box-shadow: 0 8px 25px rgba(16, 45, 77, .06);
+}
+
+.app .tableWrap th {
+  background: linear-gradient(
+    100deg,
+    #102d4d,
+    #19466e
+  );
+
+  color: #ffe8ad;
+}
+
+.app .tableWrap th,
+.app .tableWrap td {
+  transition: background .25s ease;
+}
+
+.app .tableWrap tbody tr:hover td {
+  background: rgba(213, 166, 77, .08);
+}
+
+/* ==========================================================
+   16. PRIVACY POLICY
+========================================================== */
+
+.app .split {
+  position: relative;
+}
+
+.app .split .trustBox {
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fffaf0
+  );
+}
+
+.app .split .trustBox svg {
+  color: var(--public-gold);
+  transition: transform .4s ease, filter .4s ease;
+}
+
+.app .split .trustBox:hover svg {
+  transform: scale(1.12) rotate(-5deg);
+  filter: drop-shadow(0 0 10px rgba(213, 166, 77, .45));
+}
+
+/* ==========================================================
+   17. FOOTER - MATCHING ROYAL NAVY
+========================================================== */
+
+.app .footer {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    125deg,
+    #07182b,
+    #102d4d 50%,
+    #183c5c
+  ) !important;
+
+  color: #f5e9d4;
+
+  border-top: 2px solid rgba(213, 166, 77, .65);
+}
+
+.app .footer::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(213, 166, 77, .14),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(63, 143, 198, .13),
+      transparent 38%
+    );
+
+  animation: samitiAmbient 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.app .footer h3,
+.app .footer h4 {
+  color: var(--public-gold-light);
+}
+
+.app .footerGrid a,
+.app .footerGrid p {
+  color: #d9e2ed;
+  transition: color .3s ease, transform .3s ease;
+}
+
+.app .footerGrid a:hover {
+  color: var(--public-gold-light);
+  transform: translateX(4px);
+}
+
+.app .copyright {
+  border-top-color: rgba(255, 220, 150, .22);
+  color: #c6d0dc;
+}
+
+.app .footer .socials a {
+  border-color: rgba(255, 220, 150, .4);
+  color: #ffe8ad;
+}
+
+.app .footer .socials a:hover {
+  background: rgba(213, 166, 77, .22);
+}
+
+/* ==========================================================
+   18. FLOATING WHATSAPP
+========================================================== */
+
+.app .floatingWhatsApp {
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease;
+  animation: samitiWhatsAppPulse 3s ease-in-out infinite;
+}
+
+.app .floatingWhatsApp:hover {
+  transform: scale(1.12) translateY(-4px);
+  box-shadow:
+    0 10px 28px rgba(37, 211, 102, .38),
+    0 0 18px rgba(37, 211, 102, .25);
+}
+
+/* ==========================================================
+   19. DARK MODE - COMPLETE PUBLIC WEBSITE
+========================================================== */
+
+html[data-theme="dark"] .app {
+  --public-cream: #0b1725;
+  --public-text: #edf3fa;
+  --public-muted: #b7c5d5;
+  --public-border: rgba(213, 166, 77, .25);
+}
+
+html[data-theme="dark"] .app main {
+  background: linear-gradient(
+    180deg,
+    #0b1725,
+    #10243a 48%,
+    #0b1725
+  );
+
+  color: #edf3fa;
+}
+
+/* Dark header */
+html[data-theme="dark"] .app .header {
+  background: rgba(9, 25, 42, .97) !important;
+  border-color: rgba(213, 166, 77, .4);
+}
+
+html[data-theme="dark"] .app .brand strong,
+html[data-theme="dark"] .app .nav a {
+  color: #edf3fa;
+}
+
+html[data-theme="dark"] .app .brand small {
+  color: #bac9d9;
+}
+
+html[data-theme="dark"] .app .nav a.active {
+  color: var(--public-gold-light);
+}
+
+/* Dark hero */
+html[data-theme="dark"] .app .hero {
+  background: linear-gradient(
+    120deg,
+    #0b1725,
+    #102c47,
+    #122d46
+  );
+}
+
+html[data-theme="dark"] .app .heroContent h1 {
+  color: #f4f6fa;
+}
+
+html[data-theme="dark"] .app .heroContent h1 em {
+  color: #f0c875;
+}
+
+html[data-theme="dark"] .app .heroContent p {
+  color: #c5d2df;
+}
+
+/* Dark cards */
+html[data-theme="dark"] .app .card,
+html[data-theme="dark"] .app .objectiveCard,
+html[data-theme="dark"] .app .documentCard,
+html[data-theme="dark"] .app .contactCard,
+html[data-theme="dark"] .app .financeCards > div,
+html[data-theme="dark"] .app .certificateSection > div,
+html[data-theme="dark"] .app .trustBox,
+html[data-theme="dark"] .app .form,
+html[data-theme="dark"] .app .bankBox {
+  background: linear-gradient(
+    145deg,
+    #152c43,
+    #102238
+  ) !important;
+
+  color: #edf3fa;
+  border-color: rgba(213, 166, 77, .25);
+}
+
+html[data-theme="dark"] .app main h1,
+html[data-theme="dark"] .app main h2,
+html[data-theme="dark"] .app main h3,
+html[data-theme="dark"] .app main h4 {
+  color: #f2d28c;
+}
+
+html[data-theme="dark"] .app main p,
+html[data-theme="dark"] .app .card p,
+html[data-theme="dark"] .app .trustBox p,
+html[data-theme="dark"] .app .contactCard p {
+  color: #c6d3e0;
+}
+
+/* Dark forms */
+html[data-theme="dark"] .app .form input,
+html[data-theme="dark"] .app .form select,
+html[data-theme="dark"] .app .form textarea {
+  background: #0b1c2d;
+  color: #f3f6fa;
+  border-color: #40566d;
+}
+
+html[data-theme="dark"] .app .form input::placeholder,
+html[data-theme="dark"] .app .form textarea::placeholder {
+  color: #9eafc1;
+}
+
+/* Dark table */
+html[data-theme="dark"] .app .tableWrap {
+  background: #12263b;
+  border-color: #344d65;
+}
+
+html[data-theme="dark"] .app .tableWrap td {
+  color: #e4edf6;
+  border-color: #344d65;
+}
+
+html[data-theme="dark"] .app .tableWrap tbody tr:hover td {
+  background: rgba(213, 166, 77, .1);
+}
+
+/* Dark page hero */
+html[data-theme="dark"] .app .pageHero,
+html[data-theme="dark"] .app .quoteBand {
+  background: linear-gradient(
+    125deg,
+    #061629,
+    #102d4d,
+    #173e60
+  ) !important;
+}
+
+/* Dark activity detail */
+html[data-theme="dark"] .app .activityDetailPage {
+  background: linear-gradient(
+    140deg,
+    #0b1725,
+    #10243a
+  );
+}
+
+html[data-theme="dark"] .app .activityDetailContent h1 {
+  color: #f2d28c;
+}
+
+html[data-theme="dark"] .app .activityDetailContent p {
+  color: #c6d3e0;
+}
+
+/* Dark copyright/footer */
+html[data-theme="dark"] .app .footer {
+  background: linear-gradient(
+    125deg,
+    #061426,
+    #102d4d,
+    #173e60
+  ) !important;
+}
+
+/* ==========================================================
+   20. RESPONSIVE
+========================================================== */
+
+@media (max-width: 900px) {
+  html[data-theme="dark"] .app .nav {
+    background: #0c2035;
+    border-color: rgba(213, 166, 77, .25);
+  }
+
+  html[data-theme="dark"] .app .nav a {
+    color: #f1f5f9;
+  }
+
+  html[data-theme="dark"] .app .menuBtn {
+    color: #f1f5f9;
+  }
+}
+
+@media (max-width: 768px) {
+  .app .cards .card:hover,
+  .app .card:hover,
+  .app .documentCard:hover,
+  .app .objectiveCard:hover,
+  .app .contactCard:hover {
+    transform: translateY(-3px);
+  }
+
+  .app .gallery img:hover {
+    transform: translateY(-3px) scale(1.01);
+  }
+
+  .app .heroPoster:hover img {
+    transform: none;
+  }
+}
+
+/* ==========================================================
+   21. ANIMATION KEYFRAMES
+========================================================== */
+
+@keyframes samitiTopFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes samitiTopShine {
+  0%, 70% { left: -100%; }
+  100% { left: 150%; }
+}
+
+@keyframes samitiHeaderLine {
+  from { background-position: 100% 50%; }
+  to { background-position: -100% 50%; }
+}
+
+@keyframes samitiGoldFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes samitiBlueFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes samitiButtonShine {
+  0%, 65% { left: -100%; }
+  100% { left: 150%; }
+}
+
+@keyframes samitiCardShine {
+  from { left: -110%; }
+  to { left: 150%; }
+}
+
+@keyframes samitiAmbient {
+  from {
+    opacity: .55;
+    transform: scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes samitiContentEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes samitiQuoteEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes samitiWhatsAppPulse {
+  0%, 100% {
+    box-shadow: 0 5px 16px rgba(37, 211, 102, .18);
+  }
+  50% {
+    box-shadow: 0 5px 25px rgba(37, 211, 102, .4);
+  }
+}
+
+/* ==========================================================
+   22. ACCESSIBILITY
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .app *,
+  .app *::before,
+  .app *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* =========================================
+   1. REMOVE EXTRA HEADER DOUBLE LINE
+========================================= */
+
+/* Remove the additional animated line */
+.app .header::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Keep only one clean bottom border */
+.app .header {
+  border-bottom: 1px solid rgba(201, 154, 61, 0.45) !important;
+  box-shadow: 0 5px 18px rgba(16, 45, 77, 0.07) !important;
+}
+
+/* Keep active navigation underline */
+.app .nav a.active {
+  border-bottom: 2px solid #d5a64d;
+}
+
+
+/* =========================================
+   2. PRIVACY POLICY BUTTON - NAVY BLUE
+========================================= */
+
+.app .privacyHomeSection a,
+.app .privacyHomeCard a,
+.app a[href*="privacy"].primary {
+  background: linear-gradient(
+    135deg,
+    #102d4d,
+    #1d527c,
+    #102d4d
+  ) !important;
+
+  color: #ffffff !important;
+  border: 1px solid #d5a64d !important;
+  border-radius: 11px !important;
+
+  box-shadow: 0 6px 18px rgba(16, 45, 77, 0.2);
+
+  transition: all 0.3s ease !important;
+}
+
+.app .privacyHomeSection a:hover,
+.app .privacyHomeCard a:hover,
+.app a[href*="privacy"].primary:hover {
+  background: linear-gradient(
+    135deg,
+    #c99435,
+    #eac778
+  ) !important;
+
+  color: #102d4d !important;
+  transform: translateY(-4px);
+
+  box-shadow: 0 12px 25px rgba(201, 154, 61, 0.28);
+}
+
+
+/* =========================================
+   3. VIEW PDF BUTTON - GOLD BACKGROUND
+========================================= */
+
+.app .documentCard a.primary {
+  background: linear-gradient(
+    135deg,
+    #f5d58e,
+    #d2a044,
+    #f5d58e
+  ) !important;
+
+  background-size: 200% 200% !important;
+
+  color: #17304a !important;
+  border: 1px solid #b98936 !important;
+  border-radius: 11px !important;
+
+  box-shadow:
+    0 6px 18px rgba(201, 154, 61, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  transition: all 0.35s ease !important;
+}
+
+.app .documentCard a.primary svg {
+  color: #17304a !important;
+  transition: transform 0.3s ease;
+}
+
+.app .documentCard a.primary:hover {
+  background: linear-gradient(
+    135deg,
+    #102d4d,
+    #1d527c
+  ) !important;
+
+  color: #ffffff !important;
+  border-color: #d5a64d !important;
+
+  transform: translateY(-4px);
+
+  box-shadow: 0 12px 25px rgba(16, 45, 77, 0.23);
+}
+
+.app .documentCard a.primary:hover svg {
+  color: #ffe7ad !important;
+  transform: translate(3px, -2px);
+}
+
+
+/* =========================================
+   4. DARK MODE SUPPORT
+========================================= */
+
+html[data-theme="dark"] .app .privacyHomeSection a,
+html[data-theme="dark"] .app .privacyHomeCard a {
+  background: linear-gradient(
+    135deg,
+    #1d527c,
+    #102d4d
+  ) !important;
+
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .app .documentCard a.primary {
+  background: linear-gradient(
+    135deg,
+    #f5d58e,
+    #d2a044
+  ) !important;
+
+  color: #17304a !important;
+}
+
+/* =========================================
+   CONTACT PAGE - GOOGLE MAP BUTTON
+   PREMIUM NAVY + GOLD ANIMATION
+========================================= */
+
+.contactMapCard > a.primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  background: linear-gradient(
+    115deg,
+    #f5d58e,
+    #d2a044,
+    #fbe6b0,
+    #c99435
+  ) !important;
+
+  background-size: 250% 250% !important;
+  color: #17304a !important;
+
+  border: 1px solid rgba(255, 235, 190, .9) !important;
+  border-radius: 12px !important;
+
+  box-shadow:
+    0 6px 18px rgba(190, 139, 46, .24),
+    inset 0 1px 0 rgba(255,255,255,.55);
+
+  animation: mapButtonGoldFlow 6s ease infinite;
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.contactMapCard > a.primary::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -100%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.65),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: mapButtonShine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.contactMapCard > a.primary:hover {
+  background: linear-gradient(
+    115deg,
+    #174b79,
+    #0c2e52,
+    #28648f
+  ) !important;
+
+  color: #ffffff !important;
+  border-color: #e8c477 !important;
+  transform: translateY(-4px);
+
+  box-shadow: 0 12px 25px rgba(14,57,96,.28);
+}
+
+@keyframes mapButtonGoldFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes mapButtonShine {
+  0%, 65% { left: -100%; }
+  100% { left: 150%; }
+}
+
+
+/* =========================================
+   TOPBAR - MATCHING MAROON + GOLD THEME
+========================================= */
+
+.topbar,
+.top-bar,
+.pre-header,
+.preHeader,
+.header-top,
+.topHeader {
+  background: linear-gradient(
+    110deg,
+    #421416,
+    #702124,
+    #842d2d,
+    #511719
+  ) !important;
+
+  background-size: 200% 100% !important;
+  color: #fff5df !important;
+
+  border: none !important;
+  border-bottom: 1px solid rgba(255,215,145,.55) !important;
+
+  box-shadow: 0 4px 14px rgba(65,15,20,.15);
+  animation: samitiTopbarFlow 12s ease infinite;
+}
+
+.topbar a,
+.top-bar a,
+.pre-header a,
+.preHeader a,
+.header-top a,
+.topHeader a {
+  color: #fff2d5 !important;
+  transition: color .3s ease;
+}
+
+.topbar a:hover,
+.top-bar a:hover,
+.pre-header a:hover,
+.preHeader a:hover,
+.header-top a:hover,
+.topHeader a:hover {
+  color: #ffd77e !important;
+}
+
+
+/* =========================================
+   MAIN HEADER - SINGLE GOLD DIVIDER
+========================================= */
+
+header,
+.site-header,
+.main-header {
+  border-bottom: 1px solid rgba(201,153,65,.55) !important;
+  box-shadow: 0 5px 20px rgba(15,35,55,.08) !important;
+}
+
+/* Remove duplicate animated divider */
+header::after,
+.site-header::after,
+.main-header::after {
+  display: none !important;
+  content: none !important;
+}
+
+@keyframes samitiTopbarFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+html[data-theme="dark"] .contactMapCard > a.primary {
+  background: linear-gradient(
+    115deg,
+    #f5d58e,
+    #c99435,
+    #f5d58e
+  ) !important;
+
+  color: #17304a !important;
+}
+
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .top-bar,
+html[data-theme="dark"] .pre-header,
+html[data-theme="dark"] .preHeader,
+html[data-theme="dark"] .header-top,
+html[data-theme="dark"] .topHeader {
+  background: linear-gradient(
+    110deg,
+    #24151b,
+    #482027,
+    #64282d
+  ) !important;
+}
+
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .contactMapCard > a.primary,
+  .contactMapCard > a.primary::before,
+  .topbar,
+  .top-bar,
+  .pre-header,
+  .preHeader,
+  .header-top,
+  .topHeader {
+    animation: none !important;
+  }
+}
+
+/* ==========================================
+   SAMITI TOPBAR - PREMIUM MAROON THEME
+========================================== */
+
+.topbar,
+.top-bar,
+.pre-header,
+.preHeader,
+.header-top,
+.topHeader {
+  position: relative;
+  background: linear-gradient(
+    110deg,
+    #351216 0%,
+    #51191f 35%,
+    #67242a 65%,
+    #40151a 100%
+  ) !important;
+
+  color: #fff4df !important;
+  border-bottom: 1px solid rgba(218, 174, 96, .7) !important;
+
+  box-shadow:
+    0 4px 16px rgba(35, 12, 17, .18),
+    inset 0 -1px 0 rgba(255,255,255,.06);
+}
+
+/* Topbar text */
+.topbar,
+.top-bar,
+.pre-header,
+.preHeader,
+.header-top,
+.topHeader,
+.topbar label,
+.top-bar label {
+  color: #fff4df !important;
+}
+
+/* Language and Dark buttons */
+.topbar select,
+.top-bar select,
+.pre-header select,
+.preHeader select,
+.header-top select,
+.topHeader select,
+.topbar button,
+.top-bar button,
+.pre-header button,
+.preHeader button,
+.header-top button,
+.topHeader button {
+  background: rgba(255, 255, 255, .07) !important;
+  color: #fff4df !important;
+  border: 1px solid rgba(239, 207, 151, .5) !important;
+  border-radius: 9px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+  transition: all .3s ease !important;
+}
+
+.topbar select:hover,
+.top-bar select:hover,
+.pre-header select:hover,
+.preHeader select:hover,
+.header-top select:hover,
+.topHeader select:hover,
+.topbar button:hover,
+.top-bar button:hover,
+.pre-header button:hover,
+.preHeader button:hover,
+.header-top button:hover,
+.topHeader button:hover {
+  background: linear-gradient(135deg, #d6aa5b, #f3d99e) !important;
+  color: #351216 !important;
+  border-color: #f3d99e !important;
+  box-shadow: 0 0 14px rgba(239, 207, 151, .3);
+}
+
+
+/* ==========================================
+   MAIN HEADER - REMOVE DOUBLE UNDERLINE
+========================================== */
+
+header,
+.site-header,
+.main-header {
+  border-bottom: 1px solid rgba(201, 153, 65, .5) !important;
+  box-shadow: 0 5px 18px rgba(16, 45, 77, .07) !important;
+}
+
+/* Remove extra line from header */
+header::after,
+.site-header::after,
+.main-header::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Navigation links: one clean underline only */
+header nav a,
+.site-header nav a,
+.main-header nav a {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  position: relative;
+}
+
+/* Single active underline */
+header nav a.active::after,
+.site-header nav a.active::after,
+.main-header nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -7px;
+  height: 2px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #bd842c, #f0d18c);
+}
+
+/* Remove duplicate active underline */
+header nav a.active,
+.site-header nav a.active,
+.main-header nav a.active {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+
+/* ==========================================
+   DARK MODE
+========================================== */
+
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .top-bar,
+html[data-theme="dark"] .pre-header,
+html[data-theme="dark"] .preHeader,
+html[data-theme="dark"] .header-top,
+html[data-theme="dark"] .topHeader {
+  background: linear-gradient(
+    110deg,
+    #1d1015,
+    #35171e,
+    #482027
+  ) !important;
+}
+
+/* ==========================================
+   TOPBAR - MATCH WEBSITE NAVY GOLD THEME
+========================================== */
+
+.app .topbar {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    110deg,
+    #081b30 0%,
+    #102d4d 35%,
+    #19466e 65%,
+    #081b30 100%
+  ) !important;
+
+  color: #fff4df !important;
+
+  border-bottom: 1px solid rgba(213, 166, 77, .7) !important;
+
+  box-shadow:
+    0 4px 16px rgba(8, 27, 48, .2),
+    inset 0 -1px 0 rgba(255,255,255,.08);
+}
+
+/* Subtle golden moving light */
+.app .topbar::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: -100%;
+  width: 35%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 225, 165, .16),
+    transparent
+  );
+
+  transform: skewX(-25deg);
+  animation: topbarGoldenShine 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Keep content above animation */
+.app .topbar > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Registration text and language label */
+.app .topbar,
+.app .topbar a,
+.app .topbar label {
+  color: #fff4df !important;
+}
+
+/* Language and Dark buttons */
+.app .topbar select,
+.app .topbar button {
+  background: rgba(255,255,255,.07) !important;
+  color: #fff4df !important;
+
+  border: 1px solid rgba(255, 225, 165, .5) !important;
+  border-radius: 9px !important;
+
+  transition: all .3s ease;
+}
+
+.app .topbar select:hover,
+.app .topbar button:hover {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+  border-color: #ffe8ad !important;
+
+  box-shadow: 0 0 14px rgba(255, 220, 150, .3);
+}
+
+@keyframes topbarGoldenShine {
+  0%, 70% { left: -100%; }
+  100% { left: 150%; }
+}
+
+/* Dark mode */
+html[data-theme="dark"] .app .topbar {
+  background: linear-gradient(
+    110deg,
+    #050f1c,
+    #0b2036,
+    #123453,
+    #050f1c
+  ) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app .topbar::before {
+    animation: none !important;
+  }
+}
+
+/* =====================================================
+   SAMITI - DOWNLOAD APP + VOLUNTEER APPLICATION
+   ROYAL NAVY BLUE + CHAMPAGNE GOLD
+   DESIGN ONLY | NO FUNCTIONALITY / TEXT CHANGES
+===================================================== */
+
+.app {
+  --app-navy: #102d4d;
+  --app-deep: #081b30;
+  --app-blue: #19466e;
+  --app-gold: #d5a64d;
+  --app-light-gold: #ffe8ad;
+  --app-cream: #fffaf0;
+}
+
+/* =====================================================
+   1. DOWNLOAD APP PAGE
+   Supports common app-download wrapper class names
+===================================================== */
+
+.app main .appDownloadPage,
+.app main .appDownload,
+.app main .downloadPage,
+.app main .downloadApp,
+.app main .app-download-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    125deg,
+    #fffaf0,
+    #f2f6f9,
+    #fffaf0
+  );
+
+  border-radius: 20px;
+}
+
+/* App download content cards */
+.app main .appDownloadCard,
+.app main .downloadCard,
+.app main .appCard,
+.app main .appInfoCard {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fffaf0
+  ) !important;
+
+  border: 1px solid rgba(213, 166, 77, .35) !important;
+  border-radius: 20px;
+
+  box-shadow: 0 10px 28px rgba(16, 45, 77, .07);
+
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease,
+    border-color .4s ease;
+}
+
+.app main .appDownloadCard:hover,
+.app main .downloadCard:hover,
+.app main .appCard:hover,
+.app main .appInfoCard:hover {
+  transform: translateY(-6px);
+
+  border-color: rgba(213, 166, 77, .8) !important;
+
+  box-shadow:
+    0 18px 38px rgba(16, 45, 77, .13),
+    0 0 18px rgba(213, 166, 77, .13);
+}
+
+/* Download app headings */
+.app main .appDownloadPage h1,
+.app main .appDownloadPage h2,
+.app main .appDownload h1,
+.app main .appDownload h2,
+.app main .downloadPage h1,
+.app main .downloadPage h2 {
+  color: var(--app-navy);
+  text-shadow: 0 2px 15px rgba(213, 166, 77, .10);
+}
+
+/* App description */
+.app main .appDownloadPage p,
+.app main .appDownload p,
+.app main .downloadPage p {
+  color: #657386;
+}
+
+/* App screenshots / preview */
+.app main .appDownloadPage img,
+.app main .appDownload img,
+.app main .downloadPage img {
+  transition:
+    transform .45s ease,
+    filter .45s ease,
+    box-shadow .45s ease;
+}
+
+.app main .appDownloadPage img:hover,
+.app main .appDownload img:hover,
+.app main .downloadPage img:hover {
+  transform: translateY(-5px);
+  filter: saturate(1.08);
+  box-shadow: 0 15px 30px rgba(16, 45, 77, .16);
+}
+
+/* Download buttons */
+.app main .appDownloadPage a,
+.app main .appDownload a,
+.app main .downloadPage a,
+.app main .downloadBtn,
+.app main .appDownloadBtn {
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    filter .35s ease;
+}
+
+/* Primary download button */
+.app main .downloadBtn,
+.app main .appDownloadBtn,
+.app main .appDownloadPage .primary,
+.app main .appDownload .primary,
+.app main .downloadPage .primary {
+  background: linear-gradient(
+    115deg,
+    #f5d58e,
+    #c99435,
+    #ffe8ad,
+    #c99435
+  ) !important;
+
+  background-size: 250% 250% !important;
+
+  color: #17304a !important;
+  border: 1px solid #d5a64d !important;
+
+  box-shadow:
+    0 6px 18px rgba(190, 139, 46, .22),
+    inset 0 1px 0 rgba(255,255,255,.55);
+
+  animation: samitiAppGoldFlow 7s ease infinite;
+}
+
+.app main .downloadBtn:hover,
+.app main .appDownloadBtn:hover,
+.app main .appDownloadPage .primary:hover,
+.app main .appDownload .primary:hover,
+.app main .downloadPage .primary:hover {
+  background: linear-gradient(
+    115deg,
+    #174b79,
+    #0c2e52,
+    #28648f
+  ) !important;
+
+  color: white !important;
+  transform: translateY(-4px);
+
+  box-shadow: 0 12px 26px rgba(16, 45, 77, .24);
+}
+
+/* =====================================================
+   2. VOLUNTEER INTRO CARD
+===================================================== */
+
+.app main .volunteerIntro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    120deg,
+    #102d4d,
+    #19466e,
+    #0b2947
+  ) !important;
+
+  color: #fff !important;
+
+  border: 1px solid rgba(213, 166, 77, .55);
+  border-radius: 18px;
+
+  box-shadow:
+    0 10px 28px rgba(16, 45, 77, .15),
+    inset 0 1px 0 rgba(255,255,255,.12);
+
+  transition: box-shadow .4s ease;
+}
+
+.app main .volunteerIntro::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  background: radial-gradient(
+    circle at 90% 50%,
+    rgba(213, 166, 77, .2),
+    transparent 45%
+  );
+
+  pointer-events: none;
+}
+
+.app main .volunteerIntro svg {
+  color: var(--app-light-gold);
+  filter: drop-shadow(0 0 9px rgba(255, 220, 150, .25));
+  transition: transform .4s ease;
+}
+
+.app main .volunteerIntro:hover svg {
+  transform: scale(1.12) rotate(-5deg);
+}
+
+.app main .volunteerIntro h2 {
+  color: var(--app-light-gold) !important;
+}
+
+.app main .volunteerIntro p {
+  color: #e5edf5 !important;
+}
+
+/* =====================================================
+   3. VOLUNTEER FORM CARD
+===================================================== */
+
+.app main .volunteerForm {
+  position: relative;
+  isolation: isolate;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fffaf0
+  ) !important;
+
+  border: 1px solid rgba(213, 166, 77, .4) !important;
+  border-radius: 20px;
+
+  box-shadow:
+    0 12px 32px rgba(16, 45, 77, .08),
+    0 0 0 1px rgba(255,255,255,.7) inset;
+
+  transition: box-shadow .4s ease, border-color .4s ease;
+}
+
+.app main .volunteerForm:focus-within {
+  border-color: rgba(213, 166, 77, .8) !important;
+
+  box-shadow:
+    0 16px 38px rgba(16, 45, 77, .12),
+    0 0 20px rgba(213, 166, 77, .1);
+}
+
+/* Form labels */
+.app main .volunteerForm label {
+  color: #263c54;
+  font-weight: 600;
+}
+
+/* Input fields */
+.app main .volunteerForm input,
+.app main .volunteerForm select,
+.app main .volunteerForm textarea {
+  background: #fffdf8;
+  color: #24364a;
+
+  border: 1px solid #d9c9aa;
+  border-radius: 10px;
+
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease,
+    background .3s ease;
+}
+
+.app main .volunteerForm input:focus,
+.app main .volunteerForm select:focus,
+.app main .volunteerForm textarea:focus {
+  outline: none;
+
+  background: #ffffff;
+  border-color: #c99435;
+
+  box-shadow:
+    0 0 0 3px rgba(213, 166, 77, .16),
+    0 4px 12px rgba(16, 45, 77, .06);
+}
+
+/* Placeholder */
+.app main .volunteerForm input::placeholder,
+.app main .volunteerForm textarea::placeholder {
+  color: #9aa5b2;
+}
+
+/* =====================================================
+   4. PASSWORD INPUT + SHOW/HIDE BUTTON
+===================================================== */
+
+.app main .volunteerPasswordInput {
+  border-radius: 10px;
+}
+
+.app main .volunteerPasswordInput input {
+  border-color: #d9c9aa;
+}
+
+.app main .volunteerPasswordInput .passwordToggle {
+  background: linear-gradient(
+    135deg,
+    #102d4d,
+    #19466e
+  ) !important;
+
+  color: #ffe8ad !important;
+  border: 1px solid rgba(213, 166, 77, .5) !important;
+
+  border-radius: 8px;
+  transition: all .3s ease;
+}
+
+.app main .volunteerPasswordInput .passwordToggle:hover {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+}
+
+/* =====================================================
+   5. SUBMIT VOLUNTEER APPLICATION BUTTON
+===================================================== */
+
+.app main .volunteerForm button[type="submit"] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background: linear-gradient(
+    115deg,
+    #102d4d,
+    #19466e,
+    #28648f,
+    #102d4d
+  ) !important;
+
+  background-size: 250% 250% !important;
+
+  color: #ffffff !important;
+
+  border: 1px solid rgba(213, 166, 77, .75) !important;
+  border-radius: 12px;
+
+  box-shadow:
+    0 7px 20px rgba(16, 45, 77, .2),
+    inset 0 1px 0 rgba(255,255,255,.13);
+
+  animation: samitiVolunteerBlueFlow 7s ease infinite;
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    filter .35s ease;
+}
+
+/* Golden shine */
+.app main .volunteerForm button[type="submit"]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -60%;
+  left: -100%;
+  width: 45%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 232, 173, .65),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: samitiVolunteerShine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.app main .volunteerForm button[type="submit"]:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 13px 28px rgba(16, 45, 77, .28),
+    0 0 17px rgba(213, 166, 77, .2);
+
+  filter: brightness(1.08);
+}
+
+.app main .volunteerForm button[type="submit"]:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+  transform: none;
+  animation: none;
+}
+
+/* Submit icon */
+.app main .volunteerForm button[type="submit"] svg {
+  transition: transform .35s ease;
+}
+
+.app main .volunteerForm button[type="submit"]:hover svg {
+  transform: translateX(4px);
+}
+
+/* =====================================================
+   6. SUCCESS POPUP
+===================================================== */
+
+.app .successOverlay {
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+
+  background: rgba(5, 18, 32, .7);
+}
+
+.app .successPopup {
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fff8e9
+  ) !important;
+
+  border: 1px solid rgba(213, 166, 77, .65) !important;
+  border-radius: 22px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, .3),
+    0 0 28px rgba(213, 166, 77, .15);
+
+  animation: samitiPopupEnter .45s ease both;
+}
+
+.app .successPopup h2 {
+  color: #102d4d !important;
+}
+
+.app .successPopup p {
+  color: #657386 !important;
+}
+
+.app .successIcon {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+
+  box-shadow: 0 0 22px rgba(213, 166, 77, .3);
+}
+
+.app .applicationNumber {
+  background: linear-gradient(
+    135deg,
+    #edf3f8,
+    #fff6df
+  ) !important;
+
+  border: 1px solid rgba(213, 166, 77, .45);
+  border-radius: 12px;
+}
+
+.app .applicationNumber strong {
+  color: #102d4d;
+}
+
+/* Popup OK button */
+.app .successPopup .popupOk {
+  background: linear-gradient(
+    115deg,
+    #102d4d,
+    #19466e,
+    #28648f
+  ) !important;
+
+  color: white !important;
+  border: 1px solid #d5a64d !important;
+
+  border-radius: 10px;
+  transition: all .3s ease;
+}
+
+.app .successPopup .popupOk:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 22px rgba(16, 45, 77, .24);
+}
+
+.app .successPopup .popupClose {
+  color: #102d4d;
+  transition: transform .3s ease, color .3s ease;
+}
+
+.app .successPopup .popupClose:hover {
+  color: #b27d29;
+  transform: rotate(90deg);
+}
+
+/* =====================================================
+   7. DARK MODE
+===================================================== */
+
+html[data-theme="dark"] .app main .appDownloadPage,
+html[data-theme="dark"] .app main .appDownload,
+html[data-theme="dark"] .app main .downloadPage {
+  background: linear-gradient(
+    135deg,
+    #0b1725,
+    #102d4d
+  ) !important;
+}
+
+html[data-theme="dark"] .app main .appDownloadCard,
+html[data-theme="dark"] .app main .downloadCard,
+html[data-theme="dark"] .app main .appCard,
+html[data-theme="dark"] .app main .appInfoCard,
+html[data-theme="dark"] .app main .volunteerForm {
+  background: linear-gradient(
+    145deg,
+    #152c43,
+    #102238
+  ) !important;
+
+  color: #edf3fa !important;
+  border-color: rgba(213, 166, 77, .35) !important;
+}
+
+html[data-theme="dark"] .app main .appDownloadPage h1,
+html[data-theme="dark"] .app main .appDownloadPage h2,
+html[data-theme="dark"] .app main .appDownload h1,
+html[data-theme="dark"] .app main .appDownload h2,
+html[data-theme="dark"] .app main .downloadPage h1,
+html[data-theme="dark"] .app main .downloadPage h2 {
+  color: #f4d38e !important;
+}
+
+html[data-theme="dark"] .app main .volunteerForm label {
+  color: #f0dba9;
+}
+
+html[data-theme="dark"] .app main .volunteerForm input,
+html[data-theme="dark"] .app main .volunteerForm select,
+html[data-theme="dark"] .app main .volunteerForm textarea {
+  background: #0b1c2d;
+  color: #f3f6fa;
+  border-color: #40566d;
+}
+
+html[data-theme="dark"] .app .successPopup {
+  background: linear-gradient(
+    145deg,
+    #152c43,
+    #102238
+  ) !important;
+}
+
+html[data-theme="dark"] .app .successPopup h2,
+html[data-theme="dark"] .app .applicationNumber strong {
+  color: #f4d38e !important;
+}
+
+html[data-theme="dark"] .app .successPopup p {
+  color: #c6d3e0 !important;
+}
+
+/* =====================================================
+   8. ANIMATIONS
+===================================================== */
+
+@keyframes samitiAppGoldFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes samitiVolunteerBlueFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes samitiVolunteerShine {
+  0%, 65% { left: -100%; }
+  100% { left: 150%; }
+}
+
+@keyframes samitiPopupEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =====================================================
+   9. MOBILE + ACCESSIBILITY
+===================================================== */
+
+@media (max-width: 768px) {
+  .app main .volunteerForm {
+    border-radius: 15px;
+  }
+
+  .app main .volunteerIntro {
+    border-radius: 15px;
+  }
+
+  .app main .volunteerForm button[type="submit"]:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app main .volunteerForm button[type="submit"],
+  .app main .volunteerForm button[type="submit"]::before,
+  .app main .downloadBtn,
+  .app main .appDownloadBtn,
+  .app .successPopup {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ==========================================
+   SWAMI SAMITI APP DOWNLOAD HERO
+   NAVY BLUE + CHAMPAGNE GOLD THEME
+========================================== */
+
+/* Main maroon hero box */
+main .app-download,
+main .appDownload,
+main .download-hero,
+main .downloadHero,
+main .app-download-hero,
+main .appDownloadHero,
+main .download-section,
+main .downloadSection {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(213, 166, 77, .20),
+      transparent 48%
+    ),
+    linear-gradient(
+      120deg,
+      #081b30 0%,
+      #102d4d 40%,
+      #19466e 70%,
+      #081b30 100%
+    ) !important;
+
+  border: 1px solid rgba(213, 166, 77, .55) !important;
+  border-radius: 0 0 30px 30px;
+
+  box-shadow:
+    0 20px 45px rgba(8, 27, 48, .20),
+    inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* Golden glow animation */
+main .app-download::before,
+main .appDownload::before,
+main .download-hero::before,
+main .downloadHero::before,
+main .app-download-hero::before,
+main .appDownloadHero::before,
+main .download-section::before,
+main .downloadSection::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -30%;
+
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 222, 158, .17),
+    transparent 42%
+  );
+
+  animation: samitiDownloadGlow 7s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Main title */
+main .app-download h1,
+main .appDownload h1,
+main .download-hero h1,
+main .downloadHero h1,
+main .app-download-hero h1,
+main .appDownloadHero h1,
+main .download-section h1,
+main .downloadSection h1 {
+  color: #ffe2a3 !important;
+  font-weight: 800;
+  text-shadow: 0 4px 18px rgba(0,0,0,.2);
+}
+
+/* Description and paragraphs */
+main .app-download p,
+main .appDownload p,
+main .download-hero p,
+main .downloadHero p,
+main .app-download-hero p,
+main .appDownloadHero p,
+main .download-section p,
+main .downloadSection p {
+  color: #f0f4f9 !important;
+  line-height: 1.8;
+}
+
+/* Official Android App label */
+main .app-download .eyebrow,
+main .appDownload .eyebrow,
+main .download-hero .eyebrow,
+main .downloadHero .eyebrow,
+main .app-download-hero .eyebrow,
+main .appDownloadHero .eyebrow {
+  color: #f5c96f !important;
+  letter-spacing: 3px;
+  font-weight: 800;
+}
+
+/* Phone icon box */
+main .app-download svg,
+main .appDownload svg,
+main .download-hero svg,
+main .downloadHero svg,
+main .app-download-hero svg,
+main .appDownloadHero svg {
+  color: #ffdf9c !important;
+}
+
+/* Official release / APK text */
+main .app-download span,
+main .appDownload span,
+main .download-hero span,
+main .downloadHero span,
+main .app-download-hero span,
+main .appDownloadHero span {
+  color: #fff4df;
+}
+
+/* Download button */
+main .app-download a,
+main .appDownload a,
+main .download-hero a,
+main .downloadHero a,
+main .app-download-hero a,
+main .appDownloadHero a {
+  transition: all .3s ease;
+}
+
+main .app-download a:hover,
+main .appDownload a:hover,
+main .download-hero a:hover,
+main .downloadHero a:hover,
+main .app-download-hero a:hover,
+main .appDownloadHero a:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.1);
+}
+
+/* Background animation */
+@keyframes samitiDownloadGlow {
+  from {
+    transform: scale(.9);
+    opacity: .55;
+  }
+  to {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Dark mode */
+html[data-theme="dark"] main .app-download,
+html[data-theme="dark"] main .appDownload,
+html[data-theme="dark"] main .download-hero,
+html[data-theme="dark"] main .downloadHero,
+html[data-theme="dark"] main .app-download-hero,
+html[data-theme="dark"] main .appDownloadHero,
+html[data-theme="dark"] main .download-section,
+html[data-theme="dark"] main .downloadSection {
+  background: linear-gradient(
+    120deg,
+    #050f1c,
+    #0b2036,
+    #123453,
+    #050f1c
+  ) !important;
+}
+
+/* Mobile */
+@media(max-width: 768px) {
+  main .app-download,
+  main .appDownload,
+  main .download-hero,
+  main .downloadHero,
+  main .app-download-hero,
+  main .appDownloadHero {
+    border-radius: 0 0 20px 20px;
+  }
+}
+
+/* Accessibility */
+@media(prefers-reduced-motion: reduce) {
+  main .app-download::before,
+  main .appDownload::before,
+  main .download-hero::before,
+  main .downloadHero::before,
+  main .app-download-hero::before,
+  main .appDownloadHero::before {
+    animation: none !important;
+  }
+}
+
+/* =================================================
+   VOLUNTEER PAGE - PASSWORD FIELDS ONLY
+   Scoped styling | No global overrides
+================================================= */
+
+/* Password field wrapper */
+.volunteer-page .password-field,
+.volunteer-page .password-input-wrapper,
+.volunteer-page .password-wrapper {
+  position: relative;
+  isolation: isolate;
+  border-radius: 11px;
+}
+
+/* Password inputs only */
+.volunteer-page .password-field input,
+.volunteer-page .password-input-wrapper input,
+.volunteer-page .password-wrapper input {
+  background: #0b2036 !important;
+  color: #fff8e9 !important;
+
+  border: 1px solid rgba(213, 166, 77, .55) !important;
+  border-radius: 11px !important;
+
+  box-shadow: inset 0 2px 7px rgba(0,0,0,.12);
+
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease !important;
+}
+
+/* Placeholder */
+.volunteer-page .password-field input::placeholder,
+.volunteer-page .password-input-wrapper input::placeholder,
+.volunteer-page .password-wrapper input::placeholder {
+  color: #c5d0dc !important;
+  opacity: .9;
+}
+
+/* Focus */
+.volunteer-page .password-field input:focus,
+.volunteer-page .password-input-wrapper input:focus,
+.volunteer-page .password-wrapper input:focus {
+  outline: none !important;
+  border-color: #f0c875 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(213,166,77,.15),
+    0 0 16px rgba(213,166,77,.16) !important;
+}
+
+/* Show / Hide button */
+.volunteer-page .password-field button,
+.volunteer-page .password-input-wrapper button,
+.volunteer-page .password-wrapper button {
+  background: linear-gradient(
+    135deg,
+    #102d4d,
+    #19466e
+  ) !important;
+
+  color: #ffe2a3 !important;
+
+  border: 1px solid rgba(213,166,77,.65) !important;
+  border-radius: 9px !important;
+
+  transition: all .3s ease !important;
+}
+
+/* Show / Hide hover */
+.volunteer-page .password-field button:hover,
+.volunteer-page .password-input-wrapper button:hover,
+.volunteer-page .password-wrapper button:hover {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+  border-color: #ffe8ad !important;
+}
+
+/* Dark mode */
+html[data-theme="dark"] .volunteer-page .password-field input,
+html[data-theme="dark"] .volunteer-page .password-input-wrapper input,
+html[data-theme="dark"] .volunteer-page .password-wrapper input {
+  background: #081b30 !important;
+  color: #fff8e9 !important;
+}
+
+/* Light mode */
+html[data-theme="light"] .volunteer-page .password-field input,
+html[data-theme="light"] .volunteer-page .password-input-wrapper input,
+html[data-theme="light"] .volunteer-page .password-wrapper input {
+  background: #fffaf0 !important;
+  color: #102d4d !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .volunteer-page .password-field *,
+  .volunteer-page .password-input-wrapper *,
+  .volunteer-page .password-wrapper * {
+    transition: none !important;
+  }
+}
+
+/* =================================================
+   SAMITI DONATION PAGE - PREMIUM BUTTON THEME
+   Exact Donate.jsx selectors
+   Scoped: donationPage only
+================================================= */
+
+.donationPage {
+  --donation-navy: #102d4d;
+  --donation-deep: #081b30;
+  --donation-blue: #19466e;
+  --donation-gold: #d5a64d;
+  --donation-light-gold: #ffe8ad;
+}
+
+/* Common donation action buttons */
+.donationPage .donationWizardActions button,
+.donationPage .donationReceiptActions button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  min-height: 46px;
+  padding: 11px 22px;
+
+  border-radius: 11px !important;
+  font-weight: 700 !important;
+
+  cursor: pointer;
+
+  transition:
+    transform .3s ease,
+    box-shadow .3s ease,
+    background .3s ease,
+    border-color .3s ease !important;
+}
+
+/* PRIMARY: Continue, Pay Securely, Print Receipt */
+.donationPage .donationWizardActions button.primary,
+.donationPage .donationReceiptActions button.primary {
+  background: linear-gradient(
+    115deg,
+    #102d4d,
+    #19466e,
+    #28648f,
+    #102d4d
+  ) !important;
+
+  background-size: 220% 220% !important;
+
+  color: #ffffff !important;
+  border: 1px solid rgba(213,166,77,.85) !important;
+
+  box-shadow:
+    0 6px 18px rgba(16,45,77,.20),
+    inset 0 1px 0 rgba(255,255,255,.13);
+
+  animation: donationButtonFlow 7s ease infinite;
+}
+
+/* Golden shine on primary buttons */
+.donationPage .donationWizardActions button.primary::before,
+.donationPage .donationReceiptActions button.primary::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+
+  top: -60%;
+  left: -100%;
+  width: 40%;
+  height: 220%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,232,173,.55),
+    transparent
+  );
+
+  transform: rotate(25deg);
+  animation: donationButtonShine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Primary hover */
+.donationPage .donationWizardActions button.primary:hover,
+.donationPage .donationReceiptActions button.primary:hover {
+  background: linear-gradient(
+    115deg,
+    #c99435,
+    #f5d58e,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+  border-color: #ffe8ad !important;
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 11px 25px rgba(16,45,77,.22),
+    0 0 15px rgba(213,166,77,.22);
+}
+
+/* Secondary: Back and Close */
+.donationPage .donationWizardActions button.secondary,
+.donationPage .donationReceiptActions button.secondary {
+  background: linear-gradient(
+    135deg,
+    #f7e8c7,
+    #fffaf0
+  ) !important;
+
+  color: #102d4d !important;
+  border: 1px solid #d5a64d !important;
+
+  box-shadow: 0 5px 14px rgba(16,45,77,.08);
+}
+
+/* Secondary hover */
+.donationPage .donationWizardActions button.secondary:hover,
+.donationPage .donationReceiptActions button.secondary:hover {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+
+  transform: translateY(-3px);
+
+  box-shadow: 0 9px 20px rgba(213,166,77,.22);
+}
+
+/* Button icons */
+.donationPage .donationWizardActions button svg,
+.donationPage .donationReceiptActions button svg {
+  flex-shrink: 0;
+  transition: transform .3s ease;
+}
+
+.donationPage .donationWizardActions button:hover svg,
+.donationPage .donationReceiptActions button:hover svg {
+  transform: translateX(3px);
+}
+
+/* Disabled state */
+.donationPage .donationWizardActions button:disabled,
+.donationPage .donationReceiptActions button:disabled {
+  opacity: .55 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+/* Success receipt close icon */
+.donationPage .donationModalClose {
+  background: linear-gradient(
+    135deg,
+    #102d4d,
+    #19466e
+  ) !important;
+
+  color: #ffe8ad !important;
+  border: 1px solid rgba(213,166,77,.7) !important;
+
+  border-radius: 50% !important;
+
+  transition: all .3s ease !important;
+}
+
+.donationPage .donationModalClose:hover {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: #102d4d !important;
+  transform: rotate(90deg);
+  box-shadow: 0 0 15px rgba(213,166,77,.3);
+}
+
+/* Animations */
+@keyframes donationButtonFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes donationButtonShine {
+  0%, 70% { left: -100%; }
+  100% { left: 150%; }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .donationPage .donationWizardActions,
+  .donationPage .donationReceiptActions {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .donationPage .donationWizardActions button,
+  .donationPage .donationReceiptActions button {
+    min-height: 44px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .donationPage .donationWizardActions button,
+  .donationPage .donationWizardActions button::before,
+  .donationPage .donationReceiptActions button,
+  .donationPage .donationReceiptActions button::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =====================================================
+   SAMITI DONATION WIZARD
+   PREMIUM NAVY BLUE + GOLD THEME
+   Donor Details | Donation | Review & Pay
+   Scoped to donation page only
+===================================================== */
+
+.donationPage {
+  --dw-navy: #102d4d;
+  --dw-deep: #081b30;
+  --dw-blue: #19466e;
+  --dw-gold: #d5a64d;
+  --dw-light-gold: #ffe4a5;
+  --dw-text: #263447;
+  --dw-muted: #718096;
+}
+
+/* 1. STEP PROGRESS CARDS */
+.donationPage .donationStepper {
+  gap: 12px;
+}
+
+.donationPage .donationStep {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  padding: 13px 12px;
+
+  background: linear-gradient(
+    135deg,
+    #fffdf8,
+    #fff7e9
+  ) !important;
+
+  border: 1px solid rgba(213,166,77,.35) !important;
+  border-radius: 13px;
+
+  box-shadow: 0 5px 16px rgba(16,45,77,.05);
+
+  opacity: .85;
+  transition: all .35s ease;
+}
+
+/* Active step */
+.donationPage .donationStep.active {
+  background: linear-gradient(
+    120deg,
+    #102d4d,
+    #19466e,
+    #102d4d
+  ) !important;
+
+  border-color: var(--dw-gold) !important;
+
+  box-shadow:
+    0 8px 24px rgba(16,45,77,.18),
+    0 0 13px rgba(213,166,77,.12);
+
+  animation: dwActiveGlow 4s ease-in-out infinite;
+}
+
+.donationPage .donationStep.active strong {
+  color: #fff4dc !important;
+}
+
+/* Step number circle */
+.donationPage .donationStep span {
+  background: #f5e7c8 !important;
+  color: var(--dw-navy) !important;
+
+  border: 1px solid rgba(213,166,77,.55);
+
+  transition: all .3s ease;
+}
+
+.donationPage .donationStep.active span {
+  background: linear-gradient(
+    135deg,
+    #d5a64d,
+    #ffe8ad
+  ) !important;
+
+  color: var(--dw-deep) !important;
+  border-color: #ffe8ad;
+}
+
+.donationPage .donationStep.done {
+  background: linear-gradient(
+    120deg,
+    #eef7f1,
+    #ffffff
+  ) !important;
+
+  border-color: #9fc9ad !important;
+  opacity: 1;
+}
+
+.donationPage .donationStep.done span {
+  background: #dcefe2 !important;
+  color: #246b45 !important;
+}
+
+/* 2. STEP CONTENT PANEL */
+.donationPage .donationWizardStep {
+  position: relative;
+
+  padding: 22px;
+  border: 1px solid rgba(213,166,77,.32);
+  border-radius: 17px;
+
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #fffaf0
+  );
+
+  box-shadow: 0 9px 28px rgba(16,45,77,.055);
+
+  animation: dwContentReveal .45s ease both;
+}
+
+/* Step labels */
+.donationPage .donationWizardStep > .eyebrow {
+  display: inline-flex;
+  width: fit-content;
+
+  padding: 6px 12px;
+  border-radius: 30px;
+
+  color: #9b6a1d !important;
+  background: #fff0cc;
+
+  border: 1px solid rgba(213,166,77,.35);
+
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  font-size: 11px;
+}
+
+/* Step heading */
+.donationPage .donationWizardStep h2 {
+  color: var(--dw-navy) !important;
+  font-weight: 800;
+  letter-spacing: -.3px;
+}
+
+/* Description */
+.donationPage .donationStepHint {
+  color: #687789 !important;
+  line-height: 1.65;
+}
+
+/* 3. DONATION MINI SUMMARY */
+.donationPage .donationMiniSummary {
+  background: linear-gradient(
+    120deg,
+    #f0f5fa,
+    #fffaf0
+  ) !important;
+
+  border: 1px solid rgba(213,166,77,.38) !important;
+  border-radius: 13px;
+}
+
+.donationPage .donationMiniSummary span {
+  color: #788596 !important;
+}
+
+.donationPage .donationMiniSummary strong {
+  color: var(--dw-navy) !important;
+}
+
+/* 4. REVIEW DETAILS CARDS */
+.donationPage .donationReviewCard {
+  gap: 12px;
+}
+
+.donationPage .donationReviewCard > div {
+  position: relative;
+  overflow: hidden;
+
+  padding: 15px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #fffaf0
+  ) !important;
+
+  border: 1px solid rgba(213,166,77,.35) !important;
+  border-radius: 13px;
+
+  box-shadow: 0 4px 13px rgba(16,45,77,.045);
+
+  transition: all .3s ease;
+}
+
+.donationPage .donationReviewCard > div:hover {
+  transform: translateY(-3px);
+  border-color: var(--dw-gold) !important;
+
+  box-shadow: 0 9px 20px rgba(16,45,77,.09);
+}
+
+.donationPage .donationReviewCard span {
+  color: #778597 !important;
+  font-weight: 600;
+}
+
+.donationPage .donationReviewCard strong {
+  color: var(--dw-navy) !important;
+  font-size: 15px;
+}
+
+/* Donation amount highlight */
+.donationPage .donationReviewCard .amountRow {
+  background: linear-gradient(
+    115deg,
+    #102d4d,
+    #19466e
+  ) !important;
+
+  border: 1px solid var(--dw-gold) !important;
+  border-radius: 14px;
+}
+
+.donationPage .donationReviewCard .amountRow span {
+  color: #f6dfae !important;
+}
+
+.donationPage .donationReviewCard .amountRow strong {
+  color: #ffe4a5 !important;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+/* 5. SECURE PAYMENT NOTE */
+.donationPage .donationSecureNote {
+  background: linear-gradient(
+    120deg,
+    #edf4fa,
+    #fff8e9
+  ) !important;
+
+  color: var(--dw-navy) !important;
+
+  border: 1px solid rgba(213,166,77,.4);
+  border-radius: 12px;
+
+  line-height: 1.65;
+}
+
+.donationPage .donationSecureNote svg {
+  color: #bd8b35 !important;
+  flex-shrink: 0;
+}
+
+/* 6. FIELD LABELS */
+.donationPage .donationWizardStep label {
+  color: var(--dw-navy) !important;
+  font-weight: 700;
+}
+
+.donationPage .donationFieldHint {
+  color: #788596 !important;
+}
+
+/* 7. ACTIVE STEP ANIMATIONS */
+@keyframes dwActiveGlow {
+  0%, 100% {
+    box-shadow: 0 8px 20px rgba(16,45,77,.13);
+  }
+  50% {
+    box-shadow:
+      0 8px 24px rgba(16,45,77,.20),
+      0 0 13px rgba(213,166,77,.20);
+  }
+}
+
+@keyframes dwContentReveal {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 8. DARK MODE */
+html[data-theme="dark"] .donationPage .donationWizardStep {
+  background: linear-gradient(
+    145deg,
+    #0b2036,
+    #102d4d
+  ) !important;
+
+  border-color: rgba(213,166,77,.42);
+}
+
+html[data-theme="dark"] .donationPage .donationWizardStep h2,
+html[data-theme="dark"] .donationPage .donationWizardStep label,
+html[data-theme="dark"] .donationPage .donationReviewCard strong,
+html[data-theme="dark"] .donationPage .donationMiniSummary strong {
+  color: #ffe4a5 !important;
+}
+
+html[data-theme="dark"] .donationPage .donationStep {
+  background: #102d4d !important;
+  border-color: rgba(213,166,77,.35) !important;
+}
+
+html[data-theme="dark"] .donationPage .donationStep strong {
+  color: #e8edf5 !important;
+}
+
+html[data-theme="dark"] .donationPage .donationStep.active {
+  background: linear-gradient(
+    120deg,
+    #19466e,
+    #102d4d
+  ) !important;
+}
+
+html[data-theme="dark"] .donationPage .donationReviewCard > div,
+html[data-theme="dark"] .donationPage .donationMiniSummary {
+  background: #102d4d !important;
+  border-color: rgba(213,166,77,.38) !important;
+}
+
+html[data-theme="dark"] .donationPage .donationReviewCard span,
+html[data-theme="dark"] .donationPage .donationStepHint,
+html[data-theme="dark"] .donationPage .donationFieldHint {
+  color: #c4d0df !important;
+}
+
+html[data-theme="dark"] .donationPage .donationSecureNote {
+  background: #173b4d !important;
+  color: #f1e4c7 !important;
+  border-color: rgba(213,166,77,.4);
+}
+
+/* 9. RESPONSIVE */
+@media(max-width: 700px) {
+  .donationPage .donationWizardStep {
+    padding: 16px;
+  }
+
+  .donationPage .donationStepper {
+    gap: 8px;
+  }
+
+  .donationPage .donationReviewCard {
+    grid-template-columns: 1fr;
+  }
+
+  .donationPage .donationReviewCard .amountRow {
+    grid-column: auto;
+  }
+}
+
+/* 10. REDUCED MOTION */
+@media(prefers-reduced-motion: reduce) {
+  .donationPage .donationStep,
+  .donationPage .donationWizardStep,
+  .donationPage .donationReviewCard > div {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* =========================================
+   DONATION SECURITY BOX - DARK MODE
+   Royal Navy Blue + Champagne Gold
+========================================= */
+
+.donationPage .donationSecurityBox {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 25px;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(213, 166, 77, 0.16),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #102d4d,
+      #0b2038,
+      #173d60
+    ) !important;
+
+  border: 1px solid rgba(213, 166, 77, 0.65) !important;
+  border-radius: 19px !important;
+
+  box-shadow:
+    0 14px 35px rgba(8, 27, 48, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Decorative background glow */
+.donationPage .donationSecurityBox::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  top: -90px;
+  right: -70px;
+  border-radius: 50%;
+  background: rgba(213, 166, 77, 0.12);
+  filter: blur(12px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Heading */
+.donationPage .donationSecurityBox h2 {
+  color: #ffe8ad !important;
+}
+
+/* Description */
+.donationPage .donationSecurityBox > p {
+  color: #e4edf6 !important;
+}
+
+/* Payment methods list */
+.donationPage .donationMethodList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Payment method cards */
+.donationPage .donationMethodItem {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.10),
+    rgba(255, 255, 255, 0.04)
+  ) !important;
+
+  color: #ffffff !important;
+  border: 1px solid rgba(213, 166, 77, 0.35) !important;
+  border-radius: 12px !important;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* Payment method hover */
+.donationPage .donationMethodItem:hover {
+  background: rgba(213, 166, 77, 0.14) !important;
+  border-color: #d5a64d !important;
+  transform: translateY(-2px);
+}
+
+/* Payment icons */
+.donationPage .donationMethodItem svg {
+  color: #ffe8ad !important;
+}
+
+/* Test mode note */
+.donationPage .donationTestNote {
+  background: rgba(213, 166, 77, 0.12) !important;
+  color: #ffe8ad !important;
+  border: 1px solid rgba(213, 166, 77, 0.35);
+  border-radius: 10px;
+}
+
+
+/* =========================================
+   DONATION SECURITY BOX - LIGHT MODE
+   White + Cream + Navy + Gold
+========================================= */
+
+html[data-theme="light"] .donationPage .donationSecurityBox {
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(213, 166, 77, 0.13),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fffaf0,
+      #f5f8fc
+    ) !important;
+
+  border: 1px solid rgba(190, 145, 65, 0.45) !important;
+
+  box-shadow:
+    0 12px 30px rgba(16, 45, 77, 0.08),
+    inset 0 1px 0 #ffffff;
+}
+
+/* Light mode decorative glow */
+html[data-theme="light"] .donationPage .donationSecurityBox::before {
+  background: rgba(213, 166, 77, 0.12);
+}
+
+/* Light mode heading */
+html[data-theme="light"] .donationPage .donationSecurityBox h2 {
+  color: #102d4d !important;
+}
+
+/* Light mode description */
+html[data-theme="light"] .donationPage .donationSecurityBox > p {
+  color: #526579 !important;
+}
+
+/* Light mode payment method cards */
+html[data-theme="light"] .donationPage .donationMethodItem {
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #f8f3e8
+  ) !important;
+
+  color: #243b53 !important;
+  border: 1px solid rgba(190, 145, 65, 0.35) !important;
+
+  box-shadow: 0 4px 12px rgba(16, 45, 77, 0.05);
+}
+
+/* Light mode hover */
+html[data-theme="light"] .donationPage .donationMethodItem:hover {
+  background: #fff3d8 !important;
+  border-color: #d5a64d !important;
+}
+
+/* Light mode payment icons */
+html[data-theme="light"] .donationPage .donationMethodItem svg {
+  color: #a97824 !important;
+}
+
+/* Light mode test note */
+html[data-theme="light"] .donationPage .donationTestNote {
+  background: linear-gradient(
+    135deg,
+    #fff3d8,
+    #fffaf0
+  ) !important;
+
+  color: #684b1e !important;
+  border: 1px solid rgba(190, 145, 65, 0.45);
+  border-radius: 10px;
+}
+
+/* Admin Header - Panel Matching Dark Theme */
+
+.adminDashboard.adminDark .adminTopHeader {
+  background: #1f2937 !important;
+  color: #f9fafb !important;
+  border-bottom: 1px solid #374151 !important;
+  box-shadow: none !important;
+}
+
+.adminDashboard.adminDark .adminHeaderLeft h1 {
+  color: #f9fafb !important;
+}
+
+.adminDashboard.adminDark .adminHeaderLeft p {
+  color: #cbd5e1 !important;
+}
+
+.adminDashboard.adminDark .adminNotificationHeaderButton,
+.adminDashboard.adminDark .adminThemeButton,
+.adminDashboard.adminDark .mobileMenuButton,
+.adminDashboard.adminDark .adminProfileButton {
+  background: #263244 !important;
+  color: #f9fafb !important;
+  border: 1px solid #3b4758 !important;
+  box-shadow: none !important;
+}
+
+.adminDashboard.adminDark .adminNotificationHeaderButton svg,
+.adminDashboard.adminDark .adminThemeButton svg,
+.adminDashboard.adminDark .adminProfileButton svg {
+  color: #f9fafb !important;
+}
+
+.adminDashboard.adminDark .adminNotificationHeaderButton:hover,
+.adminDashboard.adminDark .adminThemeButton:hover,
+.adminDashboard.adminDark .adminProfileButton:hover {
+  background: #374151 !important;
+  border-color: #4b5563 !important;
+  transform: none !important;
 }

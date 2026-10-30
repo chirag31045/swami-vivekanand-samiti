@@ -47,6 +47,7 @@ import Donate from "./pages/Donate";
 import DonationAdmin from "./pages/DonationAdmin";
 import AdminProfile from "./pages/AdminProfile";
 import AppDownload from "./pages/AppDownload";
+import { FaWhatsapp } from "react-icons/fa";
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const API_ORIGIN = API.replace(/\/api\/?$/, "");
 const links = [
@@ -340,6 +341,30 @@ const getHeaderNameParts = (name = "") => {
   };
 };
 
+const getWhatsAppLink = (value) => {
+  const raw = String(value || "").trim();
+
+  if (!raw) return "#";
+
+  // Already a WhatsApp URL
+  if (/^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+
+  // Convert mobile number into WhatsApp URL
+  let number = raw.replace(/\D/g, "");
+
+  // Add India country code for 10-digit numbers
+  if (number.length === 10) {
+    number = "91" + number;
+  }
+
+  // Remove extra leading zero
+  number = number.replace(/^0+/, "");
+
+  return number ? `https://wa.me/${number}` : "#";
+};
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -353,7 +378,6 @@ function ScrollToTop() {
 
   return null;
 }
-
 
 function Layout({ children }) {
   const [open, setOpen] = useState(false);
@@ -443,12 +467,22 @@ function Layout({ children }) {
       </div>
 
       <header className="header">
-        <Link to="/" className="brand" onClick={() => setOpen(false)}>
+        <Link
+          to="/"
+          className="brand"
+          onClick={(e) => {
+            setOpen(false);
+
+            if (window.location.pathname === "/") {
+              e.preventDefault();
+              window.location.reload();
+            }
+          }}
+        >
           <img src={getAssetUrl(siteSettings.logo)} alt="Samiti logo" />
 
           <div>
             <strong>{headerTitle}</strong>
-
             <small>{headerSubtitle}</small>
           </div>
         </Link>
@@ -491,11 +525,23 @@ function Layout({ children }) {
       <footer className="footer">
         <div className="footerGrid">
           <div>
-            <img
-              src={getAssetUrl(siteSettings.logo)}
-              className="footerLogo"
-              alt="Samiti logo"
-            />
+            <Link
+              to="/"
+              className="footerLogoLink"
+              onClick={(e) => {
+                if (window.location.pathname === "/") {
+                  e.preventDefault();
+                  window.location.reload();
+                }
+              }}
+              aria-label="Go to Home"
+            >
+              <img
+                src={getAssetUrl(siteSettings.logo)}
+                className="footerLogo"
+                alt="Samiti logo"
+              />
+            </Link>
 
             <h3>{currentSiteData.name}</h3>
 
@@ -530,28 +576,25 @@ function Layout({ children }) {
             </Link>
           </div>
 
-          <div>
+          <div className="footerContact">
             <h4>{t("contact")}</h4>
 
-            <p>
-              <MapPin size={16} />
-
+            <p className="footerContactItem">
+              <MapPin className="footerContactIcon" size={18} />
               <a href={mapLink} target="_blank" rel="noopener noreferrer">
                 {currentSiteData.address}
               </a>
             </p>
 
-            <p>
-              <Phone size={16} />
-
+            <p className="footerContactItem">
+              <Phone className="footerContactIcon" size={18} />
               <a href={`tel:${currentSiteData.phone}`}>
                 {currentSiteData.phone}
               </a>
             </p>
 
-            <p>
-              <Mail size={16} />
-
+            <p className="footerContactItem">
+              <Mail className="footerContactIcon" size={18} />
               <a href={`mailto:${currentSiteData.email}`}>
                 {currentSiteData.email}
               </a>
@@ -560,7 +603,6 @@ function Layout({ children }) {
             <div className="socials">
               <a
                 href={currentSiteData.social.instagram}
-                target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
               >
@@ -569,7 +611,6 @@ function Layout({ children }) {
 
               <a
                 href={currentSiteData.social.facebook}
-                target="_blank"
                 rel="noreferrer"
                 aria-label="Facebook"
               >
@@ -577,17 +618,16 @@ function Layout({ children }) {
               </a>
 
               <a
-                href={currentSiteData.social.whatsapp}
-                target="_blank"
-                rel="noreferrer"
+                href={getWhatsAppLink(currentSiteData.social?.whatsapp)}
+                rel="noopener noreferrer"
                 aria-label="WhatsApp"
+                title="Chat with us on WhatsApp"
               >
-                <MessageCircle />
+                <FaWhatsapp size={24} />
               </a>
 
               <a
                 href={currentSiteData.social.twitter}
-                target="_blank"
                 rel="noreferrer"
                 aria-label="Twitter"
               >
@@ -601,6 +641,36 @@ function Layout({ children }) {
           © {new Date().getFullYear()} {currentSiteData.name}. {t("rights")}
         </div>
       </footer>
+
+      {/* Floating WhatsApp Button */}
+      <a
+        href={`https://wa.me/${
+          String(siteSettings.phone || "")
+            .replace(/\D/g, "")
+            .replace(/^0+/, "")
+            .replace(/^91(?=\d{10}$)/, "")
+            ? "91" +
+              String(siteSettings.phone)
+                .replace(/\D/g, "")
+                .replace(/^0+/, "")
+                .replace(/^91(?=\d{10}$)/, "")
+            : ""
+        }`}
+        className="floatingWhatsApp"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
+        title="WhatsApp"
+      >
+        <svg
+          viewBox="0 0 32 32"
+          width="30"
+          height="30"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M16 2.7A13.1 13.1 0 0 0 4.8 22.6L3 29l6.6-1.7A13.1 13.1 0 1 0 16 2.7Zm0 23.8a10.7 10.7 0 0 1-5.4-1.5l-.4-.2-3.9 1 1-3.8-.3-.4A10.7 10.7 0 1 1 16 26.5Zm5.9-8c-.3-.2-1.8-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 0 1-2.5-1.5 9.3 9.3 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.7l.5-.5c.1-.2.2-.4.3-.6s0-.4 0-.6l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4s-1.1 1.1-1.1 2.6 1.1 3 1.3 3.2a12.3 12.3 0 0 0 4.7 4.2c.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4s.3-1.3.2-1.4-.2-.2-.5-.4Z" />
+        </svg>
+      </a>
     </div>
   );
 }
@@ -1201,7 +1271,6 @@ function Documents() {
           <a
             className="primary"
             href="/documents/registration-certificate.pdf"
-            target="_blank"
             rel="noreferrer"
           >
             {t("viewPdf")} <ExternalLink size={16} />
@@ -1214,7 +1283,6 @@ function Documents() {
           <a
             className="primary"
             href="/documents/ngo-darpan-certificate.pdf"
-            target="_blank"
             rel="noreferrer"
           >
             {t("viewPdf")} <ExternalLink size={16} />
@@ -1667,59 +1735,54 @@ function Contact() {
           <p>{intro}</p>
 
           <div className="contactSocials">
-            {siteSettings.social.whatsapp && (
-              <a
-                href={siteSettings.social.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle size={20} />
+            <a
+              href={siteSettings.social.instagram}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <Instagram size={20} />
+              Instagram
+            </a>
 
-                {lang === "en" ? "WhatsApp" : "व्हाट्सऐप"}
-              </a>
-            )}
+            <a
+              href={siteSettings.social.facebook}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+            >
+              <Facebook size={20} />
+              Facebook
+            </a>
 
-            {siteSettings.social.facebook && (
-              <a
-                href={siteSettings.social.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Facebook size={20} />
+            <a
+              href={siteSettings.social.whatsapp}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="WhatsApp"
+            >
+              <FaWhatsapp size={20} />
+              WhatsApp
+            </a>
 
-                {lang === "en" ? "Facebook" : "फेसबुक"}
-              </a>
-            )}
-
-            {siteSettings.social.instagram && (
-              <a
-                href={siteSettings.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Instagram size={20} />
-
-                {lang === "en" ? "Instagram" : "इंस्टाग्राम"}
-              </a>
-            )}
-
-            {siteSettings.social.twitter && (
-              <a
-                href={siteSettings.social.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Twitter size={20} />
-
-                {lang === "en" ? "Twitter" : "Twitter / X"}
-              </a>
-            )}
+            <a
+              href={siteSettings.social.twitter}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Twitter"
+            >
+              <Twitter size={20} />
+              Twitter / X
+            </a>
 
             {siteSettings.email && (
-              <a href={`mailto:${siteSettings.email}`}>
+              <a
+                href={`mailto:${String(siteSettings.email).trim()}`}
+                className="contactEmailLink"
+                aria-label="Send email"
+              >
                 <Mail size={20} />
-
-                {lang === "en" ? "Email" : "ईमेल"}
+                Email
               </a>
             )}
           </div>

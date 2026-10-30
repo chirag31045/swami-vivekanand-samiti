@@ -1875,7 +1875,12 @@ export default function AdminDashboard() {
                           aria-label="Unread"
                         />
                       )}
-                      <span className="adminNotificationView">View →</span>
+                      <span
+                        className="adminNotificationView"
+                        title="View Notification"
+                      >
+                        <Eye size={18} />
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -2032,18 +2037,19 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="volunteerFilterGrid">
-                
-                  <select value={filters.area} onChange={(e)=>
-                     setFilters({ ...filters, area: e.target.value })
-                  }>
-                  <option value="">Choose</option>
-                      {AREAS_OF_INTEREST.map((a) => (
-                        <option key={a} value={a}>
-                          {a}
-                        </option>
-                      ))}
+                  <select
+                    value={filters.area}
+                    onChange={(e) =>
+                      setFilters({ ...filters, area: e.target.value })
+                    }
+                  >
+                    <option value="">Choose</option>
+                    {AREAS_OF_INTEREST.map((a) => (
+                      <option key={a} value={a}>
+                        {a}
+                      </option>
+                    ))}
                   </select>
-
 
                   <select
                     value={filters.status}
@@ -2293,13 +2299,14 @@ export default function AdminDashboard() {
 
                           <td>
                             <span
-                              className={
+                              className={`passwordTableBadge ${
                                 v.passwordSet
-                                  ? "password-status password-status--set"
-                                  : "password-status password-status--missing"
-                              }
+                                  ? "passwordIsSet"
+                                  : "passwordIsNotSet"
+                              }`}
                             >
-                              {v.passwordSet ? "Set" : "Not set"}
+                              <span className="passwordBadgeDot"></span>
+                              {v.passwordSet ? "Set" : "Not Set"}
                             </span>
                           </td>
 
@@ -4134,15 +4141,32 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div
-                className={`password-state-detail ${viewVolunteer.passwordSet ? "is-set" : "not-set"}`}
+                className={`password-state-detail ${
+                  viewVolunteer.passwordSet ? "is-set" : "not-set"
+                }`}
               >
-                <strong>
-                  Password: {viewVolunteer.passwordSet ? "Set" : "Not set"}
-                </strong>
-                <span>
-                  {viewVolunteer.passwordSet
-                    ? "A password hash is stored securely."
-                    : "No password hash is stored for this volunteer."}
+                <div className="passwordDetailIcon">
+                  {viewVolunteer.passwordSet ? "✓" : "!"}
+                </div>
+
+                <div className="passwordDetailContent">
+                  <span className="passwordDetailLabel">ACCOUNT PASSWORD</span>
+
+                  <strong>
+                    {viewVolunteer.passwordSet
+                      ? "Password Set"
+                      : "Password Not Set"}
+                  </strong>
+
+                  <p>
+                    {viewVolunteer.passwordSet
+                      ? "This volunteer has created an account password. Password is stored securely."
+                      : "This volunteer has not created an account password yet."}
+                  </p>
+                </div>
+
+                <span className="passwordDetailStatus">
+                  {viewVolunteer.passwordSet ? "Active" : "Pending"}
                 </span>
               </div>
               {/* DETAILS */}

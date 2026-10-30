@@ -253,3 +253,129 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ================================
+   LIGHT THEME
+================================ */
+.appDownloadPage {
+  --app-bg: #fffaf0;
+  --app-card: #ffffff;
+  --app-text: #302320;
+  --app-muted: #74665f;
+  --app-border: #eadbc9;
+  --app-icon-bg: #fff0d5;
+  --app-badge-bg: #f8e8c5;
+  --app-badge-text: #7d281b;
+  --app-shadow: rgba(76, 31, 20, 0.07);
+  --app-shadow-hover: rgba(76, 31, 20, 0.13);
+  --app-notice-bg: #ffffff;
+
+  min-height: 70vh;
+  padding: 42px 5vw 80px;
+  background: var(--app-bg);
+  color: var(--app-text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.appDownloadPage .appReleaseCard,
+.appDownloadPage .appReleaseEmpty,
+.appDownloadPage .appReleaseNotice {
+  background: var(--app-card);
+  border: 1px solid var(--app-border);
+}
+
+.appDownloadPage .appReleaseCard,
+.appDownloadPage .appReleaseEmpty {
+  box-shadow: 0 12px 35px var(--app-shadow);
+}
+
+.appDownloadPage .appReleaseCard:hover {
+  box-shadow: 0 18px 40px var(--app-shadow-hover);
+}
+
+.appDownloadPage .appReleaseHeading h2,
+.appDownloadPage .appReleaseCard h3,
+.appDownloadPage .appReleaseEmpty h3 {
+  color: var(--app-text);
+}
+
+.appDownloadPage .appReleaseNotes,
+.appDownloadPage .appReleaseMeta,
+.appDownloadPage .appReleaseEmpty,
+.appDownloadPage .appReleaseSafety {
+  color: var(--app-muted);
+}
+
+.appDownloadPage .appReleaseMiniIcon {
+  background: var(--app-icon-bg);
+}
+
+.appDownloadPage .appReleaseBadge {
+  background: var(--app-badge-bg);
+  color: var(--app-badge-text);
+}
+
+.appDownloadPage .appReleaseNotice {
+  background: var(--app-notice-bg);
+}
+
+/* ================================
+   DARK THEME
+================================ */
+[data-theme="dark"] .appDownloadPage,
+.dark .appDownloadPage,
+.dark-theme .appDownloadPage {
+  --app-bg: #171211;
+  --app-card: #241b19;
+  --app-text: #fff2e7;
+  --app-muted: #c0aaa0;
+  --app-border: #49332d;
+  --app-icon-bg: #3b2922;
+  --app-badge-bg: #4a3420;
+  --app-badge-text: #ffdb91;
+  --app-shadow: rgba(0, 0, 0, 0.20);
+  --app-shadow-hover: rgba(0, 0, 0, 0.35);
+  --app-notice-bg: #241b19;
+}
+
+[data-theme="dark"] .appDownloadPage .appReleaseHeading h2,
+[data-theme="dark"] .appDownloadPage .appReleaseCard h3,
+[data-theme="dark"] .appDownloadPage .appReleaseEmpty h3,
+.dark .appDownloadPage .appReleaseHeading h2,
+.dark .appDownloadPage .appReleaseCard h3,
+.dark .appDownloadPage .appReleaseEmpty h3,
+.dark-theme .appDownloadPage .appReleaseHeading h2,
+.dark-theme .appDownloadPage .appReleaseCard h3,
+.dark-theme .appDownloadPage .appReleaseEmpty h3 {
+  color: var(--app-text);
+}
+
+[data-theme="dark"] .appDownloadPage .appReleaseVersion,
+.dark .appDownloadPage .appReleaseVersion,
+.dark-theme .appDownloadPage .appReleaseVersion {
+  color: #f0bd59;
+}
+
+[data-theme="dark"] .appDownloadPage .appReleaseHeading span,
+.dark .appDownloadPage .appReleaseHeading span,
+.dark-theme .appDownloadPage .appReleaseHeading span {
+  color: #f0bd59;
+}
+
+[data-theme="dark"] .appDownloadPage .appReleaseMiniIcon,
+.dark .appDownloadPage .appReleaseMiniIcon,
+.dark-theme .appDownloadPage .appReleaseMiniIcon {
+  color: #f0bd59;
+}
+
+[data-theme="dark"] .appDownloadPage .appReleaseEmpty svg,
+.dark .appDownloadPage .appReleaseEmpty svg,
+.dark-theme .appDownloadPage .appReleaseEmpty svg {
+  color: #f0bd59;
+}
+
+[data-theme="dark"] .appDownloadPage .appReleaseNotice.error,
+.dark .appDownloadPage .appReleaseNotice.error,
+.dark-theme .appDownloadPage .appReleaseNotice.error {
+  color: #ff938b;
+}

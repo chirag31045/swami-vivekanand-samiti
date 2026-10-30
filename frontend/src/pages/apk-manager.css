@@ -221,3 +221,77 @@
     align-self: flex-start;
   }
 }
+/* Android APK Releases - Actual Admin Dashboard Dark Mode */
+.adminDashboard.adminDark .app-release-manager {
+  background: var(--admin-surface, #1f2937) !important;
+  color: var(--admin-text, #f3f4f6) !important;
+  border: 1px solid var(--admin-border, #374151) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+.adminDashboard.adminDark .app-release-manager h2 {
+  color: #ef7770 !important;
+}
+
+.adminDashboard.adminDark .app-release-manager h3,
+.adminDashboard.adminDark .app-release-manager li,
+.adminDashboard.adminDark .app-release-manager li strong {
+  color: var(--admin-text, #f3f4f6) !important;
+  border-color: var(--admin-border, #374151) !important;
+}
+
+.adminDashboard.adminDark .app-release-manager p,
+.adminDashboard.adminDark .app-release-manager label {
+  color: var(--admin-muted, #9ca3af) !important;
+}
+
+.adminDashboard.adminDark .app-release-manager input:not([type="file"]),
+.adminDashboard.adminDark .app-release-manager textarea,
+.adminDashboard.adminDark .app-release-manager select,
+.adminDashboard.adminDark .app-release-manager input[type="file"] {
+  background: #111827 !important;
+  color: #f3f4f6 !important;
+  border-color: #374151 !important;
+}
+
+.adminDashboard.adminDark .app-release-manager input::placeholder,
+.adminDashboard.adminDark .app-release-manager textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+.adminDashboard.adminDark .app-release-manager li {
+  background: #111827 !important;
+  border-color: #374151 !important;
+}
+
+.adminDashboard.adminDark .app-release-manager li a {
+  background: #1f2937 !important;
+  color: #ff918a !important;
+  border-color: #374151 !important;
+}
+
+.adminDashboard.adminDark .app-release-manager li a:hover {
+  background: #b42328 !important;
+  color: #ffffff !important;
+}
+
+.adminDashboard.adminDark .app-release-manager input[type="file"]::file-selector-button {
+  background: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
+}
+
+.adminDashboard.adminDark .app-release-manager p[role="status"] {
+  background: #163326 !important;
+  color: #c6f6d5 !important;
+  border-left-color: #48bb78 !important;
+}
+
+.adminDashboard.adminDark .app-release-manager button[type="submit"] {
+  background: #b42328 !important;
+  color: #ffffff !important;
+}
+
+.adminDashboard.adminDark .app-release-manager button[type="submit"]:hover:not(:disabled) {
+  background: #d33b40 !important;
+}
